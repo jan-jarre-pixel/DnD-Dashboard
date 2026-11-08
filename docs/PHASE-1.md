@@ -1,7 +1,7 @@
 # Phase 1 – Architektur, Designsystem und sichere Sitzungen
 
-Status: Implementiert und lokal geprüft; CI, produktive Migration, Merge und
-Produktionskontrolle ausstehend. Aufgaben: DND-ARCH-001, DND-AUTH-001, DND-UI-001.
+Status: Getestet; produktive additive Migration erfolgreich. Frontend-Merge
+und Produktionskontrolle der neuen Oberfläche ausstehend. Aufgaben: DND-ARCH-001, DND-AUTH-001, DND-UI-001.
 
 ## Gelieferter Umfang
 
@@ -88,7 +88,7 @@ oder manipulierte JWT-user_metadata umgangen werden.
 
 ## Nachweise und Abnahme
 
-- 24 Node-Prüfungen: M0-Provenienz, Assetpfade/Build, Normalisierung, Identitäten,
+- 25 Node-Prüfungen: M0-Provenienz, Assetpfade/Build, Normalisierung, Identitäten,
   Auth-Lebenszyklus und Antwort-Rennen, Token-Kontrast.
 - Bestehende 16 PostgreSQL-Szenarien und Parallelitäts-/Recovery-Tests.
 - 17 zusätzliche Sitzungs-/Autorisierungsszenarien: fünf Rollen, Token statt Code,
@@ -97,7 +97,7 @@ oder manipulierte JWT-user_metadata umgangen werden.
 - Chromium und Firefox lokal: je fünf Rollen × Desktop/Mobil, Speichern,
   Wiederladen, Seitenwechsel, Abmeldung, keine dauerhaft gespeicherten Codes,
   keine Code-Übertragung nach dem Austausch, keine JavaScript-Ausnahmen und
-  keine horizontale Überbreite. WebKit wird in der CI geprüft.
+  keine horizontale Überbreite. WebKit ebenfalls in der CI bestanden.
 - Frische private Anwendungssicherung außerhalb des Repositorys; Migration auf
   lokaler Kopie geprüft, alle sieben bisherigen Tabellen per Prüfsumme erhalten.
 - Positivtests verwenden künstliche Codes und lokale Daten. Keine produktiven
@@ -120,3 +120,19 @@ Phase 3: private Realtime-Authentifizierung, Versions-/Konfliktbehandlung,
 atomare Ressourcenänderungen und vollständig gehärtete Wurf-Idempotenz.
 Phase 6/18: mehrere Kampagnen, zusätzliche Rollen und feinere Sichtbarkeiten.
 Die alte vollständige JSON-Speicherung hat weiterhin Last-write-wins-Verhalten.
+
+## Produktive Migration und CI-Nachweise
+
+- PR: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3
+- Getesteter Stand: e9459379d572612628f8232ec5e1f459185fe9dd.
+- Vollständige Chromium-/Firefox-/WebKit-CI erfolgreich:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42532296320
+- Supabase-Migration `phase1_identity_sessions`, produktive Version
+  `20261108225355`, erfolgreich angewendet. Der lokale Dateiname wurde an die
+  tatsächlich vom Migrationstool vergebene Version angepasst; SQL-Inhalt gleich.
+- Prüfsummen unmittelbar vor und nach der produktiven Migration: alle sieben
+  bestehenden Tabellen identisch, einschließlich Charakterdaten und Code-Prüfwerten.
+- Advisor erneut geprüft: zehn anon-SECURITY-DEFINER-Hinweise (sieben alte und
+  drei neue geschützte Einstiegspunkte), sieben RLS-ohne-Policy-Hinweise im
+  privaten/RPC-only-Bereich. Keine direkten Client-Rechte auf Sitzungstabellen.
+  [Advisor-Erläuterung](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).

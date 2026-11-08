@@ -46,6 +46,8 @@ const path=require('node:path');
     await page.waitForFunction(()=>document.body.innerText.includes('Online gespeichert'));
     assert.equal(local.rpc('read_character',{p_character_key:role,p_code:local.codes[role]}).hp,before.hp-1);
    }
+   await page.locator('#dfab').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#dfab').getAttribute('aria-expanded'),'true');
+   await page.keyboard.press('Escape');assert.equal(await page.locator('#dfab').getAttribute('aria-expanded'),'false');assert(await page.locator('#dfab').evaluate(el=>el===document.activeElement));
    assert.equal(await page.evaluate(()=>localStorage.getItem('dnd_characters_cloud_v2')),null);
    assert.match(await page.evaluate(()=>sessionStorage.getItem('dnd_session_v1')),/^[a-f0-9]{64}$/);
    for(const req of requests.filter(x=>x.method!=='dnd_sign_in'))assert(!JSON.stringify(req.body).includes(local?local.codes[role]:'synthetic_test_code_00000000'));

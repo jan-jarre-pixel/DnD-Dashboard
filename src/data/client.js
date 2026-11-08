@@ -5,7 +5,7 @@
  let client,token='',current=null,generation=0;
  const store=(value)=>{try{if(value)sessionStorage.setItem(key,value);else sessionStorage.removeItem(key);}catch{/* Memory-only session remains usable. */}};
  const clear=()=>{generation++;token='';current=null;store('');DND.store.update({identity:null,connection:'signed-out'});};
- function api(){if(client)return client;const config=root.DND_CLOUD_CONFIG||{};if(!root.supabase?.createClient||!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||'')||!config.publishableKey)throw Error('Online-Konfiguration konnte nicht geladen werden.');return client=root.supabase.createClient(config.url,config.publishableKey,{auth:{persistSession:false,autoRefreshToken:false}});}
+ function api(){if(client)return client;const config=root.DND_CLOUD_CONFIG||{};if(!root.supabase?.createClient||!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||'')||!config.publishableKey)throw Error('Online-Konfiguration konnte nicht geladen werden.');return client=root.supabase.createClient(config.url,config.publishableKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});}
  async function call(name,params){const {data,error}=await api().rpc(name,params);if(error)throw error;return data;}
  async function request(operation,payload={}){
   if(!token)throw Error('Bitte mit deinem privaten Code anmelden.');
