@@ -1,1 +1,17 @@
-{"name":"dnd-dashboard","version":"0.1.0","private":true,"scripts":{"test":"node --test tests/*.test.cjs","build":"node scripts/build.cjs","test:browser":"node tests/browser.cjs"},"engines":{"node":">=22"}}
+{
+  "name": "dnd-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/build.cjs",
+    "test:browser": "node tests/browser.cjs",
+    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
