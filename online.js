@@ -25,11 +25,11 @@
         <div class="ed"><div><label for="loginCharacter">Meine Rolle</label><select id="loginCharacter" class="w" required>
           <option value="">Bitte auswählen</option>
           ${IDS.map(k=>`<option value="${k}">${esc(D[k].name)} · ${esc(D[k].cls)}</option>`).join('')}
-          <option value="gm">Spielleiter (alle Charaktere ansehen)</option>
+          <option value="gm">Spielleiter · Control Room</option>
         </select></div>
         <div><label for="loginCode">Privater Zugangscode</label><input id="loginCode" class="w" type="password" required autocomplete="off" placeholder="Zugangscode"></div></div>
         <p class="note">Deine Sitzung gilt bis zu zwölf Stunden in diesem Tab. Der private Code wird nach der Anmeldung nicht gespeichert. Teile deinen Code nicht weiter. Jeder mit diesem Code könnte deine Daten bearbeiten.</p>
-        <button class="b" type="submit">Charakter öffnen</button>
+        <button class="b" type="submit">Command Center öffnen</button>
       </form></div>`;
   }
   function accountLine() {
@@ -64,6 +64,7 @@
     }
     original.draw(soft);
     if (state.role==='gm') {
+      if(cur!=='all'&&S[cur])sheetRoot.innerHTML+=`<section class="card"><h2>Zustände & Quest-Notizen</h2><p>${esc(S[cur].conditions.join(', ')||'Keine Zustände eingetragen')}</p><p class="preserve-lines">${esc(S[cur].questNotes||'Keine persönlichen Quest-Notizen')}</p></section>`;
       for (const b of sheetRoot.querySelectorAll('button')) {
         if (!['Kampfmodus','Bogen'].includes(b.textContent.trim())) b.disabled=true;
       }

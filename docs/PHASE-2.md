@@ -1,7 +1,7 @@
 # Phase 2 – Rollenadaptive Dashboards und Sitzungssteuerung
 
-Status: Implementiert und lokal geprüft; Cross-Browser-CI, produktive Migration,
-Merge und Produktionskontrolle ausstehend. Pakete: DND-PLAYER-001, DND-GM-001.
+Status: Cross-Browser-CI bestanden; produktive Migration erfolgreich.
+Frontend-Merge und Kontrolle der veröffentlichten Phase-2-Oberfläche ausstehend. Pakete: DND-PLAYER-001, DND-GM-001.
 
 ## Spieleroberfläche
 
@@ -74,8 +74,9 @@ Datenbanksnapshot gebaut; private Felder fehlen in Spielerantworten vollständig
 
 Mutation und Idempotenzprüfung laufen atomar unter derselben Workspace-Sperre.
 Wiederholte Request-IDs mit verändertem Payload werden abgewiesen. Pause/Ende/
-Fortsetzung prüfen zusätzlich die adressierte Spielrunde; ein alter Client kann
-nicht versehentlich die nächste Runde beenden. Versionsprüfungen sichern Pläne,
+Fortsetzung prüfen zusätzlich die adressierte Spielrunde; ein veralteter Workspace-Stand kann
+nicht versehentlich die nächste Runde beenden. Die historischen Code-RPCs
+behalten ihr bisheriges Aufrufverhalten ohne zusätzlichen Session-ID-Parameter. Versionsprüfungen sichern Pläne,
 Veröffentlichungen und Recaps gegen unbeabsichtigtes Überschreiben.
 
 Der bisherige dnd_gm_manage-Endpunkt behält Signatur, Rechte und Funktionsidentität;
@@ -110,7 +111,8 @@ Schema und Funktionen bleiben auf dem vorhandenen kostenlosen Supabase-Projekt.
   Migration erhält alle neun bisherigen Anwendungstabellen und die Identitäten
   der drei bisherigen RPC-Funktionen. Keine Tests schreiben echte Spielerwerte.
 - npm audit: keine bekannten Schwachstellen im Lockfile-Stand.
-- Vollständige Cross-Browser-CI und Produktionskontrolle noch ausstehend.
+- Vollständige Chromium-/Firefox-/WebKit-CI erfolgreich; abschließende
+  Frontend-Veröffentlichung und Produktionskontrolle noch ausstehend.
 
 Es werden keine Live-Spieltests mit privaten Originalcodes behauptet.
 
@@ -128,3 +130,27 @@ Es werden keine Live-Spieltests mit privaten Originalcodes behauptet.
 - Mehrere Kampagnen, gemeinsame Quests, NPCs, Karten, Ressourcen-Transaktionen,
   Offline-Synchronisierung und My-Turn bleiben den definierten Folgephasen
   zugeordnet. Diese Abnahme behauptet sie nicht als fertig.
+
+## Migrations- und CI-Nachweise
+
+- PR: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5
+- Erste vollständige Cross-Browser-CI erfolgreich auf e3874e93a9fafc7809caaa85cc275a0d0fa77f5e:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42536547830
+- Produktive Migration phase2_session_workspace erfolgreich als Version
+  20261108235010 angewendet. Dateiname an die tatsächliche Migrationshistorie
+  angepasst; der geprüfte SQL-Inhalt bleibt identisch.
+- Prüfsummen aller neun bisherigen Tabellen unmittelbar vor/nach Migration
+  identisch. Auch OIDs und Ausführungsrechte der drei bestehenden RPCs identisch.
+- Vier neue Tabellen direkt für anon/authenticated gesperrt; RLS aktiv.
+- Neue reale Workspace-API weist ungültige Token mit HTTP 403 / SQLSTATE 28000 ab.
+- Zehn bestehende reale API-Ablehnungstests sowie lesende Desktop-/Mobilprüfung
+  der unveränderten Rückfallseite nach Migration bestanden.
+- Advisor: elf anon-SECURITY-DEFINER-Hinweise (zehn bisherige und ein neuer
+  tokengeprüfter Workspace-RPC) sowie elf RLS-ohne-Policy-Hinweise für absichtlich
+  gesperrte private/RPC-only-Tabellen. Keine öffentlichen Tabellenrechte hinzugefügt.
+  [Advisor-Erläuterung](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
+
+Hinweis zur API-Prüfung: Die erste Assertion erwartete HTTP 401. Die tatsächliche
+PostgREST-Abbildung von SQLSTATE 28000 ist hier HTTP 403; die Antwort enthält die
+vorgesehene Sitzungssperre. Der Test prüft daher 401/403 und nicht einen falschen
+festen Status. Kein offener Autorisierungsfehler.
