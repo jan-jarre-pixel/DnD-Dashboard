@@ -31,13 +31,16 @@ PR #1 ist integriert, das Pages-Deployment und die öffentliche Adresse sind gep
 
 ## Struktur
 
-Die bestehenden Einstiegspunkte bleiben zunächst im Root, damit relative Links
-unter `/DnD-Dashboard/` funktionieren. Kein Framework-Wechsel in der Migration.
-`supabase/` enthält unveränderte historische SQL-Dateien, keine automatisch
-auszuführenden neuen Migrationen. Insbesondere `schema.sql` enthält historische
-Code-Prüfwerte und Setup-Logik: **niemals auf der bestehenden Datenbank neu ausführen**.
-Künftige Migrationen kommen nach `supabase/migrations/`.
+Die bestehenden HTML-Einstiegspunkte bleiben im Root. `src/core` enthält Modell
+und UI-Zustand, `src/data` die gemeinsame Auth-/Datengrenze, `src/ui` gemeinsame
+Komponenten, `src/pages` die Seitenadapter und `src/legacy` den weiterverwendeten
+Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
+`supabase/migrations` enthält neue additive Migrationen; die historischen
+SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
+**Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-1-Bericht und Sicherheitsentscheidungen](docs/PHASE-1.md)
+- [Architektur](docs/ARCHITECTURE.md)
 - [Migrationsbericht](docs/M0.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Sicherung und Wiederherstellung](docs/BACKUP.md)

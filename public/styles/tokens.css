@@ -1,0 +1,13 @@
+/* DND design tokens v1. Colors are shared by both roles and both entry points. */
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"] {
+ color-scheme:dark;
+ --dnd-bg:#17191f;--dnd-surface:#22252e;--dnd-raised:#2c303b;
+ --dnd-text:#f1eade;--dnd-muted:#c2b9aa;--dnd-gold:#e2bd78;
+ --dnd-border:#80889a;--dnd-positive:#8bd6ab;--dnd-danger:#ffa697;
+ --dnd-font:system-ui,-apple-system,"Segoe UI",sans-serif;
+ --dnd-radius:12px;--dnd-space:8px;--dnd-focus:#f6d58f;
+ --bg:var(--dnd-bg);--card:var(--dnd-surface);--panel:var(--dnd-surface);--panel2:var(--dnd-raised);
+ --ink:var(--dnd-text);--text:var(--dnd-text);--mut:var(--dnd-muted);--muted:var(--dnd-muted);
+ --acc:var(--dnd-gold);--gold:var(--dnd-gold);--line:var(--dnd-border);--ok:var(--dnd-positive);--green:var(--dnd-positive);--red:var(--dnd-danger);
+}
+:root[data-theme="light"]{color-scheme:light;--dnd-bg:#f4efe6;--dnd-surface:#fffdf8;--dnd-raised:#eee5d5;--dnd-text:#29241d;--dnd-muted:#5e5548;--dnd-gold:#704b15;--dnd-border:#877861;--dnd-positive:#24663c;--dnd-danger:#9d2f25;--dnd-focus:#704b15}

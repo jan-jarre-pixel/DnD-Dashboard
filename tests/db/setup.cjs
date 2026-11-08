@@ -7,3 +7,5 @@ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(
 CREATE PUBLICATION supabase_realtime;`,'dnd_test');
 for(const file of ['schema.sql','code_access.sql','multiplayer_v2.sql'])sql(fs.readFileSync(`supabase/${file}`,'utf8'),'dnd_test');
 console.log('Isolated test schema initialized. No remote database connections used.');
+
+for(const file of fs.readdirSync('supabase/migrations').filter(x=>x.endsWith('.sql')).sort())sql(fs.readFileSync(`supabase/migrations/${file}`,'utf8'),'dnd_test');
