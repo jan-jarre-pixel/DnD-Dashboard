@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if(log)log.innerHTML=hist.map(x=>`<div>${esc(x)}</div>`).join('');
       anim(total,faces,details,resultType);
       setSt('Wurf für alle Spieler gespeichert ✓');
+      window.dispatchEvent(new CustomEvent('dnd:dice-rolled',{detail:data}));
+      return data;
     }catch(e){
       const message=String(e?.message||'Unbekannter Fehler');
       status(/Sitzung starten|Spielleiter muss Sitzung starten/.test(message)?'Noch keine aktive Spielsitzung. Bitte den Spielleiter starten lassen.':

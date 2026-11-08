@@ -3,7 +3,7 @@
 Stand: 2026-11-08. **M0 und Phase 1 sind abgeschlossen und produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
 fortgeführt. Abgeschlossene Arbeitspakete: **4 von 15** (MIG, ARCH, AUTH, UI).
-Phase 2 und die weiteren Implementierungsphasen sind noch offen. Jede Aufgabe
+Phase 2 ist implementiert und befindet sich in der Abnahme; spätere Phasen sind offen. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
 
@@ -27,17 +27,17 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Alle drei Ansichten verwenden dieselben Daten.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Quick/Action/Full View offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Implementiert. Teststatus: Lokale Node-/DB-/Browserprüfungen bestanden; vollständige CI/Produktionsabnahme ausstehend.
+- Offene Probleme: Keine vollständige Mengen-/Gegenstandsautomatisierung (Phase 7), kein My-Turn (Phase 4).
+- Commit/PR: Branch feature/phase2-dashboards; PHASE-2.md.
 
 ## DND-GM-001 – 2 GM Control Room
 
 - Ziel/Abnahme: Sessionzyklen und private Notizen rollenrichtig nutzbar.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Prep/Live, Companion, Recaps offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Implementiert. Teststatus: 16 zusätzliche Workspace-DB-Szenarien und lokale GM-Browserabläufe bestanden; CI/Produktionsabnahme ausstehend.
+- Offene Probleme: Karten/NPCs/Encounter bleiben spätere Phasen; Entwürfe ohne Serverbestätigung sind flüchtig.
+- Commit/PR: Branch feature/phase2-dashboards; PHASE-2.md.
 
 ## DND-RT-001 – 3 Multiplayer und Würfel
 

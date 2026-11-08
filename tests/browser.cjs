@@ -25,6 +25,7 @@ const path=require('node:path');
    await page.route('https://*.supabase.co/**',r=>{
     let method=r.request().url().split('/').pop();let body=r.request().postDataJSON();requests.push({method,body});
     if(local){try{return r.fulfill({json:local.rpc(method,body)});}catch(e){return r.fulfill({status:400,json:{message:e.message}});}}
+    if(method==='dnd_workspace_call')return r.fulfill({json:{session:{id:'test-session',title:'Testsitzung',status:'active'},scene:'Testszene',announcement:'',version:1,...(role==='gm'?{plans:[],history:[],active_plan_id:null}:{})}});
     if(method==='dnd_sign_in'&&body.p_code!=='invalid_code_for_test_0000')return r.fulfill({json:{actor:role,role:role==='gm'?'owner':'player',identity_id:'test-identity',expires_at:new Date(Date.now()+3600000).toISOString(),token:'a'.repeat(64)}});
     if(method==='dnd_session_call'){method=body.p_operation;body=body.p_payload;}
     if(method==='identity')return r.fulfill({json:{actor:role,role:role==='gm'?'owner':'player',identity_id:'test-identity',expires_at:new Date(Date.now()+3600000).toISOString()}});
@@ -35,7 +36,7 @@ const path=require('node:path');
     return r.fulfill({json:data});
    });
    const base=`http://127.0.0.1:${server.address().port}/DnD-Dashboard/`;
-   await page.goto(base);await page.locator('#loginCharacter').waitFor();
+   await page.goto(base+(role==='gm'?'#character':''));await page.locator('#loginCharacter').waitFor();
    await page.selectOption('#loginCharacter',role);await page.fill('#loginCode','invalid_code_for_test_0000');await page.locator('button[type=submit]').click();
    await page.waitForFunction(()=>document.body.innerText.includes('ungültig'));
    await page.selectOption('#loginCharacter',role);await page.fill('#loginCode',local?local.codes[role]:'synthetic_test_code_00000000');await page.locator('button[type=submit]').click();
@@ -46,6 +47,7 @@ const path=require('node:path');
     await page.waitForFunction(()=>document.body.innerText.includes('Online gespeichert'));
     assert.equal(local.rpc('read_character',{p_character_key:role,p_code:local.codes[role]}).hp,before.hp-1);
    }
+   if(local){await require('./dashboard-flow.cjs')(page,local,role,viewport);if(role==='gm'){await page.goto(base+'#character');await page.getByText('Abmelden',{exact:true}).waitFor();}}
    await page.locator('#dfab').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#dfab').getAttribute('aria-expanded'),'true');
    await page.keyboard.press('Escape');assert.equal(await page.locator('#dfab').getAttribute('aria-expanded'),'false');assert(await page.locator('#dfab').evaluate(el=>el===document.activeElement));
    assert.equal(await page.evaluate(()=>localStorage.getItem('dnd_characters_cloud_v2')),null);
@@ -53,6 +55,7 @@ const path=require('node:path');
    for(const req of requests.filter(x=>x.method!=='dnd_sign_in'))assert(!JSON.stringify(req.body).includes(local?local.codes[role]:'synthetic_test_code_00000000'));
    await page.reload();await page.getByText('Abmelden',{exact:true}).waitFor();
    await page.goto(base+'spieltisch.html');await page.locator('#dashboard').waitFor({state:'visible'});
+   if(role==='gm'&&new URL(page.url()).hash)await page.goto(base+'spieltisch.html#session');
    assert.equal(await page.locator('#gmPanel').isVisible(),role==='gm');
    assert.equal(await page.locator('.app-navigation a[aria-current]').count(),1);
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow');

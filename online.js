@@ -7,7 +7,7 @@
   'use strict';
   const api = DND.api;
   const allowed = new Set(IDS);
-  const state = { role:'guest', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{} };
+  const state = { workspace:null, activeView:'dashboard', role:'guest', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{} };
   const original = { draw, overview, codeCard, hp, adj, pip, ds, insp, rest, cast, setv, tog };
   const safeMessage = e => {
     const msg = String(e?.message || 'Verbindung fehlgeschlagen.');
@@ -38,7 +38,7 @@
     if (state.role==='guest') { a.style.display='none'; a.innerHTML=''; return; }
     a.style.display='block';
     a.innerHTML=`<div class="row" style="justify-content:space-between">
-       <span class="note">${state.role==='gm'?'Spielleiter · alle Charaktere (nur lesen)':`${esc(D[state.char].name)} · automatisch online gespeichert`}</span>
+       <span class="note">${state.role==='gm'?'Spielleiter · alle Charaktere (nur lesen)':`${esc(S[state.char]?.name||D[state.char].name)} · automatisch online gespeichert`}</span>
        <a class="b" href="spieltisch.html" style="text-decoration:none">🎲 Live-Spieltisch</a> <button class="b" onclick="cloudLogout()">Abmelden</button></div>`;
   }
   overview = function () {
@@ -56,6 +56,12 @@
     const nav=document.getElementById('nav'),sheetRoot=document.getElementById('sheet');
     accountLine();
     if (state.role==='guest') { nav.innerHTML='';sheetRoot.innerHTML=showLogin();return; }
+    if(state.role==='player'){
+      const focused=document.activeElement;if(soft&&focused?.closest('#sheet')&&/INPUT|TEXTAREA|SELECT/.test(focused.tagName))return;
+      cur=state.char;nav.innerHTML='';
+      if(['dashboard','actions','character','inventory','journal'].includes(location.hash.slice(1)))state.activeView=location.hash.slice(1);const active=state.activeView;
+      sheetRoot.innerHTML=DND.player.render(active,cur,S[cur],state.workspace,{parts,skills:SK,attributes:AB,mod,signed:sg,sheet,combat:(id,c)=>combat(id,c,pbOf(c),c.ab.map(mod))});return;
+    }
     original.draw(soft);
     if (state.role==='gm') {
       for (const b of sheetRoot.querySelectorAll('button')) {
@@ -72,7 +78,9 @@
   }
   for (const name of ['hp','adj','pip','ds','insp','rest','cast']) {
     const wrapped = (...args) => {
-      if (requirePlayer(args[0])) return original[name](...args);
+      if(!requirePlayer(args[0]))return;
+      if(name==='hp'){const value=Number(document.getElementById('amt')?.value);if(!Number.isInteger(value)||value<1||value>9999){note('Bitte eine ganze Zahl zwischen 1 und 9999 eingeben.');return;}}
+      return original[name](...args);
     };
     if (name==='hp') hp=wrapped;
     if (name==='adj') adj=wrapped;
@@ -118,6 +126,7 @@
         S={[id]:normalizeSheet(data,id)};
         mchar=id;mode='p';isDM=false;cur=id;
       }
+      try{state.workspace=await apiWorkspace();}catch{}
       if (!silent) setSt('Online verbunden ✓');
       draw(silent);
       return true;
@@ -137,7 +146,7 @@
     if (state.saving[id] || state.role!=='player' || state.char!==id) return;
     state.saving[id]=true;
     const revision=state.revision[id];
-    const payload=clone(S[id]);
+    const payload=normalizeSheet(S[id],id);
     try {
       const {error}=await api.rpc('write_character',{p_character_key:id,p_sheet:payload});
       if (error) throw error;
@@ -162,6 +171,7 @@
       if (!isRestore && ((role==='player' && !allowed.has(id)) || !/^[A-Za-z0-9_-]{20,100}$/.test(code))) throw Error('Ungültiger Charaktercode');
       const identity=isRestore?await DND.auth.restore():await DND.auth.signIn(role==='gm'?'gm':id,code);
       if(!identity){setSt('Privaten Zugangscode eingeben.');return;}
+      const loginInput=document.getElementById('loginCode');if(loginInput)loginInput.value='';
       role=identity.role==='owner'?'gm':'player'; id=identity.actor==='gm'?'':identity.actor;
       let data,error;
       if(role==='gm')({data,error}=await api.rpc('read_party',{}));
@@ -176,6 +186,8 @@
         S={[id]:normalizeSheet(data,id)};
         isDM=false;mode='p';mchar=id;cur=id;
       }
+      try{state.workspace=await apiWorkspace();}catch{}
+      if(role==='gm'&&!location.hash){location.replace('spieltisch.html');return;}
       startPolling();draw();setSt('Online verbunden ✓');
     } catch (e) {
       if (isRestore) setSt('Gespeicherte Sitzung konnte nicht geladen werden. Bitte erneut anmelden.');
@@ -183,6 +195,15 @@
       state.role='guest';state.char='';S={};mode='';draw();
     } finally {state.busy=false;}
   }
+  const apiWorkspace=()=>DND.api.request('workspace.snapshot',{});
+  window.addEventListener('hashchange',()=>{edit=false;draw();});
+  window.addEventListener('dnd:dice-rolled',event=>{const result=event.detail;if(state.role==='player'&&result.actor_key===state.char&&result.label==='Initiative'&&state.workspace?.session?.id===result.session_id){state.workspace={...state.workspace,initiative:{total:result.total}};draw(true);}});
+  window.playerCondition=function(value){if(!requirePlayer(cur)||!value)return;const c=S[cur];if(!DND.player.conditions.includes(value)&&!c.conditions.includes(value))return;c.conditions=c.conditions.includes(value)?c.conditions.filter(x=>x!==value):[...c.conditions,value];c.status=c.conditions.join(', ').slice(0,100)||'bereit';save(cur);draw();};
+  window.playerLongRest=()=>{if(confirm('Lange Rast durchführen und die entsprechenden Ressourcen zurücksetzen?'))rest(cur,'l');};
+  window.playerSkill=()=>{const skill=SK[Number(document.getElementById('quick-skill').value)];if(skill)roll('1d20'+sg(skb(S[cur],skill,pbOf(S[cur]))[0]),skill[0]);};
+  window.playerSave=()=>{const index=Number(document.getElementById('quick-save').value);if(AB[index])roll('1d20'+sg(mod(S[cur].ab[index])+(S[cur].sv[index]?pbOf(S[cur]):0)),'Rettungswurf '+AB[index]);};
+  window.playerInitiative=()=>roll('1d20'+sg(mod(S[cur].ab[1])+S[cur].initX),'Initiative');
+  window.playerItemNote=()=>{if(!requirePlayer(cur))return;const name=document.getElementById('item-use').value.trim();if(!name)return;S[cur].n+=(S[cur].n?'\n':'')+new Date().toLocaleDateString('de-DE')+': '+name+' verwendet (Bestand manuell prüfen).';save(cur);draw();note('Verwendung im persönlichen Journal notiert.');};
   window.cloudLogin = function () {
     const choice=String(document.getElementById('loginCharacter')?.value||'');
     const code=String(document.getElementById('loginCode')?.value||'').trim();
@@ -201,6 +222,7 @@
     if (document.visibilityState==='visible') loadData(true);
   });
   window.addEventListener('dnd:session-ended',()=>{clearInterval(state.polling);state.role='guest';draw();setSt('Sitzung abgelaufen. Bitte erneut anmelden.');});
+  window.addEventListener('beforeunload',event=>{if(Object.keys(dirty).length){event.preventDefault();event.returnValue='';}});
   // Never reuse legacy offline player choice or local player copies without explicit import.
   S={}; mode='';isDM=false;mchar='';cur='all';draw();
   loginInternal('player','','',true);

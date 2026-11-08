@@ -27,3 +27,9 @@ Charakter. Ein schrittweiser Ersatz einzelner Renderer ist möglich, ohne die
 Datenbank oder die ganze Anwendung umzuschreiben.
 
 Entscheidungen und Grenzen: [Phase-1-Bericht](PHASE-1.md).
+
+Phase 2 ergänzt `src/ui/player-dashboard.js` (Ansichten desselben Charakters),
+`src/ui/gm-workspace.js` (GM-Arbeitsumgebung) und einen tokengebundenen
+Workspace-RPC. Vorbereitung und Recaps liegen privat in eigenen Tabellen;
+Veröffentlichungen sind ein ausdrücklicher separater Schreibvorgang.
+[Details und Abnahme](PHASE-2.md).
