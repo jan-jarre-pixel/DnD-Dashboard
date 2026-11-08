@@ -10,11 +10,17 @@ Zieladresse (noch nicht produktiv bestätigt): https://jan-jarre-pixel.github.io
 ## Lokal prüfen
 
 Node >=22: `npm test`, `npm run build`.
-Für Browserprüfungen muss Playwright installiert und Chromium verfügbar sein:
+Für Browserprüfungen: `npm ci`, dann `npx playwright install --with-deps`.
+Optional vorhandenes Chromium über CHROMIUM_PATH verwenden:
 `CHROMIUM_PATH=/usr/bin/chromium SUPABASE_BROWSER_BUNDLE=/privater/pfad/supabase.js npm run test:browser`.
 Der Bundle-Pfad muss die unveränderte Datei von
 https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0 enthalten.
-Die Browserprüfungen verwenden ausschließlich simulierte RPC-Antworten.
+Ohne LOCAL_DB verwenden Browserprüfungen simulierte RPC-Antworten.
+Mit `LOCAL_DB=1` verwenden sie echte lokale PostgreSQL-RPCs.
+`BROWSER=chromium|firefox|webkit` wählt die Browser-Engine.
+Die CI startet PostgreSQL ohne Netzwerk, initialisiert künstliche Testdaten
+und prüft alle drei Browser einschließlich Speicherung. `npm run test:db` prüft
+zusätzlich Rollen, Würfel, Geheimhaltung und parallele Anfragen lokal.
 `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` prüft optional die reale API
 mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 

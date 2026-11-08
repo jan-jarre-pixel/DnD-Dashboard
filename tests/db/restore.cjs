@@ -20,6 +20,6 @@ restore+='COMMIT;';sql(restore);
 const sort=rows=>(rows||[]).map(x=>JSON.stringify(Object.fromEntries(Object.entries(x).sort()))).sort();
 for(const [key,table] of Object.entries(tables)){
  const actual=JSON.parse(sql(`SELECT coalesce(jsonb_agg(to_jsonb(t)),'[]'::jsonb) FROM ${table} t;`));
- assert.deepEqual(sort(actual),sort(backup[key]),`restore mismatch: ${key}`);
+ assert(JSON.stringify(sort(actual))===JSON.stringify(sort(backup[key])),`restore mismatch: ${key}`);
 }
 console.log('Restore passed: all 7 app tables match private backup, including code hashes and timestamps.');
