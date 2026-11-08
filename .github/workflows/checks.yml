@@ -1,0 +1,53 @@
+name: Migration checks
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**', 'README.md']
+  pull_request:
+    paths-ignore: ['docs/**', 'README.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: node --check online.js
+      - run: npm run build
+  database-and-browser:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Start isolated PostgreSQL
+        run: |
+          docker run -d --name dnd-m0-postgres --network none -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-bookworm@sha256:665dc7b37ac52a17e298511414c21d23ffa4e6a6ef6225b3e5d59c7afb35e994
+          for attempt in $(seq 1 30); do
+            if docker exec dnd-m0-postgres pg_isready -U postgres; then break; fi
+            sleep 1
+          done
+          docker exec dnd-m0-postgres createdb -U postgres dnd_test
+          node tests/db/setup.cjs
+      - run: npm run test:db
+      - name: Fetch pinned public browser library
+        run: curl --fail --show-error --location https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0 -o /tmp/supabase.js
+      - run: npm run test:browser
+        env:
+          BROWSER: ${{ matrix.browser }}
+          LOCAL_DB: '1'
+          SUPABASE_BROWSER_BUNDLE: /tmp/supabase.js
+      - if: always()
+        run: docker rm -f dnd-m0-postgres
