@@ -1,7 +1,6 @@
 # Phase 1 – Architektur, Designsystem und sichere Sitzungen
 
-Status: Getestet; produktive additive Migration erfolgreich. Frontend-Merge
-und Produktionskontrolle der neuen Oberfläche ausstehend. Aufgaben: DND-ARCH-001, DND-AUTH-001, DND-UI-001.
+Status: **Produktiv bestätigt – Phase 1 abgeschlossen.** Aufgaben: DND-ARCH-001, DND-AUTH-001, DND-UI-001.
 
 ## Gelieferter Umfang
 
@@ -136,3 +135,34 @@ Die alte vollständige JSON-Speicherung hat weiterhin Last-write-wins-Verhalten.
   drei neue geschützte Einstiegspunkte), sieben RLS-ohne-Policy-Hinweise im
   privaten/RPC-only-Bereich. Keine direkten Client-Rechte auf Sitzungstabellen.
   [Advisor-Erläuterung](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
+
+## Abschluss und produktive Kontrolle
+
+- PR #3 regulär integriert; Merge-Commit
+  `be9c339e15af3c4a5f5b81792a4bb48e2fdff3c9`.
+- Abschließende CI (inklusive Tastatur-/Fokusprüfung) vollständig erfolgreich:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42532699224
+- Pages-Deployment erfolgreich:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42532891297
+- Live: https://jan-jarre-pixel.github.io/DnD-Dashboard/
+- Alle 16 veröffentlichten HTML-/JS-/CSS-/Konfigurationsdateien liefern HTTP 200
+  und stimmen per SHA-256 mit dem geprüften Build überein.
+- Echte Desktop-/Mobilprüfung (1440×900 / 390×844): beide Login-Oberflächen,
+  Rollenoptionen, reale Ablehnung ungültiger Codes und keine JS-Ausnahmen.
+- Zehn echte lesende API-Ablehnungsprüfungen bestanden, inklusive neuer
+  Sign-in- und Sitzungstoken-Grenze. Ungültige Anmeldungen erzeugten keine
+  produktiven Sitzungseinträge.
+- Positive Rollen-/Speicher-/Würfeltests verwenden lokale PostgreSQL-Kopien und
+  künstliche Codes. Keine behauptete Anmeldung mit privaten Originalcodes oder
+  produktive Änderung von Spielerwerten.
+- Neue private Sicherung vor und nach der Migration außerhalb von Git erstellt;
+  auch der Stand nach Phase 1 mit allen neun Anwendungstabellen lokal
+  wiederhergestellt und exakt verglichen. Das private Sicherungspaket muss
+  dauerhaft privat aufbewahrt werden; der Workspace ist keine Backup-Garantie.
+- sideline26/main bleibt bei `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`.
+  Keine Änderungen am Quellrepository, keine kostenpflichtigen Dienste aktiviert.
+
+Nächster Schritt: Phase 2 – vollständiges Spieler-Dashboard und GM Control Room
+auf dieser gemeinsamen Daten- und Sitzungsbasis. Bestehende LWW-Konfliktgrenzen
+und die noch fehlende private Realtime-JWT-Bindung bleiben ausdrücklich als
+Folgearbeiten dokumentiert; sie sind nicht als umgesetzt abgenommen.

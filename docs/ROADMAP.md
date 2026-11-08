@@ -1,9 +1,11 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-08. Abgeschlossene Phasen: **1 von 12** (M0 + 0–10).
-M0 ist abgeschlossen. Der Migrationsaudit liefert die Bestandsaufnahme für die
-folgenden Phasen; Phase 1 wird auf dem bestehenden Projekt umgesetzt.
-Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich anders angegeben; Folgephasen haben noch keinen Implementierungscommit.
+Stand: 2026-11-08. **M0 und Phase 1 sind abgeschlossen und produktiv geprüft.**
+Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
+fortgeführt. Abgeschlossene Arbeitspakete: **4 von 15** (MIG, ARCH, AUTH, UI).
+Phase 2 und die weiteren Implementierungsphasen sind noch offen. Jede Aufgabe
+führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
+Implementierungscommit.
 
 ## DND-MIG-001 – M0 Migration
 
@@ -17,9 +19,9 @@ Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich a
 
 - Ziel/Abnahme: Gemeinsames Modell, serverseitige Rollen, responsive Navigation.
 - Priorität: P0. Abhängigkeiten: DND-MIG-001.
-- Implementierungsstatus: In Arbeit (lokal implementiert und geprüft). Teststatus: 24 Node-Prüfungen, bestehende und neue DB-Szenarien sowie lokale Browserprüfungen bestanden; CI/Produktionsabnahme ausstehend.
-- Offene Probleme: Produktive additive Migration und Deployment ausstehend; Realtime-JWT-Bindung ist Phase 3.
-- Commit/PR: Entwicklungsbranch feature/phase1-foundation; Nachweise in PHASE-1.md.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: 25 Node-Prüfungen, 16 bestehende und 17 neue DB-Szenarien, Parallelität/Recovery, 30 Cross-Browser-Szenarien und lesende Produktionsabnahme bestanden.
+- Offene Probleme: Keine blockierenden Phase-1-Probleme. Realtime-JWT-Bindung und Versionskonflikte bleiben Phase 3; vollständige Dashboards Phase 2.
+- Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3), Merge be9c339e15af3c4a5f5b81792a4bb48e2fdff3c9; Nachweise in PHASE-1.md.
 
 ## DND-PLAYER-001 – 2 Spieler-Dashboard
 
@@ -115,18 +117,18 @@ Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich a
 - Ziel/Abnahme: Bestehende Codes gegen befristete servergebundene Sitzungstoken
   austauschen; serverseitige Rolle, Ablauf, Abmeldung, IDOR-Schutz.
 - Priorität: P0. Abhängigkeiten: DND-MIG-001.
-- Implementierungsstatus: Implementiert. Teststatus: 17 lokale DB-Szenarien und
-  Auth-Lebenszyklustests bestanden; Produktionsprüfung ausstehend.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: 17 lokale DB-Szenarien,
+  Auth-Lebenszyklus-/Race-Tests und echte API-Ablehnungsprüfungen bestanden.
 - Offene Probleme: Kein Realtime-JWT; alte Code-RPCs aus Bestandsschutz erhalten.
-- Commit/PR: Entwicklungsbranch feature/phase1-foundation; PHASE-1.md.
+- Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3); PHASE-1.md.
 
 ## DND-UI-001 – Gemeinsame Komponenten und Tokens
 
 - Ziel/Abnahme: Konsistente responsive Seitenschale, Rollen-Navigation,
   native Tastaturbedienung und geprüfte Text-Kontraste.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
-- Implementierungsstatus: Implementiert. Teststatus: Node-Kontrastprüfungen und
-  lokale Chromium-/Firefox-Szenarien bestanden; Cross-Browser-CI ausstehend.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: Kontrastprüfungen,
+  Chromium/Firefox/WebKit-CI und echte Desktop-/Mobil-Ladeprüfung bestanden.
 - Offene Probleme: Vollständige neue Dashboards folgen in Phase 2;
   Gesamt-WCAG-Abnahme folgt in Phase 10.
-- Commit/PR: Entwicklungsbranch feature/phase1-foundation; PHASE-1.md.
+- Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3); PHASE-1.md.
