@@ -1,16 +1,17 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-08. Abgeschlossene Phasen: **0 von 12** (M0 + 0–10).
-Phase 0 Audit läuft im Rahmen von M0; keine spätere Phase freigegeben.
+Stand: 2026-11-08. Abgeschlossene Phasen: **1 von 12** (M0 + 0–10).
+M0 ist abgeschlossen. Der Migrationsaudit liefert die Bestandsaufnahme für die
+folgenden Phasen; weitere Masterplan-Phasen sind noch nicht umgesetzt.
 Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich anders angegeben; Folgephasen haben noch keinen Implementierungscommit.
 
 ## DND-MIG-001 – M0 Migration
 
 - Ziel/Abnahme: Alle neun Dateien nachweisbar erhalten; neue URL und Rollen geprüft.
 - Priorität: P0. Abhängigkeiten: Keine.
-- Implementierungsstatus: In Arbeit. Teststatus: 13 Node + 10 Chromium + 8 API-Ablehnungen bestanden.
-- Offene Probleme: Pages, echte Rollenprüfungen, Restore offen.
-- Commit/PR: Aktueller Migrationsbranch; Nachweise in M0.md.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: 13 Node, 16 DB-Szenarien, parallele Requests, 30 Cross-Browser-Szenarien, zwei Restores und lesende Produktionsprüfungen bestanden.
+- Offene Probleme: Kein produktiver Spieltest mit Originalcodes; positive Rollenprüfungen bewusst isoliert. Private Sicherung dauerhaft außerhalb des Workspace aufbewahren.
+- Commit/PR: [PR #1](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/1), Merge 373adce4447385e8893f352697b1ff097e4f070d; Deployment- und Prüfnachweise in M0.md.
 
 ## DND-ARCH-001 – 1 Architektur, Designsystem und Auth
 

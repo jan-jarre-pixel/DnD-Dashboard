@@ -6,7 +6,8 @@
     "test": "node --test tests/*.test.cjs",
     "build": "node scripts/build.cjs",
     "test:browser": "node tests/browser.cjs",
-    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs"
+    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs",
+    "test:production": "node tests/production-readonly.cjs"
   },
   "engines": {
     "node": ">=22"

@@ -5,7 +5,7 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Zieladresse (noch nicht produktiv bestätigt): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (Migration M0 produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 ## Lokal prüfen
 
@@ -26,7 +26,8 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 
 `dist/` enthält ausschließlich die vier Laufzeitdateien und `.nojekyll`.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
-**GitHub Actions** eingestellt werden. Veröffentlichung erst nach den M0-Abnahmen.
+**GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
+PR #1 ist integriert, das Pages-Deployment und die öffentliche Adresse sind geprüft.
 
 ## Struktur
 
@@ -45,3 +46,6 @@ Künftige Migrationen kommen nach `supabase/migrations/`.
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
 in M0.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+
+Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
+Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
