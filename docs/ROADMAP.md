@@ -2,7 +2,7 @@
 
 Stand: 2026-11-08. Abgeschlossene Phasen: **1 von 12** (M0 + 0–10).
 M0 ist abgeschlossen. Der Migrationsaudit liefert die Bestandsaufnahme für die
-folgenden Phasen; weitere Masterplan-Phasen sind noch nicht umgesetzt.
+folgenden Phasen; Phase 1 wird auf dem bestehenden Projekt umgesetzt.
 Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich anders angegeben; Folgephasen haben noch keinen Implementierungscommit.
 
 ## DND-MIG-001 – M0 Migration
@@ -17,9 +17,9 @@ Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich a
 
 - Ziel/Abnahme: Gemeinsames Modell, serverseitige Rollen, responsive Navigation.
 - Priorität: P0. Abhängigkeiten: DND-MIG-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Sichere Code-zu-Identität-Migration offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: In Arbeit (lokal implementiert und geprüft). Teststatus: 24 Node-Prüfungen, bestehende und neue DB-Szenarien sowie lokale Browserprüfungen bestanden; CI/Produktionsabnahme ausstehend.
+- Offene Probleme: Produktive additive Migration und Deployment ausstehend; Realtime-JWT-Bindung ist Phase 3.
+- Commit/PR: Entwicklungsbranch feature/phase1-foundation; Nachweise in PHASE-1.md.
 
 ## DND-PLAYER-001 – 2 Spieler-Dashboard
 
@@ -109,3 +109,24 @@ Alle Aufgaben gehören zum aktuellen Migrations-PR, sofern nicht ausdrücklich a
 - Offene Probleme: Cross-Browser, Last, A11y, Performance offen.
 - Commit/PR: Noch keiner.
 
+
+## DND-AUTH-001 – Phase-1-Sitzungsbasis
+
+- Ziel/Abnahme: Bestehende Codes gegen befristete servergebundene Sitzungstoken
+  austauschen; serverseitige Rolle, Ablauf, Abmeldung, IDOR-Schutz.
+- Priorität: P0. Abhängigkeiten: DND-MIG-001.
+- Implementierungsstatus: Implementiert. Teststatus: 17 lokale DB-Szenarien und
+  Auth-Lebenszyklustests bestanden; Produktionsprüfung ausstehend.
+- Offene Probleme: Kein Realtime-JWT; alte Code-RPCs aus Bestandsschutz erhalten.
+- Commit/PR: Entwicklungsbranch feature/phase1-foundation; PHASE-1.md.
+
+## DND-UI-001 – Gemeinsame Komponenten und Tokens
+
+- Ziel/Abnahme: Konsistente responsive Seitenschale, Rollen-Navigation,
+  native Tastaturbedienung und geprüfte Text-Kontraste.
+- Priorität: P0. Abhängigkeiten: DND-ARCH-001.
+- Implementierungsstatus: Implementiert. Teststatus: Node-Kontrastprüfungen und
+  lokale Chromium-/Firefox-Szenarien bestanden; Cross-Browser-CI ausstehend.
+- Offene Probleme: Vollständige neue Dashboards folgen in Phase 2;
+  Gesamt-WCAG-Abnahme folgt in Phase 10.
+- Commit/PR: Entwicklungsbranch feature/phase1-foundation; PHASE-1.md.

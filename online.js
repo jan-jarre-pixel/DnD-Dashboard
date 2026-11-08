@@ -5,77 +5,19 @@
  */
 (() => {
   'use strict';
-  const conf = window.DND_CLOUD_CONFIG || {};
-  const url = String(conf.url || '').trim();
-  const publishableKey = String(conf.publishableKey || '').trim();
-  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(url) || !publishableKey || publishableKey.includes('HIER_EINFUEGEN')) {
-    setSt('Online-Datenbank noch nicht konfiguriert.');
-    return;
-  }
-  if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-    setSt('Supabase-Bibliothek konnte nicht geladen werden.');
-    return;
-  }
-  const api = window.supabase.createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
-  const storageKey = 'dnd_characters_cloud_v2';
+  const api = DND.api;
   const allowed = new Set(IDS);
-  const state = { role:'guest', code:'', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{} };
+  const state = { role:'guest', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{} };
   const original = { draw, overview, codeCard, hp, adj, pip, ds, insp, rest, cast, setv, tog };
   const safeMessage = e => {
     const msg = String(e?.message || 'Verbindung fehlgeschlagen.');
-    if (/Ungültiger.*Code|Ungültiger Charaktercode|Ungültiger Spielleiter-Code/i.test(msg)) return 'Code ungültig. Bitte den privaten Code prüfen.';
+    if (/Zugangscode ungültig|Ungültiger.*Code|Ungültiger Charaktercode|Ungültiger Spielleiter-Code/i.test(msg)) return 'Code ungültig. Bitte den privaten Code prüfen.';
+    if (e?.code==='28000') return 'Sitzung abgelaufen. Bitte erneut anmelden.';
     if (/Failed to fetch|network|timeout/i.test(msg)) return 'Keine Verbindung. Bitte Internetverbindung prüfen.';
     return msg.slice(0,200);
   };
   const note = msg => { setSt(msg); tst(msg); };
-  function loadStored() {
-    try {
-      const x = JSON.parse(localStorage.getItem(storageKey) || 'null');
-      if (x && (x.role === 'gm' || (x.role === 'player' && allowed.has(x.char)))
-          && typeof x.code === 'string' && /^[A-Za-z0-9_-]{20,100}$/.test(x.code)) return x;
-    } catch (_) { /* no storage permission */ }
-    return null;
-  }
-  function remember() {
-    try { localStorage.setItem(storageKey,JSON.stringify({role:state.role,char:state.char,code:state.code})); }
-    catch (_) { setSt('Online verbunden. Automatischer Login auf diesem Gerät nicht möglich.'); }
-  }
-  function forget() { try { localStorage.removeItem(storageKey); } catch (_) {} }
-  function normalizeSheet(raw,id) {
-    const def = clone(D[id]);
-    const s = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-    const out = {...def};
-    for (const k of ['name','player','cls','race','bg','speed','langs','atk','sp','sl','rs','ft','gear','n','cb']) {
-      if (typeof s[k] === 'string') out[k] = s[k].slice(0,20000);
-    }
-    for (const [k,[lo,hi]] of Object.entries({
-      tmp:[0,9999],hdUsed:[0,100],insp:[0,1],sa:[0,5],initX:[-100,100],joat:[0,1],lvl:[1,20],ac:[0,100],hpMax:[1,9999],hp:[0,9999],hd:[1,20]})) {
-      if (s[k] !== undefined && Number.isFinite(Number(s[k]))) out[k] = Math.max(lo,Math.min(hi,Math.trunc(Number(s[k]))));
-    }
-    for (const k of ['ab','sv','ds']) {
-      if (Array.isArray(s[k])) out[k] = def[k].map((v,i) => {
-        const n = Number(s[k][i]);
-        return Number.isFinite(n) ? Math.max(k==='ab'?1:0,Math.min(k==='ab'?30:k==='sv'?1:3,Math.trunc(n))) : v;
-      });
-    }
-    for (const k of ['slU','rsU']) {
-      out[k] = {};
-      if (s[k] && typeof s[k] === 'object' && !Array.isArray(s[k])) {
-        for (const [i,v] of Object.entries(s[k])) {
-          if (!/^(0|[1-9][0-9]?)$/.test(i)) continue;
-          if (Number.isFinite(Number(v))) out[k][i] = Math.max(0,Math.min(99,Math.trunc(Number(v))));
-        }
-      }
-    }
-    if (s.sk && typeof s.sk === 'object' && !Array.isArray(s.sk)) {
-      out.sk = {...def.sk};
-      for (const [skill,v] of Object.entries(s.sk)) {
-        if (SK.some(x=>x[0]===skill) && [0,1,2].includes(Number(v))) out.sk[skill]=Number(v);
-      }
-    }
-    out.char=id;
-    return out;
-  }
+  function normalizeSheet(raw,id) { return DND.model.normalizeSheet(raw,id,D,SK); }
   function showLogin() {
     return `<div class="card"><h3>Online-Charakterbögen</h3><h2>Mit deinem privaten Code anmelden</h2>
       <p>Wähle deinen Charakter und gib den <b>persönlichen Zugangscode</b> ein, den du vom Spielleiter bekommen hast. Keine E-Mail und kein Benutzerkonto erforderlich.</p>
@@ -86,7 +28,7 @@
           <option value="gm">Spielleiter (alle Charaktere ansehen)</option>
         </select></div>
         <div><label for="loginCode">Privater Zugangscode</label><input id="loginCode" class="w" type="password" required autocomplete="off" placeholder="Zugangscode"></div></div>
-        <p class="note">Dein Zugang bleibt auf diesem Gerät gespeichert, bis du dich abmeldest. Teile deinen Code nicht weiter. Jeder mit diesem Code könnte deine Daten bearbeiten.</p>
+        <p class="note">Deine Sitzung gilt bis zu zwölf Stunden in diesem Tab. Der private Code wird nach der Anmeldung nicht gespeichert. Teile deinen Code nicht weiter. Jeder mit diesem Code könnte deine Daten bearbeiten.</p>
         <button class="b" type="submit">Charakter öffnen</button>
       </form></div>`;
   }
@@ -159,8 +101,8 @@
     state.refreshing=true;
     try {
       let data,error;
-      if (state.role==='gm') ({data,error}=await api.rpc('read_party',{p_code:state.code}));
-      else ({data,error}=await api.rpc('read_character',{p_character_key:state.char,p_code:state.code}));
+      if (state.role==='gm') ({data,error}=await api.rpc('read_party',{}));
+      else ({data,error}=await api.rpc('read_character',{p_character_key:state.char}));
       if (error) throw error;
       if (state.role==='gm') {
         if (!Array.isArray(data)) throw Error('Ungültige Gruppendaten');
@@ -197,7 +139,7 @@
     const revision=state.revision[id];
     const payload=clone(S[id]);
     try {
-      const {error}=await api.rpc('write_character',{p_character_key:id,p_code:state.code,p_sheet:payload});
+      const {error}=await api.rpc('write_character',{p_character_key:id,p_sheet:payload});
       if (error) throw error;
       if (revision===state.revision[id]) { delete dirty[id];setSt('Online gespeichert ✓'); }
       else {clearTimeout(debounce[id]);debounce[id]=setTimeout(()=>persist(id),150);}
@@ -217,14 +159,15 @@
     state.busy=true;
     setSt(isRestore?'Gespeicherten Zugang prüfen …':'Online-Zugang prüfen …');
     try {
-      if ((role==='player' && !allowed.has(id)) || !/^[A-Za-z0-9_-]{20,100}$/.test(code)) throw Error('Ungültiger Charaktercode');
+      if (!isRestore && ((role==='player' && !allowed.has(id)) || !/^[A-Za-z0-9_-]{20,100}$/.test(code))) throw Error('Ungültiger Charaktercode');
+      const identity=isRestore?await DND.auth.restore():await DND.auth.signIn(role==='gm'?'gm':id,code);
+      if(!identity){setSt('Privaten Zugangscode eingeben.');return;}
+      role=identity.role==='owner'?'gm':'player'; id=identity.actor==='gm'?'':identity.actor;
       let data,error;
-      if (role==='gm') ({data,error}=await api.rpc('read_party',{p_code:code}));
-      else ({data,error}=await api.rpc('read_character',{p_character_key:id,p_code:code}));
-      if (error) throw error;
-      if (role==='gm' && !Array.isArray(data)) throw Error('Unerwartete Antwort');
-      if (role==='player' && (data===null || typeof data!=='object')) throw Error('Unerwartete Antwort');
-      state.role=role;state.char=id;state.code=code;
+      if(role==='gm')({data,error}=await api.rpc('read_party',{}));
+      else ({data,error}=await api.rpc('read_character',{p_character_key:id}));
+      if(error)throw error;
+      state.role=role;state.char=id;
       dirty={};edit=false;view='sheet';
       if (role==='gm') {
         S={};for(const key of IDS){const row=data.find(x=>x.char_key===key);S[key]=normalizeSheet(row?.sheet||{},key);}
@@ -233,11 +176,11 @@
         S={[id]:normalizeSheet(data,id)};
         isDM=false;mode='p';mchar=id;cur=id;
       }
-      remember();startPolling();draw();setSt('Online verbunden ✓');
+      startPolling();draw();setSt('Online verbunden ✓');
     } catch (e) {
-      if (isRestore) forget();
+      if (isRestore) setSt('Gespeicherte Sitzung konnte nicht geladen werden. Bitte erneut anmelden.');
       else note(`Anmeldung fehlgeschlagen: ${safeMessage(e)}`);
-      state.role='guest';state.code='';state.char='';S={};mode='';draw();
+      state.role='guest';state.char='';S={};mode='';draw();
     } finally {state.busy=false;}
   }
   window.cloudLogin = function () {
@@ -246,18 +189,19 @@
     if (!choice || !code) {note('Bitte Charakter und privaten Code eingeben.');return;}
     loginInternal(choice==='gm'?'gm':'player',choice==='gm'?'':choice,code);
   };
-  window.cloudLogout = function () {
+  window.cloudLogout = async function () {
+    if(Object.keys(dirty).length&&!confirm('Ungespeicherte Änderungen verwerfen und abmelden?'))return;
+    try{await DND.auth.logout();}catch{note('Lokal abgemeldet. Server-Widerruf fehlgeschlagen; die Sitzung läuft spätestens nach zwölf Stunden ab.');}
     if (state.polling) clearInterval(state.polling);
     for (const t of Object.values(debounce)) clearTimeout(t);
-    forget();state.role='guest';state.code='';state.char='';S={};mode='';cur='all';dirty={};draw();
+    state.role='guest';state.char='';S={};mode='';cur='all';dirty={};draw();
     setSt('Abgemeldet.');
   };
   document.addEventListener('visibilitychange',()=>{
     if (document.visibilityState==='visible') loadData(true);
   });
+  window.addEventListener('dnd:session-ended',()=>{clearInterval(state.polling);state.role='guest';draw();setSt('Sitzung abgelaufen. Bitte erneut anmelden.');});
   // Never reuse legacy offline player choice or local player copies without explicit import.
   S={}; mode='';isDM=false;mchar='';cur='all';draw();
-  const remembered=loadStored();
-  if (remembered) loginInternal(remembered.role,remembered.char,remembered.code,true);
-  else setSt('Privaten Zugangscode eingeben.');
+  loginInternal('player','','',true);
 })();

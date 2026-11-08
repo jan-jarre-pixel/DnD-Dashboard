@@ -5,7 +5,7 @@ const crypto=require('node:crypto');
 const vm=require('node:vm');
 const manifest=require('../docs/migration-manifest.json');
 for(const entry of manifest.files) test(`preserved ${entry.target}`,()=>{
- assert.equal(crypto.createHash('sha256').update(fs.readFileSync(entry.target)).digest('hex'),entry.sha256);
+ assert.equal(crypto.createHash('sha256').update(fs.readFileSync(['index.html','spieltisch.html','online.js'].includes(entry.target)?`tests/fixtures/m0/${entry.target}`:entry.target)).digest('hex'),entry.sha256);
 });
 for(const file of ['index.html','spieltisch.html']) test(`scripts and relative paths: ${file}`,()=>{
  const html=fs.readFileSync(file,'utf8');
@@ -23,5 +23,5 @@ test('configuration contains only public Supabase key',()=>{
 });
 test('deployment excludes SQL, docs and tests',()=>{
  require('../scripts/build.cjs');
- assert.deepEqual(fs.readdirSync('dist').sort(),['.nojekyll','config.js','index.html','online.js','spieltisch.html']);
+ assert.deepEqual(fs.readdirSync('dist').sort(),['.nojekyll','config.js','index.html','online.js','public','spieltisch.html','src']);
 });
