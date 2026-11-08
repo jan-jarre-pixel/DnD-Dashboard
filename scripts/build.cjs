@@ -1,0 +1,5 @@
+const fs = require('node:fs');
+fs.rmSync('dist', {recursive:true, force:true});
+fs.mkdirSync('dist');
+for (const file of ['index.html','spieltisch.html','online.js','config.js']) fs.copyFileSync(file, `dist/${file}`);
+fs.writeFileSync('dist/.nojekyll','');

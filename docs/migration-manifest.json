@@ -1,0 +1,51 @@
+{
+  "repository": "jan-jarre-pixel/sideline26",
+  "commit": "94bc4c75a853b1f03508a4f56446b3c1a7e8386e",
+  "files": [
+    {
+      "source": "dnd/README-multiplayer.md",
+      "target": "docs/legacy-multiplayer.md",
+      "sha256": "4d81e26542820ca875d9904f5311ddbe2216f497542872f2cf671701657eb024"
+    },
+    {
+      "source": "dnd/README.md",
+      "target": "docs/legacy-character-sheets.md",
+      "sha256": "fe35902949db6cdc29b92c4dfa12ffd72d25250598c4f1acb5ff92b37abac65e"
+    },
+    {
+      "source": "dnd/config.js",
+      "target": "config.js",
+      "sha256": "cf3cd1f3dda0365bfe7957ebb3f3ff615dbef6dd042607068cfe77885627453a"
+    },
+    {
+      "source": "dnd/index.html",
+      "target": "index.html",
+      "sha256": "4b8a2199f0e647c65ff73b40709932cc2203709e299eb9b904bb446607a37716"
+    },
+    {
+      "source": "dnd/online.js",
+      "target": "online.js",
+      "sha256": "295fd43e639cadb2d7b8dbae1fedfd28527e01ad52b4ed9c41c54d45ace5b1c6"
+    },
+    {
+      "source": "dnd/spieltisch.html",
+      "target": "spieltisch.html",
+      "sha256": "e94db14d9c97d9d9d771a96be0da686260522d9f5d6b4fa718029725494142ea"
+    },
+    {
+      "source": "dnd/supabase/code_access.sql",
+      "target": "supabase/code_access.sql",
+      "sha256": "3b10210368a0cc127fb674c59a4f908355d64561fdcac7457465b30356657ff1"
+    },
+    {
+      "source": "dnd/supabase/multiplayer_v2.sql",
+      "target": "supabase/multiplayer_v2.sql",
+      "sha256": "aa8ed02064eb2ef93a548e56213fbbd51b2fc286509c53ebb72b614818001554"
+    },
+    {
+      "source": "dnd/supabase/schema.sql",
+      "target": "supabase/schema.sql",
+      "sha256": "a8bf7b5e97f02b839faca27e762bee5f250a4655e5287a5b67741b2d7af23c2b"
+    }
+  ]
+}
