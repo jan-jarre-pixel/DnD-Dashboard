@@ -1,9 +1,10 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-08. **M0 und Phase 1 sind abgeschlossen und produktiv geprüft.**
+Stand: 2026-11-09. **M0, Phase 1 und Phase 2 sind abgeschlossen und produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **4 von 15** (MIG, ARCH, AUTH, UI).
-Phase 2 ist implementiert und befindet sich in der Abnahme; spätere Phasen sind offen. Jede Aufgabe
+fortgeführt. Abgeschlossene Arbeitspakete: **6 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM).
+Spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
 
@@ -20,24 +21,24 @@ Implementierungscommit.
 - Ziel/Abnahme: Gemeinsames Modell, serverseitige Rollen, responsive Navigation.
 - Priorität: P0. Abhängigkeiten: DND-MIG-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 25 Node-Prüfungen, 16 bestehende und 17 neue DB-Szenarien, Parallelität/Recovery, 30 Cross-Browser-Szenarien und lesende Produktionsabnahme bestanden.
-- Offene Probleme: Keine blockierenden Phase-1-Probleme. Realtime-JWT-Bindung und Versionskonflikte bleiben Phase 3; vollständige Dashboards Phase 2.
+- Offene Probleme: Keine blockierenden Phase-1-Probleme. Realtime-JWT-Bindung und Versionskonflikte bleiben Phase 3; Dashboards in Phase 2 abgeschlossen.
 - Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3), Merge be9c339e15af3c4a5f5b81792a4bb48e2fdff3c9; Nachweise in PHASE-1.md.
 
 ## DND-PLAYER-001 – 2 Spieler-Dashboard
 
 - Ziel/Abnahme: Alle drei Ansichten verwenden dieselben Daten.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
-- Implementierungsstatus: Implementiert. Teststatus: Lokale Node-/DB-/Browserprüfungen bestanden; vollständige CI/Produktionsabnahme ausstehend.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: 27 Node, 49 DB-Szenarien plus Parallelität/Recovery und 30 Cross-Browser-Szenarien bestanden; veröffentlichte Version lesend geprüft.
 - Offene Probleme: Keine vollständige Mengen-/Gegenstandsautomatisierung (Phase 7), kein My-Turn (Phase 4).
-- Commit/PR: Branch feature/phase2-dashboards; PHASE-2.md.
+- Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-GM-001 – 2 GM Control Room
 
 - Ziel/Abnahme: Sessionzyklen und private Notizen rollenrichtig nutzbar.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
-- Implementierungsstatus: Implementiert. Teststatus: 16 zusätzliche Workspace-DB-Szenarien und lokale GM-Browserabläufe bestanden; CI/Produktionsabnahme ausstehend.
+- Implementierungsstatus: Produktiv bestätigt. Teststatus: 16 zusätzliche Workspace-DB-Szenarien, vollständiger GM-Zyklus einschließlich verlorener Antwort in drei Browsern bestanden; Migration, Restore und Veröffentlichung geprüft.
 - Offene Probleme: Karten/NPCs/Encounter bleiben spätere Phasen; Entwürfe ohne Serverbestätigung sind flüchtig.
-- Commit/PR: Branch feature/phase2-dashboards; PHASE-2.md.
+- Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-RT-001 – 3 Multiplayer und Würfel
 
@@ -129,6 +130,23 @@ Implementierungscommit.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: Kontrastprüfungen,
   Chromium/Firefox/WebKit-CI und echte Desktop-/Mobil-Ladeprüfung bestanden.
-- Offene Probleme: Vollständige neue Dashboards folgen in Phase 2;
+- Offene Probleme: Neue Dashboards sind in Phase 2 abgeschlossen;
   Gesamt-WCAG-Abnahme folgt in Phase 10.
 - Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3); PHASE-1.md.
+
+
+## Gesamtübersicht der Phasen
+
+| Phase | Tatsächlicher Stand |
+| --- | --- |
+| M0 / 0 – Migration, Audit, Sicherung | Abgeschlossen; lesend produktiv geprüft |
+| 1 – Architektur und Designsystem | Abgeschlossen; lesend produktiv geprüft |
+| 2 – Spieler-/GM-Dashboard | Abgeschlossen; lesend produktiv geprüft; PHASE-2.md |
+| 3 – Realtime und Multiplayer | Offen; nächster Schritt |
+| 4 – Kampfmanager | Offen |
+| 5 – Karten und VTT | Offen |
+| 6 – Kampagnenverwaltung | Offen |
+| 7 – Inventar und Automatisierung | Offen |
+| 8 – Komfortfunktionen | Offen |
+| 9 – Erweiterte VTT-Funktionen | Offen |
+| 10 – Gesamt-QA | Offen; phasenbezogene Prüfungen laufen bereits |
