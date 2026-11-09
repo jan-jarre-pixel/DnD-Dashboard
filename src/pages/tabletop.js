@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const rpc=(name,params)=>DND.api.request(name,params);
   const isGM=()=>state.actor==='gm';
   const sessionActive=()=>state.snapshot?.session?.status==='active';
+  const work=DND.gm.init({getSnapshot:()=>state.snapshot,rpc,notice,defaults,refreshRoom:()=>refreshAfterAction()});
   function showGate(){
     $('dashboard').hidden=true;$('loginPanel').hidden=false;$('logout').hidden=true;
     $('connection').textContent='Bitte anmelden';
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $('gmPanel').hidden=!isGM();$('visibilityWrap').hidden=!isGM();
       if(!isGM())$('rollVisibility').value='public';
       await processSnapshot(snap);
+      await work.refresh(true);
       await heartbeat();
       clearInterval(state.refreshTimer);clearInterval(state.heartbeatTimer);
       state.refreshTimer=setInterval(()=>{if(!document.hidden)refresh();},3200);
@@ -104,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.loading=true;
     try{
       const data=await rpc('dnd_snapshot',{p_after:0});
-      await processSnapshot(data);state.failures=0;
+      await processSnapshot(data);await work.refresh();state.failures=0;
       $('connection').textContent='● Online';
     }catch(e){
       state.failures++;
@@ -150,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if(!previous || previous.session.id!==session.id){$('gmNotes').value=snap.gm_notes||'';}
     }
+    work.update();
   }
   async function roll(ev){
     ev.preventDefault();if(state.busy)return;
@@ -176,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if(action==='end'&&!confirm('Die aktuelle Sitzung wirklich beenden?'))return;
     state.busy=true;
     try{
-      await rpc('dnd_gm_manage',{p_action:action,p_title:action==='start'?$('newTitle').value.trim():null,p_notes:null});
+      await work.control(action,action==='start'?$('newTitle').value.trim():null);
       await refreshAfterAction();notice(action==='start'?'Sitzung gestartet':action==='end'?'Sitzung beendet':action==='pause'?'Sitzung pausiert':'Sitzung fortgesetzt');
     }catch(e){notice('Aktion fehlgeschlagen: '+friendly(e));}
     finally{state.busy=false;render((state.snapshot?.rolls||[]).slice().sort((a,b)=>Number(b.id)-Number(a.id)),state.snapshot);}
   }
   async function saveNotes(){
     if(!isGM()||state.busy)return;state.busy=true;
-    try{await rpc('dnd_gm_manage',{p_action:'notes',p_title:null,p_notes:$('gmNotes').value});notice('Private Notizen gespeichert.');}
+    try{await rpc('dnd_gm_manage',{p_action:'notes',p_title:null,p_notes:$('gmNotes').value});work.notesSaved();notice('Private Notizen gespeichert.');}
     catch(e){notice('Notizen nicht gespeichert: '+friendly(e));}
     finally{state.busy=false;}
   }
@@ -191,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('rollForm').addEventListener('submit',roll);
   document.querySelectorAll('[data-gm]').forEach(b=>b.addEventListener('click',()=>gmAction(b.dataset.gm)));
   $('saveNotes').addEventListener('click',saveNotes);
-  $('logout').addEventListener('click',async()=>{resetSession();try{await DND.auth.logout();}catch{notice('Lokal abgemeldet; Server-Widerruf fehlgeschlagen.');}});
+  $('logout').addEventListener('click',async()=>{if(!work.allowLogout())return;resetSession();try{await DND.auth.logout();}catch{notice('Lokal abgemeldet; Server-Widerruf fehlgeschlagen.');}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.actor){heartbeat();refresh();}});
   window.addEventListener('dnd:session-ended',()=>{resetSession();notice('Sitzung abgelaufen. Bitte erneut anmelden.');});
   signIn('','',true);

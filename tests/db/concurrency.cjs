@@ -2,10 +2,10 @@ const {spawn}=require('node:child_process');
 const {randomUUID}=require('node:crypto');
 const assert=require('node:assert/strict');
 const {rpc,codes,seed}=require('./rpc.cjs');
-const {container}=require('./local.cjs');
+const {container,dockerArgs,dockerEnv}=require('./local.cjs');
 function roll(actor,id){
  return new Promise((resolve,reject)=>{
-  const child=spawn('docker',['exec','-i',container,'psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-U','postgres','-d','dnd_test']);
+  const child=spawn('docker',[...dockerArgs,'exec','-i',container,'psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-U','postgres','-d','dnd_test'],{env:dockerEnv});
   let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
   child.on('error',reject);child.on('exit',code=>code===0?resolve(JSON.parse(out)):reject(Error(err)));
   child.stdin.end(`SET ROLE anon; SELECT public.dnd_roll('${actor}','${codes[actor]}','1d20+2','concurrency','public','${id}',0::smallint);`);

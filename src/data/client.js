@@ -11,7 +11,7 @@
   if(!token)throw Error('Bitte mit deinem privaten Code anmelden.');
   const credentials=token,epoch=generation;
   const safe={...payload};delete safe.p_code;delete safe.p_actor;
-  try{const result=await call('dnd_session_call',{p_token:credentials,p_operation:operation,p_payload:safe});if(epoch!==generation)throw Error('Sitzung gewechselt. Veraltete Antwort verworfen.');return result;}
+  try{const result=operation.startsWith('workspace.')?await call('dnd_workspace_call',{p_token:credentials,p_action:operation.slice(10),p_payload:safe}):await call('dnd_session_call',{p_token:credentials,p_operation:operation,p_payload:safe});if(epoch!==generation)throw Error('Sitzung gewechselt. Veraltete Antwort verworfen.');return result;}
   catch(e){if(e.code==='28000'&&epoch===generation){clear();root.dispatchEvent(new Event('dnd:session-ended'));}throw e;}
  }
  async function signIn(actor,code){
