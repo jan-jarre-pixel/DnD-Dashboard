@@ -158,3 +158,13 @@ Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
 
 Frontend-Merge, finale CI nach Aufnahme der Deploymentmetadaten und lesende
 Kontrolle der veröffentlichten Phase-3-Oberfläche stehen noch aus.
+
+Zwischenbefunde sind behoben: Die lokale Erstprüfung fand einen mehrdeutigen
+SQL-Variablennamen im neuen CAS-Pfad; korrigiert vor jeder produktiven Migration.
+CI 42577841207 erkannte nach dem Dateinamensabgleich zwei identische Migrationen;
+der zusätzliche alte Pfad wurde im Entwicklungsbranch entfernt. CI 42577948459
+bestand Chromium/WebKit, scheiterte in Firefox an einer zu frühen Replay-Assertion:
+der Statusabgleich hatte den Wurf schon dargestellt, der Stream noch nicht geliefert.
+Der Test wartet jetzt ausdrücklich auf die Ereigniszustellung und prüft danach
+weiterhin genau eine UUID. Keine Assertion entfernt, kein Test übersprungen;
+abschließender Drei-Browser-Lauf erforderlich. Backendcode dadurch nicht verändert.

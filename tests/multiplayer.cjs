@@ -53,6 +53,8 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
   await pages.gm.waitForFunction(()=>document.getElementById('onlineText').textContent==='4 / 5 Teilnehmer online');
   await pages.len.fill('#rollLabel','MISSED_PUBLIC_EVENT');await pages.len.locator('#rollButton').click();
   await pages.pei.context().setOffline(false);await pages.pei.locator('#rolls').getByText(/MISSED_PUBLIC_EVENT/).waitFor({timeout:15000});
+  // The status reconciliation can render the roll before the resumed SSE batch.
+  await pages.pei.waitForFunction(()=>DND.live.events().some(e=>e.type==='DiceRolled'&&e.payload.label==='MISSED_PUBLIC_EVENT'),{},{timeout:30000});
   assert.equal(await pages.pei.evaluate(()=>DND.live.events().filter(e=>e.type==='DiceRolled'&&e.payload.label==='MISSED_PUBLIC_EVENT').length),1);
   assert(streams>roles.length,'short-lived stream renewal exercised');
   // Authentication revocation terminates the next poll and clears private DOM.
