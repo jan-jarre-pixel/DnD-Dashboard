@@ -18,6 +18,7 @@ module.exports=async function vttFlow(pages,local){
  assert.equal(await len.evaluate(()=>DND.vtt.current().map.tokens.length),0);
  await gm.locator('#mapFog summary').click();await gm.locator('#mapFogForm button').click();await len.waitForFunction(()=>DND.vtt.current().map.tiles.length===1&&DND.vtt.current().map.tokens.length===4);assert.equal(await len.locator('#mapBoard image').count(),1);
  const raw=await len.evaluate(()=>DND.api.request('vtt.snapshot'));assert.equal(raw.map.tiles.length,1);assert(!JSON.stringify(raw).includes(foe.id));assert(!JSON.stringify(raw).includes('SECRET_TOKEN_BROWSER'));
+ const tilePixels=await len.evaluate(async source=>{const img=new Image();img.src=source;await img.decode();const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.drawImage(img,0,0);return {width:img.naturalWidth,height:img.naturalHeight,samples:[[2,2],[253,2],[2,253],[253,253]].map(([a,b])=>[...x.getImageData(a,b,1,1).data])};},raw.map.tiles[0].image);assert.equal(tilePixels.width,256);assert.equal(tilePixels.height,256);assert(tilePixels.samples.every(([r,g,b])=>g>r+30&&g>b+10),'only the authorized green quadrant is contained in the transmitted image');
  await len.locator('#mapSelection').selectOption('t:'+ids.gra);assert(await len.locator('#mapTokenSave').isDisabled());
  // Four independent owners move concurrently; no global map-version collision.
  for(const role of ['len','gra','sas','pei']){await pages[role].waitForFunction(()=>DND.vtt.current()?.map?.tokens.length===4);await pages[role].locator('#mapSelection').selectOption('t:'+ids[role]);await pages[role].locator('#mapToken [name=x]').fill(String(positions[role][0]+10));}
@@ -40,7 +41,7 @@ module.exports=async function vttFlow(pages,local){
  // Keyboard movement and preserved focus on the SVG token.
  await len.locator('#mapSelection').selectOption('t:'+ids.len);const svgToken=len.locator(`#mapBoard [data-token="${ids.len}"]`);await svgToken.focus();await svgToken.press('ArrowRight');await len.waitForFunction(()=>DND.vtt.current().map.tokens.find(t=>t.char_key==='len').x===185);assert.equal(await len.evaluate(()=>document.activeElement.dataset.token),ids.len);
  // Real pointer dragging and viewport controls, with server-confirmed coordinates.
- await len.locator('#mapSnap').uncheck();
+ await len.locator('#mapSnap').uncheck();await len.locator('#mapBoard').scrollIntoViewIfNeeded();assert.equal(await len.locator('#mapBoard [data-token]').last().getAttribute('data-token'),ids.len);
  const screen=await len.evaluate(()=>{const b=document.getElementById('mapBoard'),t=DND.vtt.current().map.tokens.find(t=>t.char_key==='len');return [t.x,215].map(x=>{const p=b.createSVGPoint();p.x=x;p.y=t.y;const q=p.matrixTransform(b.getScreenCTM());return {x:q.x,y:q.y};});});
  await len.mouse.move(screen[0].x,screen[0].y);await len.mouse.down();await len.mouse.move(screen[1].x,screen[1].y,{steps:5});await len.mouse.up();await len.waitForFunction(()=>DND.vtt.current().map.tokens.find(t=>t.char_key==='len').x===215);
  await len.locator('#mapPanel [data-zoom="1.4"]').click();assert((await len.locator('#mapBoard').getAttribute('viewBox')).split(' ').map(Number)[2]<512);await len.locator('#mapPanel [data-pan="right"]').click();await len.locator('#mapFit').click();assert.equal(await len.locator('#mapBoard').getAttribute('viewBox'),'0 0 512 512');

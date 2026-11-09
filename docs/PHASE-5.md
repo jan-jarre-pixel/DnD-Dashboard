@@ -160,7 +160,7 @@ und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
   Parallelitäts-/50-Wurf-Tests und zehn Chromium-Rollen-/Viewport-Szenarien
   lokal bestanden. Gezielter VTT-Browserdurchlauf mit echtem Touch-Eingabekontext
   bestanden; beobachtete 50-Token-/500-Objekt-Darstellung einschließlich Abruf
-  lokal 679 ms, DB-Projektion einschließlich docker/psql 82–88 ms. Keine
+  lokal 679 bzw. 1248 ms in zwei Durchläufen, DB-Projektion einschließlich docker/psql 82–88 ms. Keine
   garantierten Produktionslatenzen oder Core-Web-Vitals-Abnahme behauptet.
 - 20 echte lesende/ablehnende API-/Edge-Prüfungen bestanden, einschließlich
   ungültigem Token am neuen Karten-RPC. Keine echten Spielerwerte verändert.
@@ -173,3 +173,18 @@ und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
   vor echtem Spielbetrieb erwartbar.
 - Finale CI und Pages-Abnahme stehen noch aus.
   Original-Spielercodes werden nicht für positive Live-Tests benutzt.
+
+
+## Korrigierte Zwischenbefunde
+
+Lokale SQL-Alias-/Variablennamen vor jeder produktiven Anwendung bereinigt.
+Browserprüfungen öffnen native Detailbereiche ausdrücklich und warten auf die
+wirkliche SVG-Darstellung. Der vollständige Mehrspielertest deckte überlappende
+Tokens auf: Die Auswahl wird nun innerhalb der Tokenebene in den Vordergrund
+gezeichnet; tatsächliches Ziehen und resultierende Serverposition sind als
+Regression geprüft. Das Mess-/Zoom-Werkzeug verwendet Bildschirmkoordinaten erst
+nach sichtbarem Scrollen zur Kartenfläche. Keine Prüfung wurde übersprungen.
+Zusätzliche Pixelprüfung: Die freigegebene Bildkachel ist tatsächlich 256 × 256
+und enthält ausschließlich den freigegebenen Quadranten des eigenen Testbilds.
+Eine separate Wiederherstellungsprobe mit nichtleeren synthetischen Bildkacheln
+vergleicht alle 29 Tabellen ebenfalls exakt.
