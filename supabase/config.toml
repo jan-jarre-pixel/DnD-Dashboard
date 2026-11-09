@@ -1,0 +1,7 @@
+# Local/CLI function configuration; existing hosted project remains unchanged.
+project_id = "dnd-dashboard"
+
+[functions.dnd-events]
+# The handler verifies the capability session on every database poll.
+verify_jwt = false
+entrypoint = "./functions/dnd-events/index.ts"

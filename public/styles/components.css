@@ -28,3 +28,5 @@ input,select,textarea{background:var(--bg);color:var(--text);border-color:var(--
 .quiet-link{border-color:var(--line)}
 
 button.ln{width:100%;border:0;border-bottom:1px dotted var(--line);border-radius:0;background:transparent;color:var(--text);text-align:left}.character-link{color:var(--gold);background:transparent;padding:6px 8px}
+
+.app-header{flex-wrap:wrap}.live-status{font-size:.8rem;color:var(--muted);max-width:100%;overflow-wrap:anywhere}

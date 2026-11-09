@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 function harness(handler){
  const session=new Map(),legacy=new Map();let events=0;
  const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});
- const ctx={structuredClone,Event:class{},dispatchEvent:()=>events++,sessionStorage:storage(session),localStorage:storage(legacy),DND_CLOUD_CONFIG:{url:'https://example.supabase.co',publishableKey:'sb_publishable_test'},supabase:{createClient:()=>({rpc:handler})}};
+ const ctx={crypto:require('node:crypto'),structuredClone,Event:class{},dispatchEvent:()=>events++,sessionStorage:storage(session),localStorage:storage(legacy),DND_CLOUD_CONFIG:{url:'https://example.supabase.co',publishableKey:'sb_publishable_test'},supabase:{createClient:()=>({rpc:handler})}};
  vm.createContext(ctx);for(const p of ['core/model','core/store','data/client'])vm.runInContext(fs.readFileSync(`src/${p}.js`,'utf8'),ctx);
  return {ctx,session,legacy,events:()=>events};
 }
@@ -36,4 +36,13 @@ test('late sign-in after logout cannot resurrect an authenticated identity',asyn
  let finish;const h=harness(async name=>name==='dnd_sign_in'?new Promise(r=>finish=r):{data:null});
  const pending=h.ctx.DND.auth.signIn('len',code);await h.ctx.DND.auth.logout();finish({data:{...identity,token}});
  await assert.rejects(pending,/Anmeldung verworfen/);assert.equal(h.ctx.DND.auth.identity(),null);assert.equal(h.session.size,0);
+});
+
+test('lost dice reply retries the same immutable request; parallel callers share one request',async()=>{
+ let lost=true;const sent=[];const h=harness(async(name,p)=>{
+  if(name==='dnd_sign_in')return {data:{...identity,token}};
+  if(name==='dnd_workspace_call')return {data:{session:{id:'00000000-0000-0000-0000-000000000004'}}};
+  if(name==='dnd_sync_call'){sent.push(p.p_payload);if(lost){lost=false;return {error:{code:'GatewayTimeout',message:'lost after commit'}};}return {data:{id:1,total:12}};}
+ });await h.ctx.DND.auth.signIn('len',code);const p={p_formula:'1d20',p_label:'Test',p_visibility:'public',p_adv:0};
+ assert((await h.ctx.DND.api.roll(p)).error);const [a,b]=await Promise.all([h.ctx.DND.api.roll(p),h.ctx.DND.api.roll(p)]);assert.equal(a.data.id,1);assert.equal(b.data.id,1);assert.equal(sent.length,2);assert.deepEqual(sent[0],sent[1]);
 });

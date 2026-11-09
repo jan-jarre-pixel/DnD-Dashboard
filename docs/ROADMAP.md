@@ -3,7 +3,7 @@
 Stand: 2026-11-09. **M0, Phase 1 und Phase 2 sind abgeschlossen und produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
 fortgeführt. Abgeschlossene Arbeitspakete: **6 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM).
-Spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+Phase 3 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -44,9 +44,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: GM + vier Spieler synchron; keine Geheimnisse an Fremde.
 - Priorität: P0. Abhängigkeiten: DND-PLAYER-001, DND-GM-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Versionierung, Replay, Reconnect, private Kanäle offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Implementiert. Teststatus: Lokale DB-/SSE-/Mehrspielerprüfungen bestanden; abschließende CI und Veröffentlichung ausstehend.
+- Offene Probleme: Transport ist autorisiertes SSE statt Auth-JWT/WebSocket; bewusst unveränderte Legacy-Clients ohne CAS. PHASE-3.md.
+- Commit/PR: Branch feature/phase3-multiplayer; PHASE-3.md.
 
 ## DND-COMBAT-001 – 4 Kampfmanager
 
