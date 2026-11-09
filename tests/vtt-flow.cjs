@@ -51,10 +51,20 @@ module.exports=async function vttFlow(pages,local){
  sql(`INSERT INTO game_private.vtt_objects(map_id,layer,shape,label,x,y,w,h,visible) SELECT '${id}','effects','circle','test-shape-'||i,40+(i%9)*20,40+(i%9)*20,10,10,true FROM generate_series(1,500-(SELECT count(*)::int FROM game_private.vtt_objects WHERE map_id='${id}'))i;
  INSERT INTO game_private.vtt_tokens(map_id,name,x,y,owner_key,visible) SELECT '${id}','test-token-'||i,50+(i%7)*25,50+(i%7)*25,'len',true FROM generate_series(1,50-(SELECT count(*)::int FROM game_private.vtt_tokens WHERE map_id='${id}'))i;`,'dnd_test');
  const loadStarted=Date.now();await gm.locator('#mapReload').click();await gm.waitForFunction(()=>DND.vtt.current().map.tokens.length===50&&DND.vtt.current().map.objects.length===500);await gm.waitForFunction(()=>document.querySelectorAll('#mapBoard [data-token]').length===50&&document.querySelectorAll('#mapBoard [data-object]').length===500);assert.equal(await gm.locator('#mapBoard [data-token]').count(),50);assert.equal(await gm.locator('#mapBoard [data-object]').count(),500);console.log(`Local 50-token/500-object load-to-DOM: ${Date.now()-loadStarted} ms.`);
- await gm.setViewportSize({width:390,height:844});await len.setViewportSize({width:390,height:844});
  for(const [role,page]of [['gm',gm],['len',len]]){
+  await page.bringToFront();await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   try{await page.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth+1,{},{timeout:5000});}
-  catch(error){if(process.env.SCREENSHOT_DIR){require('node:fs').mkdirSync(process.env.SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:process.env.SCREENSHOT_DIR+'/vtt-overflow-'+role+'.png',fullPage:true});}console.error('Mobile map overflow',role,await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:[...document.querySelectorAll('body *')].filter(x=>!(x instanceof SVGElement)&&x.getBoundingClientRect().right>innerWidth+1).slice(-20).map(x=>({tag:x.tagName,id:x.id,cls:x.className,width:x.getBoundingClientRect().width,right:x.getBoundingClientRect().right}))})));throw error;}
+  catch(error){
+   console.error('Mobile map overflow',role,await page.evaluate(()=>{
+    const html=[...document.querySelectorAll('body *')].filter(x=>!(x instanceof SVGElement)&&x.getBoundingClientRect().right+scrollX>innerWidth+1).slice(-20).map(x=>({tag:x.tagName,id:x.id,cls:x.className,width:x.getBoundingClientRect().width,right:x.getBoundingClientRect().right+scrollX,font:getComputedStyle(x).font}));
+    const text=[],walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const node=walker.currentNode;if(!node.textContent.trim()||node.parentElement.closest('script,style'))continue;const range=document.createRange();range.selectNodeContents(node);const box=range.getBoundingClientRect();if(box.right+scrollX>innerWidth+1)text.push({tag:node.parentElement.tagName,id:node.parentElement.id,text:node.textContent.slice(0,80),right:box.right+scrollX});}
+    return {width:innerWidth,scrollX,visibility:document.visibilityState,active:document.activeElement?.id,scroll:document.documentElement.scrollWidth,html,text:text.slice(-20)};
+   }));
+   if(process.env.SCREENSHOT_DIR){require('node:fs').mkdirSync(process.env.SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:process.env.SCREENSHOT_DIR+'/vtt-overflow-'+role+'.png',fullPage:true});}
+   throw error;
+  }
+
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   for(const button of await page.locator('#mapPanel .buttonbar button:visible').all()){const box=await button.boundingBox();assert(box.width>=44&&box.height>=44,`${role}: map toolbar retains a 44px touch target`);}
  }
