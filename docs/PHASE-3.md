@@ -1,6 +1,8 @@
 # Phase 3 – Sichere Live-Ereignisse und Versionskonflikte
 
-Status: Implementiert; lokale Abnahme läuft, CI und produktive Veröffentlichung ausstehend.
+Status: Abgeschlossen, integriert und veröffentlichte Version lesend produktiv bestätigt
+(2026-11-09). Positive Rollen-/Speicher-/Replay-Abläufe sind isoliert getestet;
+keine Produktions-Spieltests mit Originalcodes.
 Arbeitspaket DND-RT-001. Entwicklung ausschließlich im neuen Repository.
 
 ## Geliefertes Verhalten
@@ -156,8 +158,8 @@ Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
   [RLS-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
   [RPC-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
 
-Frontend-Merge, finale CI nach Aufnahme der Deploymentmetadaten und lesende
-Kontrolle der veröffentlichten Phase-3-Oberfläche stehen noch aus.
+Frontend regulär integriert und veröffentlicht; abschließende CI und lesende
+Produktionskontrolle erfolgreich, siehe Abschlussnachweise.
 
 Zwischenbefunde sind behoben: Die lokale Erstprüfung fand einen mehrdeutigen
 SQL-Variablennamen im neuen CAS-Pfad; korrigiert vor jeder produktiven Migration.
@@ -167,4 +169,43 @@ bestand Chromium/WebKit, scheiterte in Firefox an einer zu frühen Replay-Assert
 der Statusabgleich hatte den Wurf schon dargestellt, der Stream noch nicht geliefert.
 Der Test wartet jetzt ausdrücklich auf die Ereigniszustellung und prüft danach
 weiterhin genau eine UUID. Keine Assertion entfernt, kein Test übersprungen;
-abschließender Drei-Browser-Lauf erforderlich. Backendcode dadurch nicht verändert.
+abschließender Drei-Browser-Lauf erfolgreich. Backendcode dadurch nicht verändert.
+
+
+## Abschlussnachweise
+
+- Implementierung: ab62069f8cc59251ead25fbc5dd531fcda3206c2.
+- [Finale grüne CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42578895004):
+  Chromium, Firefox und WebKit einschließlich parallelem Mehrspieler-Test bestanden.
+- PR #7 regulär integriert: 1e0638b14ff763a83a64de17e5cf7f36f5d198b5.
+- [Erfolgreiches Pages-Deployment](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42579517250).
+- Zieladresse https://jan-jarre-pixel.github.io/DnD-Dashboard/ bestätigt.
+  Beide echten Login-Einstiege bei 1440×900 und 390×844 lesend geprüft;
+  ungültige Codes abgewiesen, keine akzeptierten Testsitzungen/Spieleränderungen.
+  Alle 20 Laufzeitdateien bytegleich zum geprüften Build. 18 reale API-/Edge-
+  Prüfungen erneut bestanden. Positive autorisierte Streamtests bleiben isoliert;
+  produktiv sind Endpoint, Quellgleichheit, CORS und Zugriffssperren bestätigt.
+- Nachher-Sicherung aller 17 Anwendungstabellen exakt in isolierter Kopie
+  wiederhergestellt. Private Sicherung mit Migration, Function-Quellen und
+  Git-Bundles bleibt außerhalb des öffentlichen Repositorys.
+- `sideline26` unverändert auf 94bc4c75a853b1f03508a4f56446b3c1a7e8386e.
+- Keine offenen blockierenden Phase-3-Befunde. Bewusste Grenzen bleiben erhalten:
+  Legacy-Clients ohne CAS, begrenzter Replay-Puffer, flüchtige Offline-Entwürfe,
+  serverseitiger 2-Sekunden-Ereignisabruf statt WebSocket. Keine behaupteten
+  produktiven Latenzgarantien oder vollständige WCAG-/Gerätezertifizierung.
+- Nächstes Paket: DND-COMBAT-001 / Phase 4 – gemeinsamer Initiative-/Kampfmanager,
+  Runden, Gegner, Zustände und My-Turn-Modus.
+
+## Veränderte Dateien
+
+- Oberfläche/Anbindung: index.html, spieltisch.html, online.js;
+  public/styles/components.css; src/ui/shell.js; src/pages/tabletop.js,
+  src/pages/character-dice.js; src/data/client.js und src/data/live.js.
+- Backend: supabase/config.toml; supabase/functions/dnd-events/index.ts,
+  supabase/functions/dnd-events/handler.mjs;
+  supabase/migrations/20261109070924_phase3_event_sync.sql.
+- Prüfungen: package.json, .github/workflows/checks.yml; tests/auth.test.cjs,
+  tests/stream.test.cjs, tests/live-readonly.cjs, tests/multiplayer.cjs;
+  tests/db/setup.cjs, tests/db/rpc.cjs, tests/db/sync.cjs,
+  tests/db/sync-concurrency.cjs.
+- Dokumentation: README.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/PHASE-3.md.

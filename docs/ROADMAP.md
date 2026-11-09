@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-09. **M0, Phase 1 und Phase 2 sind abgeschlossen und produktiv geprüft.**
+Stand: 2026-11-09. **M0 sowie Phasen 1–3 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **6 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM).
-Phase 3 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **7 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT).
+Spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -21,7 +21,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Gemeinsames Modell, serverseitige Rollen, responsive Navigation.
 - Priorität: P0. Abhängigkeiten: DND-MIG-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 25 Node-Prüfungen, 16 bestehende und 17 neue DB-Szenarien, Parallelität/Recovery, 30 Cross-Browser-Szenarien und lesende Produktionsabnahme bestanden.
-- Offene Probleme: Keine blockierenden Phase-1-Probleme. Realtime-JWT-Bindung und Versionskonflikte bleiben Phase 3; Dashboards in Phase 2 abgeschlossen.
+- Offene Probleme: Keine blockierenden Phase-1-Probleme. Phase 3 verwendet tokenautorisierte Streams und Charakter-CAS; Dashboards in Phase 2 abgeschlossen.
 - Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3), Merge be9c339e15af3c4a5f5b81792a4bb48e2fdff3c9; Nachweise in PHASE-1.md.
 
 ## DND-PLAYER-001 – 2 Spieler-Dashboard
@@ -44,9 +44,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: GM + vier Spieler synchron; keine Geheimnisse an Fremde.
 - Priorität: P0. Abhängigkeiten: DND-PLAYER-001, DND-GM-001.
-- Implementierungsstatus: Implementiert. Teststatus: Lokale DB-/SSE-/Mehrspielerprüfungen bestanden; abschließende CI und Veröffentlichung ausstehend.
+- Implementierungsstatus: Produktiv bestätigt (lesend). Teststatus: 31 Node, 65 DB-Szenarien plus Parallelität/50 Würfe, 30 Rollen-/Viewport-Abläufe und drei parallele Mehrspieler-Durchläufe bestanden; 18 echte API-/Edge-Prüfungen und Veröffentlichung geprüft.
 - Offene Probleme: Transport ist autorisiertes SSE statt Auth-JWT/WebSocket; bewusst unveränderte Legacy-Clients ohne CAS. PHASE-3.md.
-- Commit/PR: Branch feature/phase3-multiplayer; PHASE-3.md.
+- Commit/PR: [PR #7](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/7), Merge 1e0638b14ff763a83a64de17e5cf7f36f5d198b5; PHASE-3.md.
 
 ## DND-COMBAT-001 – 4 Kampfmanager
 
@@ -142,8 +142,8 @@ Implementierungscommit.
 | M0 / 0 – Migration, Audit, Sicherung | Abgeschlossen; lesend produktiv geprüft |
 | 1 – Architektur und Designsystem | Abgeschlossen; lesend produktiv geprüft |
 | 2 – Spieler-/GM-Dashboard | Abgeschlossen; lesend produktiv geprüft; PHASE-2.md |
-| 3 – Realtime und Multiplayer | Offen; nächster Schritt |
-| 4 – Kampfmanager | Offen |
+| 3 – Realtime und Multiplayer | Abgeschlossen; lesend produktiv geprüft; PHASE-3.md |
+| 4 – Kampfmanager | Offen; nächster Schritt |
 | 5 – Karten und VTT | Offen |
 | 6 – Kampagnenverwaltung | Offen |
 | 7 – Inventar und Automatisierung | Offen |
