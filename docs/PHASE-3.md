@@ -69,7 +69,7 @@ Es wird ausschließlich die eigene private Anwendungsschema-Struktur erweitert.
 
 ## Datenbank und Sicherheit
 
-Migration `20261109063937_phase3_event_sync.sql`: vier neue private Tabellen
+Migration `20261109070924_phase3_event_sync.sql`: vier neue private Tabellen
 `character_versions`, `sync_cursors`, `sync_events`, `sync_commands`, RLS aktiv,
 keine direkten Rechte für anon/authenticated. Keine bisherigen Zeilen umgeschrieben.
 Neue RPCs `dnd_sync_call` und `dnd_sync_poll` prüfen immer die bestehende Identität;
@@ -131,3 +131,30 @@ Der Zustellmechanismus ist für künftige freigegebene Objekte erweiterbar.
 Vollständige Kampfautomatisierung folgt als DND-COMBAT-001.
 
 Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
+
+## Bisherige Integrationsnachweise
+
+- PR #7: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/7 .
+- Erste vollständige grüne Drei-Browser-CI auf baea00204a2f736dd130a57bb9f8ab36b420cd27:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42576858527 .
+  31 Node-Prüfungen, 65 DB-Szenarien plus Parallelitäts-/Lastprüfungen,
+  30 Rollen-/Viewport-Abläufe und je ein paralleler Mehrspieler-Durchlauf
+  in Chromium, Firefox und WebKit erfolgreich.
+- Produktive Migration erfolgreich als Version 20261109070924 registriert.
+  Dateiname an die tatsächliche Historie angepasst, SQL-Inhalt identisch.
+- Alle 13 bisherigen Tabellen unmittelbar vor/nach Migration identisch;
+  alle bestehenden Funktions-OIDs und Ausführungsrechte ebenfalls identisch.
+- Vier neue private Tabellen mit RLS; anon/authenticated haben keine Leserechte.
+- `dnd-events` Version 1 aktiv, beide Quelldateien identisch zur lokalen Prüfung.
+  Versionierte CLI-Konfiguration dokumentiert die eigene Tokenprüfung.
+- 18 echte lesende API-/Edge-Prüfungen bestanden: direkte Tabellenzugriffe,
+  alte und neue ungültige Sitzungsanfragen, Function-Authentifizierung vor
+  Streambeginn, falsche Origin, Methode, Eingabe und erlaubtes CORS-Preflight.
+- Advisor meldet beabsichtigte RLS-ohne-Policy-Sperren und anon-aufrufbare,
+  intern tokengeprüfte SECURITY-DEFINER-RPCs; außerdem den bisherigen Hinweis
+  auf Leaked-Password-Protection für die hier nicht verwendete Passwortanmeldung.
+  [RLS-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
+  [RPC-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
+
+Frontend-Merge, finale CI nach Aufnahme der Deploymentmetadaten und lesende
+Kontrolle der veröffentlichten Phase-3-Oberfläche stehen noch aus.
