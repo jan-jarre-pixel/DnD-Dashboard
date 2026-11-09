@@ -1,7 +1,7 @@
 /* Shared combat controller. Mutations are confirmed by the server, never local dice/state. */
 ((root)=>{
  'use strict';const DND=root.DND,e=x=>DND.ui.escape(x);
- let current=null,allowLogout=()=>true;DND.combat=Object.freeze({current:()=>current,allowLogout:()=>allowLogout()});
+ let current=null,allowLogout=()=>true,openParticipant=async()=>false;DND.combat=Object.freeze({current:()=>current,allowLogout:()=>allowLogout(),open:(id,target)=>openParticipant(id,target)});
  document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
  function init(){
   const tabletop=!!document.getElementById('dashboard'),host=tabletop?document.querySelector('.gm-main'):document.getElementById('account')?.parentElement;
@@ -77,6 +77,7 @@
    if(action==='attack'){const attacks=String(snapshot.combat.own?.atk||'').split('\n').map(x=>x.split('|').map(x=>x.trim())).filter(x=>/^[+-]?[0-9]{1,3}$/.test(x[1])&&Math.abs(Number(x[1]))<=100).slice(0,3),atk=attacks[Number(b.dataset.attack)];if(atk){const bonus=Number(atk[1]),result=await DND.api.roll({p_formula:'1d20'+(bonus>=0?'+':'')+bonus,p_label:('Angriff · '+atk[0]).slice(0,100),p_visibility:'public',p_adv:0});note(result.error?result.error.message:'Serverwurf '+result.data.total);}return;}
    command(action,data);
   });
+  openParticipant=async(id,target)=>{if(!identity)return false;if((dirty||ownerDirty)&&!confirm('Nicht gespeicherte Kampfeingaben verwerfen?'))return false;if(owner()&&id)selected=id;dirty=ownerDirty=false;dirtyOwnerForms.clear();$('combatNpcForm').reset();$('combatTitle').value='';if(tabletop)location.hash='#combat';await refresh(true);const row=[...$('combatRows').children].find(x=>x.dataset.target===target);if(!row)return false;const details=row.querySelector('details');if(details)details.open=true;row.scrollIntoView({block:'center'});(details?.querySelector('summary')||$('combatBanner')).focus({preventScroll:true});return true;};
   DND.store.subscribe(state=>{if(state.identity===identity)return;identity=state.identity;generation++;loading=busy=false;pending.clear();selected=null;lastRenderStatus='unrendered';snapshot=latest=current=null;dirtyOwnerForms.clear();dirty=ownerDirty=false;$('combatRows').replaceChildren();$('combatTurn').replaceChildren();$('combatLog').replaceChildren();$('combatTitle').value='';$('combatNpcForm').reset();$('combatNotice').textContent='';$('combatBanner').textContent='';$('combatList').replaceChildren();$('combatRetry').hidden=true;layout();if(identity)refresh(true);});
   root.addEventListener('dnd:live-refresh',()=>refresh());root.addEventListener('hashchange',layout);
   allowLogout=()=>!(dirty||ownerDirty||pending.size||busy)||confirm('Nicht gespeicherte Kampfeingaben verwerfen und abmelden?');

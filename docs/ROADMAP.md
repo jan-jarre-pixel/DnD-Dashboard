@@ -3,7 +3,7 @@
 Stand: 2026-11-09. **M0 sowie Phasen 1–4 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
 fortgeführt. Abgeschlossene Arbeitspakete: **8 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT).
-Phase 5 ist der nächste Implementierungsschritt; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+Phase 5 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -60,9 +60,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Tokenbesitz und geheime Objekte serverseitig geschützt.
 - Priorität: P1. Abhängigkeiten: DND-COMBAT-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Uploads, Raster, Besitz, Fog offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Implementiert. Teststatus: Lokale Datenbank-, Browser- und Restore-Abnahme läuft.
+- Offene Probleme: Finale CI und produktive Abnahme laufen; Fog bewusst kachelweise.
+- Commit/PR: Branch feature/phase5-vtt; PHASE-5.md.
 
 ## DND-CAMPAIGN-001 – 6 Kampagnenverwaltung
 

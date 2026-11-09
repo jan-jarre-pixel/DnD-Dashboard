@@ -223,7 +223,7 @@
     loginInternal(choice==='gm'?'gm':'player',choice==='gm'?'':choice,code);
   };
   window.cloudLogout = async function () {
-    if(DND.combat?.allowLogout?.()===false)return;
+    if(DND.combat?.allowLogout?.()===false||DND.vtt?.allowLogout?.()===false)return;
     if(Object.keys(dirty).length&&!confirm('Ungespeicherte Änderungen verwerfen und abmelden?'))return;
     try{await DND.auth.logout();}catch{note('Lokal abgemeldet. Server-Widerruf fehlgeschlagen; die Sitzung läuft spätestens nach zwölf Stunden ab.');}
     if (state.polling) clearInterval(state.polling);

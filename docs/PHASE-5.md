@@ -1,0 +1,175 @@
+# Phase 5 – Karten und Virtual Tabletop
+
+Status: Implementiert, Abnahme läuft. Kein erfolgreicher Produktiv-Spieltest behauptet.
+Arbeitspaket: DND-MAP-001. Entwicklung ausschließlich in DnD-Dashboard.
+
+## Bedienbare Funktionen
+
+- Eigenständiger GM-Bereich **Karten**, private Bibliothek mit Archiv/Umschaltung,
+  JPG-/PNG-/WebP-Upload, Titel und Zuordnung zu einer benannten Szene.
+- Explizites Veröffentlichen/Zurückziehen für die aktuelle Spielsitzung. Spieler
+  sehen nur diese Karte. Sitzungsende und ein neuer Sitzungszyklus geben alte Karten
+  nicht automatisch frei. Pause erlaubt Lesen, sperrt Spielerbewegungen und Pings.
+- Quadratisches, hexagonales und rasterloses Spiel; Rastergröße, X/Y-Ausrichtung
+  und ft-Maßstab. Zoom, ganzer Ausschnitt und Verschieben per Zeiger oder Knöpfen.
+- Auswahlwerkzeug, optionales Einrasten, Token-Dragging mit lokaler Vorschau und
+  genau einer verbindlichen Serverbestätigung beim Loslassen. Koordinatenformular,
+  native Auswahlliste und Pfeiltasten bieten alternative Bedienwege.
+- Tokens hinzufügen, bewegen, drehen, skalieren, verbergen, entfernen und Besitz
+  zuweisen. Charaktertokens gehören ihrem Charakter. Spielleitung kann eigene
+  NPC-Tokens an einen Spieler delegieren. Fremde/verborgene Tokens bleiben geschützt.
+- Direkte Verknüpfung mit einer zugeordneten Kampfbegegnung und deren Teilnehmern.
+  Die Token-FK referenziert dieselbe Instanz wie die Initiative. Verknüpfte TP und
+  Zustände kommen aus dem Kampfmanager bzw. dem bestehenden Charakterbogen.
+  Die Auswahl bietet einen direkten Knopf zum betreffenden Kampfteilnehmer
+  für TP-/Zustandsänderungen sowie zum eigenen Charakterbogen.
+- Rechteckige Props, elliptische Flächeneffekte und beschriftete DM-Notizen.
+  Auswahl und Bearbeitung erfolgen über Karte oder Formular; keine HTML-Notizen.
+- Layer: Base Map, Objects & Props, Tokens & Effects, Visibility & Fog,
+  DM-only Annotations. DM-Notizen werden niemals an Spieler übertragen.
+- Einfacher Fog of War: Einzelkacheln oder gezogener Rechteckbereich aufdecken/
+  verbergen; dieselbe Funktion über Kachelkoordinaten und Gesamtkarten-Knöpfe.
+- Entfernung mit zwei Zeigerpunkten oder Koordinaten messen. Quadratisch/rasterlos
+  euklidisch, hexagonal über Hexschritte; der eingestellte Maßstab gilt jeweils.
+- Gemeinsame, kurzlebige Pings; ein Ping je Akteur/Sekunde, nur freigegebene Bereiche.
+- Responsive Kartenfläche und gestapelte Formulare auf Mobilgeräten. Sichtbarer
+  Fokus, native Formulare, beschriftete Werkzeuge und reduzierte Ping-Animation.
+  Keine vollständige WCAG- oder physische Geräte-Zertifizierung behauptet.
+
+## Sichere Bildfreigabe und kostenlose Grenzen
+
+Das bestehende Projekt verwendet befristete, servergeprüfte Code-Sitzungen,
+keine Storage-kompatiblen Auth-JWTs. Ein öffentlicher Bucket mit einer vollständigen
+Karten-URL würde Fog of War umgehen. Die Basisimplementierung verwendet deshalb
+privat gespeicherte, normalisierte Bildkacheln und die bestehende tokengeprüfte RPC.
+Es entstehen kein neuer Server, kein neues Projekt und keine kostenpflichtigen Dienste.
+
+Der Browser prüft Dateityp und Bildsignatur, akzeptiert höchstens 8 MiB und
+4096 × 4096 Pixel und normalisiert auf höchstens 2048 × 2048 Pixel. Kleine
+Abmessungen werden auf mindestens 256 Pixel gepolstert. Die ursprüngliche Datei
+wird nicht öffentlich hochgeladen. Gespeichert werden bis zu 64 WebP-/PNG-Kacheln
+von 256 × 256 Pixeln, höchstens 100.000 Zeichen pro Kachel und 2.000.000 Zeichen
+JSON-Kacheldaten pro Karte. Die RPC prüft Grenzen, vollständige Koordinaten,
+Base64 und die PNG/JPEG/WebP-Signatur erneut. Andere Formate und URLs sind unzulässig.
+
+Maximal 24 Karten einschließlich Archiv begrenzen Bildwachstum auf unter 48 MB
+Kacheldaten vor Datenbankkompression. Pro Karte höchstens 50 Tokens und 500 Objekte.
+Archivieren erhält Daten; es erhöht dieses Kontingent nicht. Originalbilder sollte
+man separat aufbewahren: Die normalisierte Spielkarte ist kein Originaldatei-Archiv.
+
+**Nebel hat bewusst eine Granularität von 256 Bildpixeln**, unabhängig vom Spielraster.
+Der Server gibt nur ausdrücklich aufgedeckte Kacheln aus. Weder ursprüngliches Bild
+noch eine vollständige Bild-URL, verborgene Bildbytes, versteckte Token-IDs oder
+DM-Notizen werden an Spieler gesendet. Tokens/Objekte müssen mit ihrer vollständigen
+Fläche in freigegebenen Kacheln liegen. Spielerbewegungen prüfen auch die Strecke
+in kleinen Schritten gegen den Nebel. Wiederverbergen entfernt Daten aus künftigen
+Antworten und der aktuellen Oberfläche. Früher gesehene Bilder kann man nicht zurückholen.
+
+Kachel-SHA256 sowie Hashes der bereits autorisierten Token-/Objektprojektionen
+vermeiden erneute Übertragung unveränderter Daten. Hashes entstehen nach der
+Sichtbarkeitsprüfung. Der private Browsercache liegt nur im Arbeitsspeicher dieses
+Tabs und wird bei Abmeldung/Sitzungsablauf oder Kartenwechsel entfernt. Kein
+Service Worker, kein dauerhafter Offline-Cache geheimer Karten und keine behauptete
+bestätigte Offline-Kampfaktion. PWA/Offline-Ansichten folgen Phase 8.
+
+## Datenmodell und Autorisierung
+
+Additive Migration `supabase/migrations/20261109144905_phase5_virtual_tabletop.sql`:
+
+| Private Tabelle | Zweck |
+| --- | --- |
+| vtt_maps | Kartenmetadaten, Szene, Encounter-FK, Raster und Versionen |
+| vtt_tiles | Bildkacheln, Hash und Freigabe |
+| vtt_state | Eine ausdrücklich veröffentlichte Karte, Sitzung und CAS-Version |
+| vtt_tokens | Position/Transformation/Besitz und eindeutige Combatant-FK |
+| vtt_objects | Props, Effekte und private Anmerkungen |
+| vtt_commands | Actor-gebundene Idempotenz-Receipts |
+| vtt_log | Auditierbare UUID-Aktionen und kurzlebige Ping-Projektion |
+
+Alle sieben Tabellen: RLS aktiv, keine direkten anon/authenticated-Rechte.
+Hilfsfunktionen privat und EXECUTE entzogen. `dnd_vtt_call` prüft bei jedem Aufruf
+Identität, Ablauf und Rolle des bestehenden Tokens, bei Mutationen zusätzlich
+Sitzung und Versionen. Leerer search_path; keine Client-Metadaten als Rechtequelle.
+
+- Owner-Befehle ausschließlich für die serverseitige GM-Identität.
+- Spieler können nur eigene, aktuell sichtbare Tokens der veröffentlichten Karte
+  bewegen/drehen. Übermittelte fremde Besitzer oder Größen werden nicht übernommen.
+- Ein verknüpfter Combatant muss zur Kartenbegegnung gehören. Seine Instanz kann
+  genau einen verknüpften Token besitzen. Vor einer Neuzuordnung die Verknüpfung
+  lösen oder den Token entfernen; der Charakter/Kampfteilnehmer bleibt erhalten.
+- `vtt_tokens.combatant_id` ist die kanonische Verknüpfung. Die alten nullable
+  Platzhalter `combatants.map_id/token_id` werden nicht als zweite Zuordnung gepflegt.
+  Keine TP-Kopie in Tokens. Namens-/Stat-Projektionen folgen dem echten Combatant.
+- Vorbereitete, ausgeblendete oder nicht freigegebene Gegner erscheinen auch dann
+  nicht, wenn ein Token aufgedeckt wurde. Gegnerstats benötigen die Kampf-Freigabe.
+- Private und öffentliche Kartenversionen; geheime Token-/Notizänderungen erzeugen
+  keine Spielerzustellung oder öffentliche Versionsänderung. Live-Events enthalten
+  keine Objekt-IDs, Namen, Bildbytes oder geheimen Koordinaten.
+- Globale Sperrreihenfolge wie bisher: Workspace vor Karte/Token und Sync-Cursor.
+  Unabhängige Tokenbewegungen verwenden eigene Tokenversionen statt globalem
+  Karten-CAS; Nebel-/Rasterrevision wird zusätzlich geprüft. So können mehrere
+  Spieler unabhängig bewegen, während konkurrierende Änderungen desselben Tokens
+  oder einer inzwischen geänderten Freigabe ausdrücklich abgelehnt werden.
+- Request-ID, Akteur, Aktion und vollständiger Payload-Hash verhindern doppelte
+  Anwendung oder veränderte Wiederholungen. Receipts 24 Stunden, Tokens höchstens
+  zwölf Stunden; 10.000 Mutationen je Akteur/Tag. Unklare Netzwerkantworten behalten
+  ihre ursprüngliche Anfrage bis zur erneuten Bestätigung; keine automatische Queue.
+- Formularentwürfe behalten ihre ursprünglichen Versionen trotz Live-Updates.
+  Konflikte benötigen eine bewusste Aktualisierung. Abmelden/Verlassen warnt vor
+  nicht gespeicherten Eingaben, laufenden Uploads und unbestätigten Aktionen.
+
+Keine bestehenden Tabelleninhalte, Zugangscodes, RPC-Definitionen oder Rechte
+werden durch diese Migration verändert. Die bisherigen Rückfallclients bleiben
+nutzbar. `sideline26` wird nicht verändert.
+
+## Bewusste Regelgrenzen und Folgephasen
+
+Bewegen eines Tokens ist keine automatische D&D-Bewegungsabbuchung. Die bereits
+vorhandenen Kampfbewegungen/Aktionen verwaltet man separat. Entfernung, Wände,
+Bewegungsarten, Hausregeln und strittige Wege entscheidet die Spielleitung.
+Rasterloser Maßstab bezieht sich auf die eingestellte Rasterbreite als Referenz.
+Es gibt noch keine Sichtlinien, Lichtquellen, Türen oder dynamische Sichtbarkeit
+(Phase 9). Die fünf Darstellungslayer sind keine mehrstöckigen Dungeon-Karten.
+
+Szene ist die benannte Kartenzuordnung; Kampagnen-/NPC-/Encounter-Planung mit
+Schwierigkeit, Loot und Statblock-Bibliothek folgt Phase 6. Neue Gegner für diese
+Phase legt man im vorhandenen Kampfmanager an und verknüpft ihre echte Instanz.
+Datei-Exporte/Importe und bequemere Backups folgen Phase 8; private Betriebssicherung
+und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
+
+## Nachweise und noch laufende Abnahme
+
+- Vorher-Sicherung aller 22 Anwendungstabellen und 29 Funktionsdefinitionen privat.
+- Isolierte Wiederherstellung exakt verglichen; vollständige neue Migration erhält
+  alle bisherigen Zeilen sowie bisherigen Funktionsdefinitionen, OIDs und Grants.
+- 27 neue DB-Szenarien einschließlich privater Bildbytes, IDOR, Rollen, Fog,
+  Instanzverknüpfung, Retry, CAS, Sessionbindung und Ressourcenlimits.
+  20 echte gleichzeitige unabhängige Bewegungen; 50 Tokens und 500 Objekte lokal.
+- Drei neue reine Geometrietests; alle bestehenden Regressionen bleiben aktiv.
+- Browserprüfungen mit realen lokalen RPCs und HTTP-SSE: Bild-Upload, Freigabe,
+  vier Spielerbewegungen, verlorene Antwort, Konfliktentwurf, Raster, Messung,
+  private Anmerkungen/XSS, Ping, Wiederverbindung, Tastatur, Last und Mobilansicht.
+- Produktive additive Migration 20261109144905 erfolgreich angewandt. Dateiname
+  an die tatsächliche Historie angepasst; SQL-Inhalt identisch zur lokalen Abnahme.
+  Alle 22 bisherigen Tabellen und alle 29 bisherigen Funktionsdefinitionen, OIDs
+  und Grants unmittelbar vor/nach Anwendung identisch. Sieben neue Tabellen mit
+  RLS und ohne direkte anon/authenticated-Leserechte bestätigt.
+- Abschließender Restore aller 29 Anwendungstabellen exakt verglichen; die
+  Würfel-Identity-Sequenz ist für nachfolgende Würfe synchronisiert.
+- 34 Node-Tests, insgesamt 120 DB-Szenarien (93 bisherige + 27 neue),
+  Parallelitäts-/50-Wurf-Tests und zehn Chromium-Rollen-/Viewport-Szenarien
+  lokal bestanden. Gezielter VTT-Browserdurchlauf mit echtem Touch-Eingabekontext
+  bestanden; beobachtete 50-Token-/500-Objekt-Darstellung einschließlich Abruf
+  lokal 679 ms, DB-Projektion einschließlich docker/psql 82–88 ms. Keine
+  garantierten Produktionslatenzen oder Core-Web-Vitals-Abnahme behauptet.
+- 20 echte lesende/ablehnende API-/Edge-Prüfungen bestanden, einschließlich
+  ungültigem Token am neuen Karten-RPC. Keine echten Spielerwerte verändert.
+- Advisor-Hinweise: beabsichtigte direkte RLS-Sperren ohne Policy, öffentlich
+  aufrufbare, intern tokengeprüfte Definer-RPCs und bereits bekannte deaktivierte
+  Leaked-Password-Protection für die unbenutzte Passwortanmeldung.
+  [RLS-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
+  [RPC-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
+  Neue Fremdschlüssel besitzen passende Indizes; unbenutzte neue Indizes sind
+  vor echtem Spielbetrieb erwartbar.
+- Finale CI und Pages-Abnahme stehen noch aus.
+  Original-Spielercodes werden nicht für positive Live-Tests benutzt.

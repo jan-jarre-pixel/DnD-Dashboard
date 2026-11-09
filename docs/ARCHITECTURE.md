@@ -44,3 +44,9 @@ Phase 4: `src/ui/combat.js` verbindet den gemeinsamen Kampfmanager mit
 `dnd_combat_call`. PC-Zustände verbleiben im Charakter-JSON, NPC-Zustände in der
 einheitlichen Kampf-/späteren Tokeninstanz. Private/öffentliche Projektionen und
 Versionen entstehen serverseitig; Details und Regelgrenzen in PHASE-4.md.
+
+Phase 5: `src/ui/vtt.js` verwendet `dnd_vtt_call` für private Bildkacheln,
+Kartenfreigabe und versionierte Tokenpositionen. Keine vollständige Karten-URL
+an Spieler; serverseitige Kachel-/Objektprojektion. `vtt_tokens.combatant_id`
+verweist eindeutig auf die gemeinsame Kampfinstanz, ohne deren TP zu kopieren.
+Geometrie liegt separat in `src/core/vtt.js`. Grenzen und Abnahme: PHASE-5.md.
