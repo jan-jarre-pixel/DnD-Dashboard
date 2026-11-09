@@ -5,7 +5,7 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phasen 1–3 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0 und Phasen 1–4 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 ## Lokal prüfen
 
@@ -28,7 +28,7 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1, #3, #5 und #7 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3, #5, #7 und #9 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
@@ -54,11 +54,11 @@ SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 - [Historische Multiplayer-Dokumentation](docs/legacy-multiplayer.md)
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
-in M0.md sowie PHASE-1.md bis PHASE-3.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+in M0.md sowie PHASE-1.md bis PHASE-4.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
 
-Phase-3-Mehrspielerprüfung lokal: `npm run test:multiplayer` (isolierte DB nötig).
+Mehrspieler-/Kampfprüfung lokal: `npm run test:multiplayer` (isolierte DB nötig).
 Der authentifizierte Live-Transport verwendet die bestehende Supabase Edge Function
 `dnd-events`; Deploymentquelle liegt unter `supabase/functions/dnd-events`.
