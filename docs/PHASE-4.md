@@ -68,7 +68,7 @@ Unklare Klassen-/Hausregeln entscheidet die Spielleitung. Inventarverbrauch folg
 
 ## Datenmodell und Datenintegrität
 
-Migration `20261109074511_phase4_combat_manager.sql` ergänzt fünf private Tabellen:
+Migration `20261109090211_phase4_combat_manager.sql` ergänzt fünf private Tabellen:
 
 - `encounters`: Sitzungsbezug, Status, Runde, aktueller Teilnehmer und Versionen.
 - `combatants`: gemeinsame Instanz-ID, Charakter-/NPC-Zuordnung und Zugbudgets.
@@ -108,7 +108,9 @@ Hilfsfunktionen sind privat, EXECUTE entzogen, search_path leer.
 - Client behält bei unklarer Netzwerkantwort die **gesamte** ursprüngliche Anfrage,
   auch nach zwischenzeitlichem Laden einer neueren Version. Definitive SQL-Ablehnungen
   verwerfen diese Receipt-Anfrage, sodass nach bewusstem Aktualisieren neu versucht
-  werden kann. Eingaben bleiben bei Fehlern erhalten.
+  werden kann. Eingaben bleiben bei Fehlern erhalten. Eine separate Rückbestätigung
+  löst unklare Antworten auch dann auf, wenn der normale Aktionsknopf inzwischen
+  als verbraucht gesperrt ist. Verlassen/Abmelden warnt vor ungeklärten Requests.
 - Einheitliche Sperrreihenfolge mit Session-Steuerung und Charakteränderungen.
   Ende/Wechsel der Spielsitzung beendet laufende Kämpfe auch über alte GM-Endpunkte.
   Pause der Spielsitzung sperrt Spieleraktionen unabhängig vom sichtbaren Kampfstatus.
@@ -154,3 +156,32 @@ Encounter Builder mit Bestiary, Schwierigkeit, Taktik und Loot Phase 6.
 Inventar-/Gegenstandsautomatisierung Phase 7. Offline-Queue/Exporte Phase 8.
 Keine dieser Funktionen wird durch die nullable Referenzfelder als fertig ausgegeben.
 Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
+
+## Erste Integrationsnachweise
+
+- PR #9: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/9 .
+- Erste vollständige grüne CI auf 229478ef3bc9c7cb496c3885d5b86d00bcbf602a:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42588906023 .
+  31 Node-Prüfungen, insgesamt 92 DB-Szenarien plus Parallelität/50 Würfe,
+  30 Rollen-/Viewport-Szenarien und je ein erweiterter paralleler Mehrspieler-
+  Durchlauf in Chromium, Firefox und WebKit bestanden.
+- Ergänzte Rückbestätigung für bereits gesperrte Aktionsknöpfe lokal bestanden;
+  sie wird vor dem Frontend-Merge nochmals in allen drei Browsern geprüft.
+- Produktive Migration erfolgreich als Version 20261109090211 registriert.
+  Dateiname an tatsächliche Historie angepasst; SQL-Inhalt unverändert.
+- Alle 17 bisherigen Tabellen unmittelbar vor/nach Migration identisch.
+  Auch sämtliche bisherigen Funktionsdefinitionen, OIDs und Grants identisch.
+- Fünf neue private Tabellen: RLS aktiv, keine anon/authenticated-Leserechte.
+- 19 echte lesende API-/Edge-Prüfungen bestanden, einschließlich Ablehnung des
+  neuen Kampf-RPC bei ungültigem Token. Keine produktiven Spielerwerte verändert.
+- Advisor-Hinweise: beabsichtigte RLS-ohne-Policy-Sperren, intern tokengeprüfte
+  anon-aufrufbare Definer-RPCs sowie der bereits bekannte Hinweis auf nicht
+  aktivierte Leaked-Password-Protection für die unbenutzte Passwortanmeldung.
+  [RLS-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
+  [RPC-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
+
+Lokale Zwischenbefunde wurden korrigiert: SQL-CASE-Parserfehler vor jeder
+produktiven Anwendung, auf die Loginform eingegrenzte Browserselektoren wegen
+neuer versteckter Formulare und aktualisierte Prüfung der präziseren Bezeichnung
+„Letzter eigener Initiativwurf“. Kein Test übersprungen, keine Prüfung des echten
+Würfelergebnisses entfernt. Frontend-Merge/Produktionsabnahme stehen noch aus.

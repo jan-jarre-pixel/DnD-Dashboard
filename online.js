@@ -44,7 +44,7 @@
   overview = function () {
     return original.overview().replace(
       'Spieler schicken dir ihren Code (Button „Code erzeugen“ in ihrem Bogen), den du unten einfügst. So siehst du ihren aktuellen Stand. Jeder Spieler sieht und ändert ausschließlich seinen eigenen.',
-      'Live-Gruppenübersicht (automatisch synchronisiert). Als Spielleiter kannst du alle Charakterbögen lesen, aber keine Spielerwerte verändern.');
+      'Live-Gruppenübersicht (automatisch synchronisiert). Diese Charakteransicht ist nur lesbar; Kampfwerte steuerst du im Control Room.');
   };
   codeCard = function () {
     if (state.role!=='player') return '';
