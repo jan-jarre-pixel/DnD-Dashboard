@@ -3,7 +3,7 @@
 Stand: 2026-11-09. **M0 sowie Phasen 1–3 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
 fortgeführt. Abgeschlossene Arbeitspakete: **7 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT).
-Spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+Phase 4 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -52,9 +52,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Atomare Aktionen, Runden, Sichtbarkeit geprüft.
 - Priorität: P1. Abhängigkeiten: DND-RT-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Initiative, Effekte, My Turn offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Implementiert. Teststatus: Lokale DB-/Browserabnahme läuft; CI und Produktionsabnahme ausstehend.
+- Offene Probleme: Karten erst Phase 5, umfassender Encounter Builder Phase 6; manuelle Regelentscheidungen dokumentiert.
+- Commit/PR: Branch feature/phase4-combat; PHASE-4.md.
 
 ## DND-MAP-001 – 5 Karten und VTT
 

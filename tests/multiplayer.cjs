@@ -24,10 +24,10 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
   const context=await browser.newContext();contexts.push(context);
   // Redirect only the transport endpoint; the application and handler remain real.
   await context.addInitScript(()=>{const original=window.fetch;window.fetch=(url,options)=>original(typeof url==='string'&&url.includes('/functions/v1/dnd-events')?location.origin+'/events':url,options);});
-  const page=await context.newPage();page.on('pageerror',e=>failures.push(e.message));
+  const page=await context.newPage();page.setDefaultTimeout(30000);page.on('pageerror',e=>failures.push(e.message));
   await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.SUPABASE_BROWSER_BUNDLE||'/workspace/private-dnd-backup/supabase.js',contentType:'text/javascript'}));
   await page.route('https://*.supabase.co/rest/v1/rpc/*',r=>{try{return r.fulfill({json:rpc(r.request().url().split('/').pop(),r.request().postDataJSON())});}catch(e){return r.fulfill({status:400,json:{code:/Versionskonflikt/.test(e.message)?'40001':/abgelaufen/.test(e.message)?'28000':'P0001',message:e.message}});}});
-  await page.goto(base+(sheet?'':'spieltisch.html'));await page.selectOption(sheet?'#loginCharacter':'#role',role);await page.fill(sheet?'#loginCode':'#accessCode',codes[role]);await page.locator(sheet?'button[type=submit]':'#loginForm button[type=submit]').click();await page.getByText('Abmelden',{exact:true}).waitFor();await page.locator('.live-status').filter({hasText:'● Live'}).waitFor({timeout:15000});return page;
+  await page.goto(base+(sheet?'':'spieltisch.html'));await page.selectOption(sheet?'#loginCharacter':'#role',role);await page.fill(sheet?'#loginCode':'#accessCode',codes[role]);await page.locator(sheet?'#sheet form button[type=submit]':'#loginForm button[type=submit]').click();await page.getByText('Abmelden',{exact:true}).waitFor();await page.locator('.live-status').filter({hasText:'● Live'}).waitFor({timeout:15000});return page;
  }
  try{
   for(const role of roles)pages[role]=await open(role);
@@ -57,6 +57,7 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
   await pages.pei.waitForFunction(()=>DND.live.events().some(e=>e.type==='DiceRolled'&&e.payload.label==='MISSED_PUBLIC_EVENT'),{},{timeout:30000});
   assert.equal(await pages.pei.evaluate(()=>DND.live.events().filter(e=>e.type==='DiceRolled'&&e.payload.label==='MISSED_PUBLIC_EVENT').length),1);
   assert(streams>roles.length,'short-lived stream renewal exercised');
+  await require('./combat-flow.cjs')(pages,{rpc,codes});
   // Authentication revocation terminates the next poll and clears private DOM.
   const gmToken=await pages.gm.evaluate(()=>sessionStorage.getItem('dnd_session_v1'));rpc('dnd_sign_out',{p_token:gmToken});await pages.gm.locator('#loginPanel').waitFor({state:'visible',timeout:15000});assert(!await pages.gm.locator('body').textContent().then(x=>x.includes('GM_SECRET_MULTIPLAYER')));
   assert.deepEqual(failures,[]);console.log(`${engine}: GM + four simultaneous players, public/private rolls, HP/conditions, CAS draft recovery, offline presence, missed-event replay, stream renewal and revocation passed. Local observed five-roll delivery: ${latency} ms.`);

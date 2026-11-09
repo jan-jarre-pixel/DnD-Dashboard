@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renderFeed();work.update();
   }
-  function renderFeed(){const labels={SessionStarted:'Sitzung gestartet',SessionEnded:'Sitzung beendet',SessionPaused:'Sitzung pausiert',SessionResumed:'Sitzung fortgesetzt',ScenePublished:'Szene/Gruppeninfo aktualisiert',CharacterHPChanged:'Lebenspunkte aktualisiert',CharacterStateChanged:'Charakterstatus aktualisiert',WorkspaceChanged:'Privater Arbeitsstand aktualisiert'};const events=(DND.live?.events()||[]).filter(e=>e.session_id===state.sessionId&&labels[e.type]).slice(-50).reverse();$('sessionFeed').replaceChildren(...events.map(e=>{const li=document.createElement('li');li.textContent=displayTime(e.created_at)+' · '+labels[e.type]+(e.payload.key?' · '+(names[e.payload.key]||'Charakter'):'');return li;}));}
+  function renderFeed(){const labels={SessionStarted:'Sitzung gestartet',SessionEnded:'Sitzung beendet',SessionPaused:'Sitzung pausiert',SessionResumed:'Sitzung fortgesetzt',ScenePublished:'Szene/Gruppeninfo aktualisiert',CharacterHPChanged:'Lebenspunkte aktualisiert',CharacterStateChanged:'Charakterstatus aktualisiert',WorkspaceChanged:'Privater Arbeitsstand aktualisiert',CombatChanged:'Kampfstand aktualisiert',InitiativeAdvanced:'Nächster Zug'};const events=(DND.live?.events()||[]).filter(e=>e.session_id===state.sessionId&&labels[e.type]).slice(-50).reverse();$('sessionFeed').replaceChildren(...events.map(e=>{const li=document.createElement('li');li.textContent=displayTime(e.created_at)+' · '+labels[e.type]+(e.payload.key?' · '+(names[e.payload.key]||'Charakter'):'');return li;}));}
   window.addEventListener('dnd:live-event',renderFeed);
   async function roll(ev){
     ev.preventDefault();if(state.busy)return;
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('rollForm').addEventListener('submit',roll);
   document.querySelectorAll('[data-gm]').forEach(b=>b.addEventListener('click',()=>gmAction(b.dataset.gm)));
   $('saveNotes').addEventListener('click',saveNotes);
-  $('logout').addEventListener('click',async()=>{if(!work.allowLogout())return;resetSession();try{await DND.auth.logout();}catch{notice('Lokal abgemeldet; Server-Widerruf fehlgeschlagen.');}});
+  $('logout').addEventListener('click',async()=>{if(!work.allowLogout()||DND.combat?.allowLogout?.()===false)return;resetSession();try{await DND.auth.logout();}catch{notice('Lokal abgemeldet; Server-Widerruf fehlgeschlagen.');}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.actor){heartbeat();refresh();}});
   window.addEventListener('dnd:session-ended',()=>{resetSession();notice('Sitzung abgelaufen. Bitte erneut anmelden.');});
   signIn('','',true);

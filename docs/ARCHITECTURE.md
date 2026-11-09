@@ -39,3 +39,8 @@ Supabase Edge Function `dnd-events`. `sync_events` und Cursor sind pro Empfänge
 privat; SQL filtert vor der Übertragung. `dnd_sync_call` kapselt Charakter-CAS und
 idempotente Würfe. Kein clientseitiges Realtime-Rollenattribut/JWT. Details und
 bewusste Kompatibilitätsgrenzen stehen in PHASE-3.md.
+
+Phase 4: `src/ui/combat.js` verbindet den gemeinsamen Kampfmanager mit
+`dnd_combat_call`. PC-Zustände verbleiben im Charakter-JSON, NPC-Zustände in der
+einheitlichen Kampf-/späteren Tokeninstanz. Private/öffentliche Projektionen und
+Versionen entstehen serverseitig; Details und Regelgrenzen in PHASE-4.md.

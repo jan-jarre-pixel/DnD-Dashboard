@@ -20,7 +20,7 @@ const path=require('node:path');
  let count=0;
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   for(const role of ['len','gra','sas','pei','gm']){
-   const context=await browser.newContext({viewport});const page=await context.newPage();const errors=[];const requests=[];page.on('pageerror',e=>errors.push(e.message));
+   const context=await browser.newContext({viewport});const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[];const requests=[];page.on('pageerror',e=>errors.push(e.message));
    await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.SUPABASE_BROWSER_BUNDLE||'/workspace/private-dnd-backup/supabase.js',contentType:'text/javascript'}));
    await page.route('https://*.supabase.co/**',r=>{
     let method=r.request().url().split('/').pop();let body=r.request().postDataJSON();requests.push({method,body});
@@ -37,9 +37,9 @@ const path=require('node:path');
    });
    const base=`http://127.0.0.1:${server.address().port}/DnD-Dashboard/`;
    await page.goto(base+(role==='gm'?'#character':''));await page.locator('#loginCharacter').waitFor();
-   await page.selectOption('#loginCharacter',role);await page.fill('#loginCode','invalid_code_for_test_0000');await page.locator('button[type=submit]').click();
+   await page.selectOption('#loginCharacter',role);await page.fill('#loginCode','invalid_code_for_test_0000');await page.locator('#sheet form button[type=submit]').click();
    await page.waitForFunction(()=>document.body.innerText.includes('ungültig'));
-   await page.selectOption('#loginCharacter',role);await page.fill('#loginCode',local?local.codes[role]:'synthetic_test_code_00000000');await page.locator('button[type=submit]').click();
+   await page.selectOption('#loginCharacter',role);await page.fill('#loginCode',local?local.codes[role]:'synthetic_test_code_00000000');await page.locator('#sheet form button[type=submit]').click();
    await page.getByText('Abmelden',{exact:true}).waitFor({timeout:5000}).catch(async e=>{console.error(await page.locator('body').innerText(),errors);throw e;});
    if(local && role!=='gm'){
     const before=local.rpc('read_character',{p_character_key:role,p_code:local.codes[role]});

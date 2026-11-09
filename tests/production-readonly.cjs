@@ -10,7 +10,7 @@ const assert=require('node:assert/strict');
    const context=await browser.newContext({viewport});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
    const response=await page.goto(base);assert.equal(response.status(),200);await page.locator('#loginCharacter').waitFor();
    assert.equal(await page.locator('#loginCharacter option').count(),6);
-   await page.selectOption('#loginCharacter','len');await page.fill('#loginCode','invalid_code_for_test_0000');await page.locator('button[type=submit]').click();
+   await page.selectOption('#loginCharacter','len');await page.fill('#loginCode','invalid_code_for_test_0000');await page.locator('#sheet form button[type=submit]').click();
    await page.waitForFunction(()=>document.body.innerText.includes('Code ungültig'));
    await page.goto(base+'spieltisch.html');await page.locator('#loginPanel').waitFor({state:'visible'});
    assert.equal(await page.locator('#role option').count(),6);
