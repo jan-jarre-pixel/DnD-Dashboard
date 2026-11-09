@@ -33,6 +33,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps ${{ matrix.browser }}
         timeout-minutes: 10
+      - run: npm run test:layout
+        env:
+          BROWSER: ${{ matrix.browser }}
       - name: Start isolated PostgreSQL
         run: |
           docker run -d --name dnd-m0-postgres --network none -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-bookworm@sha256:665dc7b37ac52a17e298511414c21d23ffa4e6a6ef6225b3e5d59c7afb35e994

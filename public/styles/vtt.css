@@ -3,3 +3,5 @@
 .vtt-panel input[type=checkbox]{width:20px;height:20px;min-height:20px;flex:0 0 20px;vertical-align:middle;accent-color:#d8bd83}.vtt-panel label:has(input[type=checkbox]){display:inline-flex;align-items:center;gap:.4rem;min-height:44px}#mapShortcut{display:inline-flex;margin-top:.8rem;min-height:44px;align-items:center}#mapShortcut[hidden]{display:none}
 .vtt-panel{max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}.vtt-panel form,.vtt-panel details,.vtt-inspectors>section{min-width:0;max-width:100%}.vtt-panel input:not([type=checkbox]),.vtt-panel select{width:100%;min-width:0}.vtt-panel button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:600px){.vtt-panel .buttonbar>button{flex:1 1 140px}.vtt-panel .section-head{flex-wrap:wrap}}
+/* WebKit otherwise includes native option paint beyond the sized select box. */
+.vtt-panel select{contain:paint}
