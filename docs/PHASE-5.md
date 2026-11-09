@@ -142,7 +142,7 @@ und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
 - Vorher-Sicherung aller 22 Anwendungstabellen und 29 Funktionsdefinitionen privat.
 - Isolierte Wiederherstellung exakt verglichen; vollständige neue Migration erhält
   alle bisherigen Zeilen sowie bisherigen Funktionsdefinitionen, OIDs und Grants.
-- 27 neue DB-Szenarien einschließlich privater Bildbytes, IDOR, Rollen, Fog,
+- 28 neue DB-Szenarien einschließlich privater Bildbytes, IDOR, Rollen, Fog,
   Instanzverknüpfung, Retry, CAS, Sessionbindung und Ressourcenlimits.
   20 echte gleichzeitige unabhängige Bewegungen; 50 Tokens und 500 Objekte lokal.
 - Drei neue reine Geometrietests; alle bestehenden Regressionen bleiben aktiv.
@@ -156,7 +156,7 @@ und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
   RLS und ohne direkte anon/authenticated-Leserechte bestätigt.
 - Abschließender Restore aller 29 Anwendungstabellen exakt verglichen; die
   Würfel-Identity-Sequenz ist für nachfolgende Würfe synchronisiert.
-- 34 Node-Tests, insgesamt 120 DB-Szenarien (93 bisherige + 27 neue),
+- 34 Node-Tests, insgesamt 121 DB-Szenarien (93 bisherige + 28 neue),
   Parallelitäts-/50-Wurf-Tests und zehn Chromium-Rollen-/Viewport-Szenarien
   lokal bestanden. Gezielter VTT-Browserdurchlauf mit echtem Touch-Eingabekontext
   bestanden; beobachtete 50-Token-/500-Objekt-Darstellung einschließlich Abruf
@@ -188,3 +188,20 @@ Zusätzliche Pixelprüfung: Die freigegebene Bildkachel ist tatsächlich 256 × 
 und enthält ausschließlich den freigegebenen Quadranten des eigenen Testbilds.
 Eine separate Wiederherstellungsprobe mit nichtleeren synthetischen Bildkacheln
 vergleicht alle 29 Tabellen ebenfalls exakt.
+
+
+Zusätzliche Kompatibilitätsmigration `20261109153439_phase5_legacy_token_projection.sql`:
+Standalone-Charaktertokens verwenden ebenfalls die bestehende `combat_state`-
+Normalisierung. Ungültige alte TP-/Zustandswerte werden in der Ausgabe abgefangen,
+ohne gespeicherte Bögen umzuschreiben. Alle 29 Tabellen vor/nach Anwendung
+identisch, sämtliche 33 Funktions-OIDs und Grants gleich; nur die neue private
+Kartenprojektion verbessert. Der zusätzliche Regressionstest prüft auch, dass
+die gespeicherten Legacy-Werte erhalten bleiben.
+
+Weitere Browserbefunde: Firefox quantisiert Mauskoordinaten auf CSS-Pixel; der
+Zeigertest prüft die tatsächliche Serverposition mit einer Pixel-Toleranz.
+Zeigerziele bleiben beim Start einer Bewegung erhalten. Sichtbar gesperrte
+Schreibaktionen und Eingaben bleiben bis zum Abschluss einer laufenden Anfrage
+gesperrt; eine absichtlich verzögerte und dann verlorene HTTP-Antwort prüft dies
+zusammen mit der idempotenten Rückbestätigung. Echtes Panning berücksichtigt die
+SVG-Skalierung einschließlich seitlicher Leerflächen.
