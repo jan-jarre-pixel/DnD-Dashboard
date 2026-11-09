@@ -134,7 +134,7 @@ Hilfsfunktionen sind privat, EXECUTE entzogen, search_path leer.
 - Vorher-Sicherung mit allen 17 bisherigen Anwendungstabellen und Funktionsdefinitionen.
   Isolierte Wiederherstellung plus volle neue Migration: bisherige Tabellen und
   Funktionsidentitäten unverändert. Keine Tests verändern produktive Spielerwerte.
-- 27 neue DB-Szenarien: Baseline-Parität, Rollen/IDOR, Geheimhaltung auch nach
+- 28 neue DB-Szenarien: Baseline-Parität, Rollen/IDOR, Geheimhaltung auch nach
   erneutem Verbergen, Initiative/Gleichstände, Single-Source-TP, Retry/CAS,
   Konzentration/Effekte inklusive normalem Charakter-Speichern, Budgets, Runden,
   Ressourcen, alle d20-Todeswurfwerte, echte Serverwürfe, temporäre TP, Pause,
@@ -185,3 +185,15 @@ produktiven Anwendung, auf die Loginform eingegrenzte Browserselektoren wegen
 neuer versteckter Formulare und aktualisierte Prüfung der präziseren Bezeichnung
 „Letzter eigener Initiativwurf“. Kein Test übersprungen, keine Prüfung des echten
 Würfelergebnisses entfernt. Frontend-Merge/Produktionsabnahme stehen noch aus.
+
+
+Ressourcen-Kompatibilitätsprüfung: Eine ergänzende Migration
+`20261109093201_phase4_resource_compatibility.sql` übernimmt dieselbe Leerzeilen-
+Bereinigung wie der vorhandene `parts()`-Parser und begrenzt ungültige Legacy-
+Verbrauchszähler beim expliziten Verbrauch. Der zusätzliche Regressionstest
+prüft die zweite Ressource nach einer Leerzeile und deren Höchstmenge.
+Der Erstbefund konnte nur eine betroffene Aktion ablehnen; bisherige Daten wurden
+nicht beschädigt. Die Ergänzung verändert keine Tabellendaten. Alle 22 Tabellen,
+Funktions-OIDs und Grants vor/nach Anwendung identisch, nur die neue Kampf-RPC-
+Definition verbessert. Insgesamt jetzt 93 DB-Szenarien (28 neue Kampf-Szenarien).
+Erneute vollständige CI vor Frontend-Merge erforderlich.
