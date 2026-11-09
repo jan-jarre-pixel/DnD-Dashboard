@@ -42,6 +42,7 @@ Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
 SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 **Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-3-Bericht: sichere Live-Ereignisse](docs/PHASE-3.md)
 - [Phase-2-Bericht: Dashboards und Sitzungssteuerung](docs/PHASE-2.md)
 - [Phase-1-Bericht und Sicherheitsentscheidungen](docs/PHASE-1.md)
 - [Architektur](docs/ARCHITECTURE.md)
@@ -56,3 +57,7 @@ in M0.md, PHASE-1.md und PHASE-2.md. Zugangscodes, private Spielstände und Sich
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
+
+Phase-3-Mehrspielerprüfung lokal: `npm run test:multiplayer` (isolierte DB nötig).
+Der authentifizierte Live-Transport verwendet die bestehende Supabase Edge Function
+`dnd-events`; Deploymentquelle liegt unter `supabase/functions/dnd-events`.

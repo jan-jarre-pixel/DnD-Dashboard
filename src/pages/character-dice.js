@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const advantage=(/^1?d20(?:[+-]\d+)?$/.test(f)&&typeof advm!=='undefined')?Number(advm)||0:0;
     pending=true;status('Wurf wird sicher auf dem Server erzeugt …');
     try{
-      const {data,error}=await api.rpc('dnd_roll',{
+      const {data,error}=await api.roll({
         p_formula:f,p_label:name||'Freier Wurf',
         p_visibility:'public',p_request_id:crypto.randomUUID(),p_adv:advantage
       });

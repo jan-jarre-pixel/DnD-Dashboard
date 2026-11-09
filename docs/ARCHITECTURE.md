@@ -33,3 +33,9 @@ Phase 2 ergänzt `src/ui/player-dashboard.js` (Ansichten desselben Charakters),
 Workspace-RPC. Vorbereitung und Recaps liegen privat in eigenen Tabellen;
 Veröffentlichungen sind ein ausdrücklicher separater Schreibvorgang.
 [Details und Abnahme](PHASE-2.md).
+
+Phase 3: `src/data/live.js` empfängt tokenautorisierte SSE-Zustellungen aus der
+Supabase Edge Function `dnd-events`. `sync_events` und Cursor sind pro Empfänger
+privat; SQL filtert vor der Übertragung. `dnd_sync_call` kapselt Charakter-CAS und
+idempotente Würfe. Kein clientseitiges Realtime-Rollenattribut/JWT. Details und
+bewusste Kompatibilitätsgrenzen stehen in PHASE-3.md.

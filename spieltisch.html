@@ -12,6 +12,7 @@
 <script defer src="src/core/model.js"></script>
 <script defer src="src/core/store.js"></script>
 <script defer src="src/data/client.js"></script>
+<script defer src="src/data/live.js"></script>
 <script defer src="src/ui/components.js"></script>
 <script defer src="src/ui/shell.js"></script>
 
@@ -45,6 +46,7 @@
       <button type="submit" id="rollButton" class="primary wide">🎲 Würfeln & mit allen teilen</button><p class="tiny">Würfe funktionieren nur während einer aktiven Spielsitzung. Die Ergebnisse kommen direkt aus Supabase.</p>
     </form><div id="lastResult" class="result" aria-live="polite" hidden></div></section></div>
     <section class="paper events"><div class="section-head"><h2>📜 Gemeinsamer Würfelverlauf</h2><span class="tiny" id="rollCountText">Noch keine Würfe</span></div><div id="rolls" aria-live="polite" class="roll-list"></div></section>
+    <section class="paper"><h2>Session-Ereignisse</h2><ol id="sessionFeed" aria-label="Synchronisierte Session-Ereignisse"></ol></section>
     <p class="footer">D&D Spieltisch · Kostenlose GitHub-Pages- und Supabase-Version · <a href="./">Zurück zum Charakterbogen</a></p>
   </div>
   <div id="notice" class="toast" role="alert" hidden></div>

@@ -7,7 +7,7 @@
   'use strict';
   const api = DND.api;
   const allowed = new Set(IDS);
-  const state = { workspace:null, activeView:'dashboard', role:'guest', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{} };
+  const state = { workspace:null, activeView:'dashboard', role:'guest', char:'', busy:false, refreshing:false, polling:null, revision:{}, saving:{}, versions:{}, pending:{}, conflict:null };
   const original = { draw, overview, codeCard, hp, adj, pip, ds, insp, rest, cast, setv, tog };
   const safeMessage = e => {
     const msg = String(e?.message || 'Verbindung fehlgeschlagen.');
@@ -44,7 +44,7 @@
   overview = function () {
     return original.overview().replace(
       'Spieler schicken dir ihren Code (Button „Code erzeugen“ in ihrem Bogen), den du unten einfügst. So siehst du ihren aktuellen Stand. Jeder Spieler sieht und ändert ausschließlich seinen eigenen.',
-      'Live-Gruppenübersicht (alle vier Sekunden aktualisiert). Als Spielleiter kannst du alle Charakterbögen lesen, aber keine Spielerwerte verändern.');
+      'Live-Gruppenübersicht (automatisch synchronisiert). Als Spielleiter kannst du alle Charakterbögen lesen, aber keine Spielerwerte verändern.');
   };
   codeCard = function () {
     if (state.role!=='player') return '';
@@ -104,14 +104,15 @@
       save(state.char);draw();setSt('Sicherung geladen – wird online gespeichert');
     } catch (_) { note('Sicherungscode ungültig oder für einen anderen Charakter.'); }
   };
+  async function readPlayer(id){const {data,error}=await api.rpc('sync.character.read',{key:id});if(error)return {error};return {data:data.sheet,version:data.version,error:null};}
   async function loadData(silent=false) {
     if (state.role==='guest' || state.refreshing) return false;
     if (state.role==='player' && (dirty[state.char] || edit)) return false;
     state.refreshing=true;
     try {
-      let data,error;
-      if (state.role==='gm') ({data,error}=await api.rpc('read_party',{}));
-      else ({data,error}=await api.rpc('read_character',{p_character_key:state.char}));
+      let data,error,version;
+      if (state.role==='gm') ({data,error}=await api.rpc('sync.party.read',{}));
+      else ({data,error,version}=await readPlayer(state.char));
       if (error) throw error;
       if (state.role==='gm') {
         if (!Array.isArray(data)) throw Error('Ungültige Gruppendaten');
@@ -123,7 +124,8 @@
         S=all;mode='d';isDM=true;mchar='';if (cur!=='all'&&!allowed.has(cur)) cur='all';
       } else {
         if (data===null || typeof data!=='object') throw Error('Ungültige Charakterdaten');
-        const id=state.char;
+        if(dirty[state.char]||edit)return false;
+        const id=state.char;state.versions[id]=version;
         S={[id]:normalizeSheet(data,id)};
         mchar=id;mode='p';isDM=false;cur=id;
       }
@@ -146,23 +148,31 @@
   async function persist(id) {
     if (state.saving[id] || state.role!=='player' || state.char!==id) return;
     state.saving[id]=true;
-    const revision=state.revision[id];
-    const payload=normalizeSheet(S[id],id);
+    if(state.conflict){state.saving[id]=false;return;}
+    if(!state.pending[id])state.pending[id]={revision:state.revision[id],payload:{key:id,version:state.versions[id],sheet:normalizeSheet(S[id],id),request_id:crypto.randomUUID()}};
+    const {revision,payload}=state.pending[id];
     try {
-      const {error}=await api.rpc('write_character',{p_character_key:id,p_sheet:payload});
-      if (error) throw error;
+      const {data,error}=await api.rpc('sync.character.save',payload);
+      if(error)throw error;state.versions[id]=data.version;delete state.pending[id];
       if (revision===state.revision[id]) { delete dirty[id];setSt('Online gespeichert ✓'); }
       else {clearTimeout(debounce[id]);debounce[id]=setTimeout(()=>persist(id),150);}
     } catch (e) {
+      if(e.code==='40001'||/Versionskonflikt/.test(e.message||'')){delete state.pending[id];state.conflict=id;showConflict();setSt('Versionskonflikt – Entwurf behalten. Bitte prüfen.');return;}
       setSt(`Nicht gespeichert! ${safeMessage(e)} · neuer Versuch in 10 Sekunden`);
       clearTimeout(debounce[id]);debounce[id]=setTimeout(()=>persist(id),10000);
     } finally { state.saving[id]=false; }
+  }
+  function showConflict(){
+    let el=document.getElementById('syncConflict');if(!el){el=document.createElement('section');el.id='syncConflict';el.className='card';document.getElementById('account').after(el);}
+    el.hidden=false;el.innerHTML='<h2>Charakter wurde gleichzeitig geändert</h2><p>Dein Entwurf bleibt hier erhalten. Es wurde nichts überschrieben. Sichere den Entwurf und lade danach den aktuellen Serverstand, um deine Änderungen dort neu einzutragen.</p><button class="b" id="conflictDraft">Lokalen Entwurf anzeigen</button> <button class="b" id="conflictReload">Serverstand laden</button><textarea id="conflictText" aria-label="Lokaler Entwurf zum Kopieren" rows="6" readonly hidden></textarea>';
+    document.getElementById('conflictDraft').onclick=()=>{const t=document.getElementById('conflictText');t.value=JSON.stringify(normalizeSheet(S[state.char],state.char),null,2);t.hidden=false;t.focus();t.select();};
+    document.getElementById('conflictReload').onclick=async()=>{if(!confirm('Lokalen Entwurf verwerfen und Serverstand laden?'))return;const id=state.char;try{const result=await readPlayer(id);if(result.error)throw result.error;state.versions[id]=result.version;S[id]=normalizeSheet(result.data,id);delete dirty[id];delete state.pending[id];state.conflict=null;el.remove();edit=false;draw();setSt('Aktueller Serverstand geladen ✓');}catch(e){note(safeMessage(e));}};
   }
   function startPolling() {
     if (state.polling) clearInterval(state.polling);
     state.polling=setInterval(() => {
       if (document.visibilityState!=='hidden') loadData(true);
-    },4000);
+    },30000);
   }
   async function loginInternal(role,id,code,isRestore=false) {
     if (state.busy) return;
@@ -174,9 +184,9 @@
       if(!identity){setSt('Privaten Zugangscode eingeben.');return;}
       const loginInput=document.getElementById('loginCode');if(loginInput)loginInput.value='';
       role=identity.role==='owner'?'gm':'player'; id=identity.actor==='gm'?'':identity.actor;
-      let data,error;
-      if(role==='gm')({data,error}=await api.rpc('read_party',{}));
-      else ({data,error}=await api.rpc('read_character',{p_character_key:id}));
+      let data,error,version;
+      if(role==='gm')({data,error}=await api.rpc('sync.party.read',{}));
+      else ({data,error,version}=await readPlayer(id));
       if(error)throw error;
       state.role=role;state.char=id;
       dirty={};edit=false;view='sheet';
@@ -184,7 +194,7 @@
         S={};for(const key of IDS){const row=data.find(x=>x.char_key===key);S[key]=normalizeSheet(row?.sheet||{},key);}
         isDM=true;mode='d';mchar='';cur='all';
       } else {
-        S={[id]:normalizeSheet(data,id)};
+        state.versions[id]=version;S={[id]:normalizeSheet(data,id)};
         isDM=false;mode='p';mchar=id;cur=id;
       }
       try{state.workspace=await apiWorkspace();}catch{}
@@ -197,6 +207,7 @@
     } finally {state.busy=false;}
   }
   const apiWorkspace=()=>DND.api.request('workspace.snapshot',{});
+  window.addEventListener('dnd:live-refresh',()=>loadData(true));
   window.addEventListener('hashchange',()=>{edit=false;draw();});
   window.addEventListener('dnd:dice-rolled',event=>{const result=event.detail;if(state.role==='player'&&result.actor_key===state.char&&result.label==='Initiative'&&state.workspace?.session?.id===result.session_id){state.workspace={...state.workspace,initiative:{total:result.total}};draw(true);}});
   window.playerCondition=function(value){if(!requirePlayer(cur)||!value)return;const c=S[cur];if(!DND.player.conditions.includes(value)&&!c.conditions.includes(value))return;c.conditions=c.conditions.includes(value)?c.conditions.filter(x=>x!==value):[...c.conditions,value];c.status=c.conditions.join(', ').slice(0,100)||'bereit';save(cur);draw();};
@@ -216,13 +227,14 @@
     try{await DND.auth.logout();}catch{note('Lokal abgemeldet. Server-Widerruf fehlgeschlagen; die Sitzung läuft spätestens nach zwölf Stunden ab.');}
     if (state.polling) clearInterval(state.polling);
     for (const t of Object.values(debounce)) clearTimeout(t);
+    state.pending={};state.versions={};state.conflict=null;document.getElementById('syncConflict')?.remove();
     state.role='guest';state.char='';S={};mode='';cur='all';dirty={};draw();
     setSt('Abgemeldet.');
   };
   document.addEventListener('visibilitychange',()=>{
     if (document.visibilityState==='visible') loadData(true);
   });
-  window.addEventListener('dnd:session-ended',()=>{clearInterval(state.polling);state.role='guest';draw();setSt('Sitzung abgelaufen. Bitte erneut anmelden.');});
+  window.addEventListener('dnd:session-ended',()=>{clearInterval(state.polling);for(const t of Object.values(debounce))clearTimeout(t);state.pending={};state.versions={};state.conflict=null;document.getElementById('syncConflict')?.remove();state.role='guest';state.char='';S={};dirty={};draw();setSt('Sitzung abgelaufen. Bitte erneut anmelden.');});
   window.addEventListener('beforeunload',event=>{if(Object.keys(dirty).length){event.preventDefault();event.returnValue='';}});
   // Never reuse legacy offline player choice or local player copies without explicit import.
   S={}; mode='';isDM=false;mchar='';cur='all';draw();

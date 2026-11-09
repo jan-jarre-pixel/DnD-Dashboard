@@ -1,7 +1,7 @@
 // Run only after creating dnd_test in the dedicated local container.
 const fs=require('node:fs');
 const {sql}=require('./local.cjs');
-sql(`CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN;
+sql(`DO $$ BEGIN IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='anon') THEN CREATE ROLE anon NOLOGIN; END IF; IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='authenticated') THEN CREATE ROLE authenticated NOLOGIN; END IF; END $$;
 CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
 CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
 CREATE PUBLICATION supabase_realtime;`,'dnd_test');

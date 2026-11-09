@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-/* D&D multiplayer tabletop — free-tier polling, all authorization inside Supabase RPC. */
+/* D&D multiplayer tabletop — authenticated events with bounded fallback, all authorization inside Supabase RPC. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(state.refreshTimer);clearInterval(state.heartbeatTimer);
     state.actor='';state.role='';state.snapshot=null;state.sessionId='';state.onlineSince=0;
     state.first=true;state.busy=false;state.loading=false;
+    for(const id of ['rolls','party','lastResult','sessionFeed'])$(id).textContent='';$('lastResult').hidden=true;
     $('accessCode').value='';showGate();
   }
   async function signIn(actor,code,restore=false){
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await work.refresh(true);
       await heartbeat();
       clearInterval(state.refreshTimer);clearInterval(state.heartbeatTimer);
-      state.refreshTimer=setInterval(()=>{if(!document.hidden)refresh();},3200);
+      state.refreshTimer=setInterval(()=>{if(!document.hidden)refresh();},30000);
       state.heartbeatTimer=setInterval(()=>{if(!document.hidden)heartbeat();},18000);
       $('connection').textContent='● Online';
     }catch(e){
@@ -59,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }finally{state.busy=false; if(state.actor&&state.snapshot)render((state.snapshot.rolls||[]).slice().sort((a,b)=>Number(b.id)-Number(a.id)),state.snapshot);}
   }
   async function heartbeat(){
-    if(!state.actor)return;
+    if(!state.actor||navigator.onLine===false)return;
     try{await rpc('dnd_heartbeat',{});}catch(e){$('connection').textContent='Verbindung gestört';}
   }
   function displayTime(date){
@@ -133,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOnline=online.has(p.key);
       return `<article class="party-card"><div class="pc-top"><strong>${escapeHtml(p.name||names[p.key]||'Charakter')}</strong><span class="${isOnline?'online':'offline'}">● ${isOnline?'Online':'Offline'}</span></div>
         <div class="pc-class">${escapeHtml(p.class||'')}${p.level?' · Stufe '+escapeHtml(p.level):''}</div><div class="hp-track"><span style="width:${percent}%"></span></div>
-        <div class="pc-bottom"><span>${hp}/${max} TP${temp?' (+'+temp+' temp)':''}</span><span>RK ${Number.isFinite(ac)?ac:'–'}</span></div></article>`;
+        <div class="pc-bottom"><span>${hp}/${max} TP${temp?' (+'+temp+' temp)':''}</span><span>RK ${Number.isFinite(ac)?ac:'–'}</span></div><p class="tiny">${escapeHtml(p.status==='bereit'?'Keine Zustände':p.status||'Keine Zustände')}</p></article>`;
     }).join('')||'<div class="empty">Keine Charaktere gefunden.</div>';
     const nameFor=k=>names[k]||k;
     $('rolls').innerHTML=rolls.length?rolls.map(r=>`<article class="roll-entry ${isCritical(r)} ${r.visibility==='gm'?'secret':''}">
@@ -152,8 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if(!previous || previous.session.id!==session.id){$('gmNotes').value=snap.gm_notes||'';}
     }
-    work.update();
+    renderFeed();work.update();
   }
+  function renderFeed(){const labels={SessionStarted:'Sitzung gestartet',SessionEnded:'Sitzung beendet',SessionPaused:'Sitzung pausiert',SessionResumed:'Sitzung fortgesetzt',ScenePublished:'Szene/Gruppeninfo aktualisiert',CharacterHPChanged:'Lebenspunkte aktualisiert',CharacterStateChanged:'Charakterstatus aktualisiert',WorkspaceChanged:'Privater Arbeitsstand aktualisiert'};const events=(DND.live?.events()||[]).filter(e=>e.session_id===state.sessionId&&labels[e.type]).slice(-50).reverse();$('sessionFeed').replaceChildren(...events.map(e=>{const li=document.createElement('li');li.textContent=displayTime(e.created_at)+' · '+labels[e.type]+(e.payload.key?' · '+(names[e.payload.key]||'Charakter'):'');return li;}));}
+  window.addEventListener('dnd:live-event',renderFeed);
   async function roll(ev){
     ev.preventDefault();if(state.busy)return;
     if(!sessionActive()){notice('Der Spielleiter muss die Sitzung zunächst starten.');return;}
@@ -164,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const formula=`${count}d${faces}${mod?(mod>0?'+':'')+mod:''}`;
     state.busy=true;$('rollButton').disabled=true;
     try{
-      const data=await rpc('dnd_roll',{p_formula:formula,p_label:label||'Wurf',p_visibility:isGM()?$('rollVisibility').value:'public',p_request_id:crypto.randomUUID(),p_adv:adv});
-      showLast(data);await refreshAfterAction();
+      const result=await DND.api.roll({p_formula:formula,p_label:label||'Wurf',p_visibility:isGM()?$('rollVisibility').value:'public',p_request_id:crypto.randomUUID(),p_adv:adv});
+      if(result.error)throw result.error;showLast(result.data);await refreshAfterAction();
     }catch(e){notice('Wurf fehlgeschlagen: '+friendly(e));}
     finally{state.busy=false;$('rollButton').disabled=!sessionActive();}
   }
@@ -190,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     catch(e){notice('Notizen nicht gespeichert: '+friendly(e));}
     finally{state.busy=false;}
   }
+  window.addEventListener('dnd:live-refresh',()=>{refresh();work.refresh(true);});
   $('loginForm').addEventListener('submit',ev=>{ev.preventDefault();signIn($('role').value,$('accessCode').value.trim());});
   $('rollForm').addEventListener('submit',roll);
   document.querySelectorAll('[data-gm]').forEach(b=>b.addEventListener('click',()=>gmAction(b.dataset.gm)));

@@ -49,5 +49,9 @@ jobs:
           BROWSER: ${{ matrix.browser }}
           LOCAL_DB: '1'
           SUPABASE_BROWSER_BUNDLE: /tmp/supabase.js
+      - run: npm run test:multiplayer
+        env:
+          BROWSER: ${{ matrix.browser }}
+          SUPABASE_BROWSER_BUNDLE: /tmp/supabase.js
       - if: always()
         run: docker rm -f dnd-m0-postgres
