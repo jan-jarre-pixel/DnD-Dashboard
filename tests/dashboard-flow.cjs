@@ -35,7 +35,13 @@ module.exports=async function dashboardFlow(page,local,role,viewport){
   await page.locator('#gm-navigation').getByRole('link',{name:'Vorbereitung',exact:true}).click();
   const title='Browserplan '+viewport.width;
   await page.fill('#planTitle',title);await page.fill('#planScene','Verwunschene Brücke');await page.fill('#planInfo','Treffpunkt am Fluss');await page.fill('#planNotes','GM_SECRET_BROWSER');
+  let dropped=false;
+  const loseResponse=route=>{const body=route.request().postDataJSON();if(!dropped&&body.p_action==='plan.save'){local.rpc('dnd_workspace_call',body);dropped=true;return route.fulfill({status:504,json:{code:'GatewayTimeout',message:'Test: Antwort nach Commit verloren'}});}return route.fallback();};
+  await page.route('**/rest/v1/rpc/dnd_workspace_call',loseResponse);
+  await page.getByRole('button',{name:'Plan speichern',exact:true}).click();await page.waitForFunction(()=>document.getElementById('notice').textContent.includes('Antwort nach Commit verloren'));
   await page.getByRole('button',{name:'Plan speichern',exact:true}).click();await page.waitForFunction(()=>document.getElementById('planStatus').textContent.includes('Gespeichert'));
+  await page.unroute('**/rest/v1/rpc/dnd_workspace_call',loseResponse);
+  const ownerToken=await page.evaluate(()=>sessionStorage.getItem('dnd_session_v1'));const plans=local.rpc('dnd_workspace_call',{p_token:ownerToken,p_action:'snapshot',p_payload:{}}).plans;assert.equal(plans.filter(x=>x.title===title).length,1,'retry after a lost response must not create a duplicate plan');
   await page.getByRole('button',{name:'Gespeicherten Plan starten',exact:true}).click();await page.waitForFunction(()=>document.getElementById('sessionTitleDisplay').textContent.startsWith('Browserplan'));await page.locator('#gmPreparation').waitFor({state:'hidden'});
   const playerToken=local.rpc('dnd_sign_in',{p_actor:'len',p_code:local.codes.len}).token;
   const playerScene=()=>local.rpc('dnd_workspace_call',{p_token:playerToken,p_action:'snapshot',p_payload:{}});

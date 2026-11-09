@@ -66,7 +66,7 @@
   async function command(action,payload){
    const key=JSON.stringify([action,payload]);if(!pending.has(key))pending.set(key,crypto.randomUUID());
    try{const result=await rpc('workspace.'+action,{...payload,request_id:pending.get(key)});pending.delete(key);return result;}
-   catch(error){if(error.code)pending.delete(key);throw error;}
+   catch(error){/* A proxy error can arrive after commit; retain the same request ID for retry. */throw error;}
   }
   const changed=()=>{planDirty=true;$('startPlan').disabled=true;$('planStatus').textContent='Nicht gespeichert. Erst speichern, dann starten.';};
   function showPlan(value){plan=value;planDirty=false;for(const [id,key] of [['planTitle','title'],['planScene','scene'],['planInfo','party_info'],['planNotes','private_notes']])$(id).value=value?.[key]||'';$('startPlan').disabled=!value||value.status!=='planned';$('planStatus').textContent=value?`Gespeichert · Version ${value.version} · ${value.status==='planned'?'Vorbereitet':value.status==='live'?'Laufend':'Beendet'}`:'Neuer, noch nicht gespeicherter Plan.';if(value)$('planList').value=value.id;}

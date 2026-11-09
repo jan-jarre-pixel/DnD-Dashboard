@@ -106,7 +106,8 @@ Schema und Funktionen bleiben auf dem vorhandenen kostenlosen Supabase-Projekt.
 - Erweiterte Browserabläufe für alle fünf Rollen bei Desktop/Mobil: drei
   Charakteransichten, echte Speicherung auf lokaler DB, Schaden, Bedingungen,
   Inventar/Journal/Quest-Notizen, Initiative, Rast und kompletter GM-Zyklus mit
-  Plan, Start/Pause/Fortsetzen, Veröffentlichung, Ende und erneut geladenem Recap.
+  Plan, verlorene Proxy-Antwort nach Commit mit sicherem Retry, Start/Pause/
+  Fortsetzen, Veröffentlichung, Ende und erneut geladenem Recap.
 - Frisches privates Backup vor Migration; auf einer lokalen Kopie wiederhergestellt.
   Migration erhält alle neun bisherigen Anwendungstabellen und die Identitäten
   der drei bisherigen RPC-Funktionen. Keine Tests schreiben echte Spielerwerte.
