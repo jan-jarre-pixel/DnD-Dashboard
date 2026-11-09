@@ -1,7 +1,8 @@
 # Phase 2 – Rollenadaptive Dashboards und Sitzungssteuerung
 
-Status: Cross-Browser-CI bestanden; produktive Migration erfolgreich.
-Frontend-Merge und Kontrolle der veröffentlichten Phase-2-Oberfläche ausstehend. Pakete: DND-PLAYER-001, DND-GM-001.
+Status: Abgeschlossen, integriert und veröffentlichte Version lesend produktiv bestätigt
+(2026-11-09). Pakete: DND-PLAYER-001, DND-GM-001. Positive Rollen-/Speicherabläufe
+sind mit echten isolierten PostgreSQL-RPCs getestet; keine Live-Spieltests mit Originalcodes.
 
 ## Spieleroberfläche
 
@@ -112,8 +113,9 @@ Schema und Funktionen bleiben auf dem vorhandenen kostenlosen Supabase-Projekt.
   Migration erhält alle neun bisherigen Anwendungstabellen und die Identitäten
   der drei bisherigen RPC-Funktionen. Keine Tests schreiben echte Spielerwerte.
 - npm audit: keine bekannten Schwachstellen im Lockfile-Stand.
-- Vollständige Chromium-/Firefox-/WebKit-CI erfolgreich; abschließende
-  Frontend-Veröffentlichung und Produktionskontrolle noch ausstehend.
+- Finale Chromium-/Firefox-/WebKit-CI erfolgreich: 30 Rollen-/Viewport-Szenarien.
+  Veröffentlichte Version auf Desktop/Mobil lesend geprüft; elf reale API-
+  Ablehnungen bestanden. Alle 19 Laufzeitdateien bytegleich zum geprüften Build.
 
 Es werden keine Live-Spieltests mit privaten Originalcodes behauptet.
 
@@ -155,3 +157,38 @@ Hinweis zur API-Prüfung: Die erste Assertion erwartete HTTP 401. Die tatsächli
 PostgREST-Abbildung von SQLSTATE 28000 ist hier HTTP 403; die Antwort enthält die
 vorgesehene Sitzungssperre. Der Test prüft daher 401/403 und nicht einen falschen
 festen Status. Kein offener Autorisierungsfehler.
+
+
+## Abschluss und nächste Phase
+
+- Implementierungsstand: f5136ff0267be5e514c0589f812a75579b0ed3d3.
+- [Finale grüne CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42538020143).
+- PR #5 regulär integriert: df3ee3859ced44d90b1c4eab6447ea07cc4cc6da.
+- [Erfolgreiches Pages-Deployment](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42538313742).
+- Zieladresse bestätigt: https://jan-jarre-pixel.github.io/DnD-Dashboard/ .
+- Lesende Produktionstests: beide Login-Einstiege bei 1440×900 und 390×844,
+  echte Ablehnung ungültiger Codes ohne akzeptierte Testsitzung. Elf echte API-
+  Ablehnungen; vollständiger Buildvergleich der 19 ausgelieferten Laufzeitdateien.
+- Privater Nachher-Export aller 13 Anwendungstabellen in isolierter Kopie
+  wiederhergestellt und exakt verglichen. Git-Bundles vor/nach Implementierung
+  geprüft. Dies ersetzt keinen vollständigen Supabase-Auth-/Storage-Dump.
+- Quellrepository weiterhin unverändert auf
+  94bc4c75a853b1f03508a4f56446b3c1a7e8386e; alte Website bleibt Rückfallmöglichkeit.
+- Kein offener blockierender Phase-2-Befund. Lokales WebKit benötigt zusätzliche
+  Betriebssystembibliotheken; die WebKit-Abnahme ist durch die erfolgreiche CI
+  belegt. Vollständige WCAG-Zertifizierung und echte Gerätetests werden nicht behauptet.
+- Nächstes Arbeitspaket: DND-RT-001 (Phase 3), sichere Echtzeitverbindungen,
+  Wiederverbindung, Ereignisnachladen und Versionskonflikte bei Charakteränderungen.
+
+## Veränderte Dateien
+
+- Einstieg/Anbindung: index.html, online.js, spieltisch.html; src/pages/tabletop.js,
+  src/pages/character-dice.js; src/legacy/character-sheet.js.
+- Gemeinsames Modell und Oberfläche: src/core/model.js, src/data/client.js,
+  src/ui/shell.js, src/ui/player-dashboard.js, src/ui/gm-workspace.js,
+  public/styles/dashboards.css.
+- Datenbank: supabase/migrations/20261108235010_phase2_session_workspace.sql.
+- Qualitätssicherung: package.json; tests/browser.cjs, tests/dashboard-flow.cjs,
+  tests/player-dashboard.test.cjs, tests/live-readonly.cjs; tests/db/local.cjs,
+  tests/db/rpc.cjs, tests/db/concurrency.cjs, tests/db/workspace.cjs.
+- Dokumentation: README.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/PHASE-2.md.

@@ -5,7 +5,7 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phase 1 produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0, Phase 1 und Phase 2 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 ## Lokal prüfen
 
@@ -24,10 +24,11 @@ zusätzlich Rollen, Würfel, Geheimhaltung und parallele Anfragen lokal.
 `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` prüft optional die reale API
 mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 
-`dist/` enthält ausschließlich die vier Laufzeitdateien und `.nojekyll`.
+`dist/` enthält ausschließlich die HTML-/JS-Einstiegspunkte, Laufzeitmodule,
+öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1 und #3 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3 und #5 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
@@ -51,7 +52,7 @@ SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 - [Historische Multiplayer-Dokumentation](docs/legacy-multiplayer.md)
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
-in M0.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+in M0.md, PHASE-1.md und PHASE-2.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
