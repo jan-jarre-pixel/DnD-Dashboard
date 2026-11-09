@@ -44,7 +44,7 @@
   overview = function () {
     return original.overview().replace(
       'Spieler schicken dir ihren Code (Button „Code erzeugen“ in ihrem Bogen), den du unten einfügst. So siehst du ihren aktuellen Stand. Jeder Spieler sieht und ändert ausschließlich seinen eigenen.',
-      'Live-Gruppenübersicht (automatisch synchronisiert). Als Spielleiter kannst du alle Charakterbögen lesen, aber keine Spielerwerte verändern.');
+      'Live-Gruppenübersicht (automatisch synchronisiert). Diese Charakteransicht ist nur lesbar; Kampfwerte steuerst du im Control Room.');
   };
   codeCard = function () {
     if (state.role!=='player') return '';
@@ -223,6 +223,7 @@
     loginInternal(choice==='gm'?'gm':'player',choice==='gm'?'':choice,code);
   };
   window.cloudLogout = async function () {
+    if(DND.combat?.allowLogout?.()===false)return;
     if(Object.keys(dirty).length&&!confirm('Ungespeicherte Änderungen verwerfen und abmelden?'))return;
     try{await DND.auth.logout();}catch{note('Lokal abgemeldet. Server-Widerruf fehlgeschlagen; die Sitzung läuft spätestens nach zwölf Stunden ab.');}
     if (state.polling) clearInterval(state.polling);

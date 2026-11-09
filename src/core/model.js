@@ -20,6 +20,8 @@
   for(const k of ['slU','rsU']){out[k]={};if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))for(const [i,v] of Object.entries(s[k]))if(/^(0|[1-9][0-9]?)$/.test(i)&&Number.isFinite(Number(v)))out[k][i]=Math.max(0,Math.min(99,Math.trunc(Number(v))));}
   if(s.sk&&typeof s.sk==='object'&&!Array.isArray(s.sk)){out.sk={...def.sk};for(const [skill,v] of Object.entries(s.sk))if(skills.some(x=>x[0]===skill)&&[0,1,2].includes(Number(v)))out.sk[skill]=Number(v);}
   out.conditions=Array.isArray(s.conditions)?[...new Set(s.conditions.filter(x=>typeof x==='string'&&x.length<=40))].slice(0,20):[];
+  out.concentration=typeof s.concentration==='string'?s.concentration.slice(0,120):'';
+  out.effects=Array.isArray(s.effects)?[...new Set(s.effects.filter(x=>typeof x==='string'&&x.length<=80))].slice(0,12):[];
   out.questNotes=out.questNotes||'';out.status=out.status||'bereit';
   out.char=id;return out;
  }

@@ -42,6 +42,7 @@ Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
 SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 **Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-4-Bericht: Kampfmanager und My Turn](docs/PHASE-4.md)
 - [Phase-3-Bericht: sichere Live-Ereignisse](docs/PHASE-3.md)
 - [Phase-2-Bericht: Dashboards und Sitzungssteuerung](docs/PHASE-2.md)
 - [Phase-1-Bericht und Sicherheitsentscheidungen](docs/PHASE-1.md)

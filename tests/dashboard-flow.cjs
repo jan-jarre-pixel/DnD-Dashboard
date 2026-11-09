@@ -22,7 +22,7 @@ module.exports=async function dashboardFlow(page,local,role,viewport){
   await page.getByRole('link',{name:'Full Sheet',exact:true}).click();await page.getByRole('heading',{name:'Ausrüstung & Items',exact:true}).waitFor();assert((await page.locator('#sheet').innerText()).includes('Testseil'));assert((await page.locator('#sheet').innerText()).includes('Die Brücke untersuchen'));
   await page.getByRole('link',{name:'Quick View',exact:true}).click();
   await page.getByRole('button',{name:'Initiative würfeln',exact:true}).click();await page.waitForFunction(()=>document.getElementById('st').textContent.includes('Wurf für alle'));
-  await page.keyboard.press('Escape');assert((await page.locator('#sheet').innerText()).includes('Gewürfelte Initiative'));
+  await page.keyboard.press('Escape');assert((await page.locator('#sheet').innerText()).includes('Letzter eigener Initiativwurf'));
   if(process.env.SCREENSHOT_DIR)await page.screenshot({path:`${process.env.SCREENSHOT_DIR}/${role}-${viewport.width}-quick.png`,fullPage:true});
   await page.getByRole('button',{name:'Kurze Rast',exact:true}).click();await saved();
   page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Lange Rast',exact:true}).click();await saved();assert.equal(character().hp,character().hpMax);
