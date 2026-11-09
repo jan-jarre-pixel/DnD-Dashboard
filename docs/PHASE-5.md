@@ -205,3 +205,17 @@ Schreibaktionen und Eingaben bleiben bis zum Abschluss einer laufenden Anfrage
 gesperrt; eine absichtlich verzögerte und dann verlorene HTTP-Antwort prüft dies
 zusammen mit der idempotenten Rückbestätigung. Echtes Panning berücksichtigt die
 SVG-Skalierung einschließlich seitlicher Leerflächen.
+
+
+Kartenwechsel sind zusätzlich gegen verspätete Antworten einer vorherigen Karte
+geschützt. Ein absichtlich zurückgehaltener alter Snapshot darf die nach einem
+bestätigten Upload neu ausgewählte Karte nicht überschreiben. Explizite
+Aktualisierungen behalten ihren Discard-Auftrag auch hinter einem laufenden Abruf.
+Native Formulare erhalten schrumpfbare Breiten und umbrechende Knöpfe; die
+Viewport-Prüfung wartet auf den tatsächlichen Reflow und prüft anschließend
+weiterhin die gesamte Dokumentbreite.
+
+WebKit ließ sich nach anfänglich fehlenden Systembibliotheken ohne Root-Installation
+mit lokal extrahierten Debian-Bibliotheken starten. Ein vollständiger gezielter
+Kartenablauf mit echter WebKit-Engine bestand anschließend lokal. Die CI verwendet
+weiter ihre unveränderte Installation der gepinnten Browser/Abhängigkeiten.
