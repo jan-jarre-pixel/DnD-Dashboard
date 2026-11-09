@@ -1,6 +1,7 @@
 # Phase 4 – Gemeinsamer Kampfmanager und My Turn
 
-Status: Implementiert; lokale Abnahme läuft. CI, produktive Migration und Pages-Abnahme ausstehend.
+Status: Abgeschlossen, integriert und lesend produktiv geprüft am 2026-11-09.
+Positive Rollen-/Kampfaktionen ausschließlich mit isolierten Testdaten geprüft.
 Arbeitspaket: DND-COMBAT-001. Ausschließlich DnD-Dashboard; keine bezahlte Infrastruktur.
 
 ## Funktionen
@@ -147,7 +148,7 @@ Hilfsfunktionen sind privat, EXECUTE entzogen, search_path leer.
   Aktionsbudgets, Freigabe, Rundenwechsel, Mobilansicht und Kampfende.
 - Native Formulare/Tastatur, sichtbare Statusmeldungen, Fokuswiederherstellung
   und bestehende reduzierte Bewegung. Keine behauptete vollständige WCAG- oder
-  physische Geräte-Zertifizierung. Chromium/Firefox/WebKit-CI noch ausstehend.
+  physische Geräte-Zertifizierung. Chromium/Firefox/WebKit-CI vollständig bestanden.
 
 ## Offene Folgephasen
 
@@ -157,7 +158,7 @@ Inventar-/Gegenstandsautomatisierung Phase 7. Offline-Queue/Exporte Phase 8.
 Keine dieser Funktionen wird durch die nullable Referenzfelder als fertig ausgegeben.
 Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
 
-## Erste Integrationsnachweise
+## Integrations- und Produktionsnachweise
 
 - PR #9: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/9 .
 - Erste vollständige grüne CI auf 229478ef3bc9c7cb496c3885d5b86d00bcbf602a:
@@ -165,8 +166,20 @@ Positive Produktions-Spieltests mit Originalcodes werden nicht behauptet.
   31 Node-Prüfungen, insgesamt 92 DB-Szenarien plus Parallelität/50 Würfe,
   30 Rollen-/Viewport-Szenarien und je ein erweiterter paralleler Mehrspieler-
   Durchlauf in Chromium, Firefox und WebKit bestanden.
-- Ergänzte Rückbestätigung für bereits gesperrte Aktionsknöpfe lokal bestanden;
-  sie wird vor dem Frontend-Merge nochmals in allen drei Browsern geprüft.
+- Rückbestätigung bereits gesperrter Aktionsknöpfe in allen drei Browsern bestanden.
+- Finale CI auf d87cbc61d4ddd69f19592427d5f71c9bdc75735a:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42594449082 .
+  31 Node-Tests, 93 DB-Szenarien plus Parallelität/50 Würfe, 30 Rollen-/Viewport-
+  Szenarien und drei parallele Mehrspieler-/Kampfdurchläufe bestanden.
+- Merge von PR #9: 8814d77803c6bf3ef49fe3d20dd63be3c2e2165c.
+  Erfolgreiche Pages-Veröffentlichung:
+  https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42596093733 .
+- Veröffentlichtes Login und echte Ablehnung ungültiger Codes auf beiden Seiten
+  bei 1440×900 und 390×844 geprüft; keine Browserfehler.
+- Alle 22 veröffentlichten Laufzeitdateien entsprechen bytegenau dem geprüften Build.
+- Abschließende Sicherung aller 22 Anwendungstabellen isoliert exakt wiederhergestellt;
+  Würfel-Identity-Sequenz für anschließende neue Würfe synchronisiert.
+  Private Daten und Zugangsmaterial ausschließlich außerhalb des Repositories.
 - Produktive Migration erfolgreich als Version 20261109090211 registriert.
   Dateiname an tatsächliche Historie angepasst; SQL-Inhalt unverändert.
 - Alle 17 bisherigen Tabellen unmittelbar vor/nach Migration identisch.
@@ -184,7 +197,7 @@ Lokale Zwischenbefunde wurden korrigiert: SQL-CASE-Parserfehler vor jeder
 produktiven Anwendung, auf die Loginform eingegrenzte Browserselektoren wegen
 neuer versteckter Formulare und aktualisierte Prüfung der präziseren Bezeichnung
 „Letzter eigener Initiativwurf“. Kein Test übersprungen, keine Prüfung des echten
-Würfelergebnisses entfernt. Frontend-Merge/Produktionsabnahme stehen noch aus.
+Würfelergebnisses entfernt. Keine fehlgeschlagenen oder ausgelassenen finalen CI-Prüfungen.
 
 
 Ressourcen-Kompatibilitätsprüfung: Eine ergänzende Migration
@@ -196,4 +209,22 @@ Der Erstbefund konnte nur eine betroffene Aktion ablehnen; bisherige Daten wurde
 nicht beschädigt. Die Ergänzung verändert keine Tabellendaten. Alle 22 Tabellen,
 Funktions-OIDs und Grants vor/nach Anwendung identisch, nur die neue Kampf-RPC-
 Definition verbessert. Insgesamt jetzt 93 DB-Szenarien (28 neue Kampf-Szenarien).
-Erneute vollständige CI vor Frontend-Merge erforderlich.
+Die erneute vollständige CI vor dem Frontend-Merge wurde erfolgreich abgeschlossen.
+
+
+## Geänderte Dateien (PR #9)
+
+- Einstieg/Integration: `index.html`, `spieltisch.html`, `online.js`,
+  `src/pages/tabletop.js`, `src/ui/shell.js`, `src/ui/gm-workspace.js`,
+  `src/ui/player-dashboard.js`.
+- Daten und Darstellung: `src/core/model.js`, `src/data/client.js`,
+  `src/ui/combat.js`, `public/styles/combat.css`.
+- Beide oben genannten Migrationen unter `supabase/migrations/`.
+- Prüfungen: `tests/db/combat.cjs`, `tests/db/rpc.cjs`, `tests/combat-flow.cjs`,
+  `tests/multiplayer.cjs`, `tests/browser.cjs`, `tests/dashboard-flow.cjs`,
+  `tests/production-readonly.cjs`, `tests/live-readonly.cjs`, `package.json`.
+- Dokumentation: `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, dieser Bericht.
+
+Keine Änderungen an sideline26, keine privaten Zugangscodes in Git,
+keine neuen kostenpflichtigen Ressourcen. Der nächste Implementierungsschritt ist
+DND-MAP-001 (Phase 5): Karten und Tokens auf derselben Kampfteilnehmerinstanz.

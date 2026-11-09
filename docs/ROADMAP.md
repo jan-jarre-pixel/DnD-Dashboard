@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-09. **M0 sowie Phasen 1–3 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-09. **M0 sowie Phasen 1–4 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **7 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT).
-Phase 4 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **8 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT).
+Phase 5 ist der nächste Implementierungsschritt; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -29,7 +29,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Alle drei Ansichten verwenden dieselben Daten.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 27 Node, 49 DB-Szenarien plus Parallelität/Recovery und 30 Cross-Browser-Szenarien bestanden; veröffentlichte Version lesend geprüft.
-- Offene Probleme: Keine vollständige Mengen-/Gegenstandsautomatisierung (Phase 7), kein My-Turn (Phase 4).
+- Offene Probleme: Keine vollständige Mengen-/Gegenstandsautomatisierung (Phase 7); My-Turn in Phase 4 ergänzt.
 - Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-GM-001 – 2 GM Control Room
@@ -37,7 +37,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Sessionzyklen und private Notizen rollenrichtig nutzbar.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 16 zusätzliche Workspace-DB-Szenarien, vollständiger GM-Zyklus einschließlich verlorener Antwort in drei Browsern bestanden; Migration, Restore und Veröffentlichung geprüft.
-- Offene Probleme: Karten/NPCs/Encounter bleiben spätere Phasen; Entwürfe ohne Serverbestätigung sind flüchtig.
+- Offene Probleme: Karten/NPC-Verwaltung folgen später; Kampfbegegnungen sind in Phase 4 ergänzt. Entwürfe ohne Serverbestätigung sind flüchtig.
 - Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-RT-001 – 3 Multiplayer und Würfel
@@ -52,9 +52,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Atomare Aktionen, Runden, Sichtbarkeit geprüft.
 - Priorität: P1. Abhängigkeiten: DND-RT-001.
-- Implementierungsstatus: Implementiert. Teststatus: Lokale DB-/Browserabnahme läuft; CI und Produktionsabnahme ausstehend.
+- Implementierungsstatus: Produktiv bestätigt (lesend). Teststatus: 31 Node, 93 DB-Szenarien plus Parallelität/50 Würfe, 30 Rollen-/Viewport-Szenarien und drei parallele Mehrspieler-/Kampfdurchläufe bestanden; 19 lesende API-Prüfungen, Pages-Build und isolierter Restore aller 22 Tabellen bestanden.
 - Offene Probleme: Karten erst Phase 5, umfassender Encounter Builder Phase 6; manuelle Regelentscheidungen dokumentiert.
-- Commit/PR: Branch feature/phase4-combat; PHASE-4.md.
+- Commit/PR: [PR #9](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/9), Merge 8814d77803c6bf3ef49fe3d20dd63be3c2e2165c; PHASE-4.md.
 
 ## DND-MAP-001 – 5 Karten und VTT
 
@@ -143,8 +143,8 @@ Implementierungscommit.
 | 1 – Architektur und Designsystem | Abgeschlossen; lesend produktiv geprüft |
 | 2 – Spieler-/GM-Dashboard | Abgeschlossen; lesend produktiv geprüft; PHASE-2.md |
 | 3 – Realtime und Multiplayer | Abgeschlossen; lesend produktiv geprüft; PHASE-3.md |
-| 4 – Kampfmanager | Offen; nächster Schritt |
-| 5 – Karten und VTT | Offen |
+| 4 – Kampfmanager | Abgeschlossen; lesend produktiv geprüft; PHASE-4.md |
+| 5 – Karten und VTT | Offen; nächster Schritt |
 | 6 – Kampagnenverwaltung | Offen |
 | 7 – Inventar und Automatisierung | Offen |
 | 8 – Komfortfunktionen | Offen |
