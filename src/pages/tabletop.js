@@ -200,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('saveNotes').addEventListener('click',saveNotes);
   $('logout').addEventListener('click',async()=>{if(DND.inventory?.allowLogout?.()===false||DND.campaign?.allowLogout?.()===false||!work.allowLogout()||DND.combat?.allowLogout?.()===false||DND.vtt?.allowLogout?.()===false)return;resetSession();try{await DND.auth.logout();}catch{notice('Lokal abgemeldet; Server-Widerruf fehlgeschlagen.');}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.actor){heartbeat();refresh();}});
+  window.addEventListener('dnd:session-restored',()=>{if(!state.actor&&!state.busy&&DND.auth.identity())signIn('','',true);});
   window.addEventListener('dnd:session-ended',()=>{resetSession();notice('Sitzung abgelaufen. Bitte erneut anmelden.');});
   signIn('','',true);
 })();

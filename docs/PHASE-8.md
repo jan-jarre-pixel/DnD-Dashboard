@@ -64,7 +64,9 @@ entschlüsseln. Für dauerhafte Sicherungen die private JSON-Datei herunterladen
 
 **Prüfen & synchronisieren** validiert zuerst die Sitzung erneut und verwendet
 anschließend den vorhandenen autorisierten Charakter-RPC mit Originalversion.
-Es gibt keine automatische Hintergrundübernahme dieser Offline-Entwürfe.
+Es gibt keine automatische Hintergrundübernahme dieser Offline-Entwürfe. Nach
+der bestätigten Wiederverbindung laden Charakterseite und Spieltisch ihre
+Online-Ansichten wieder, ohne einen manuellen Reload zu verlangen.
 Bei einer verlorenen Antwort wird dieselbe unveränderliche Anfrage mit derselben
 Request-ID wiederholt, auch nach einem Neuladen des Tabs. Solange die Antwort
 unklar ist, bleiben weitere Notizänderungen gesperrt. Die Aufbewahrung von
