@@ -50,3 +50,16 @@ Kartenfreigabe und versionierte Tokenpositionen. Keine vollständige Karten-URL
 an Spieler; serverseitige Kachel-/Objektprojektion. `vtt_tokens.combatant_id`
 verweist eindeutig auf die gemeinsame Kampfinstanz, ohne deren TP zu kopieren.
 Geometrie liegt separat in `src/core/vtt.js`. Grenzen und Abnahme: PHASE-5.md.
+
+## Kampagnenbuch (Phase 6)
+
+`src/ui/campaign.js` nutzt ausschließlich `campaign.*` am bestehenden Client.
+`dnd_campaign_call` prüft GM-Identität, CAS und unveränderliche Command-Receipts;
+Spieler erhalten nur explizite Veröffentlichungssnapshots der serverseitig
+gebundenen aktuellen Kampagne. Story-Kanten benötigen sichtbare Endpunkte.
+`campaign_sessions` bindet Sitzungen unveränderlich, `campaign_resources` verknüpft
+bestehende Pläne, Karten und Encounters. Additive Trigger schützen auch Aufrufe
+bestehender Clients gegen kampagnenübergreifende Aktivierung/Veröffentlichung.
+Der Builder ruft den bestehenden Kampf-RPC transaktional auf; HP bleiben im
+Charakterbogen beziehungsweise in `combatants`, Kartentoken referenzieren dieselbe
+Instanz. `src/core/campaign.js` liefert die ausdrücklich beratende DMG-2014-Schätzung.

@@ -1,0 +1,65 @@
+const assert=require('node:assert/strict');
+module.exports=async(pages,{rpc})=>{
+ const {gm,len}=pages;for(const p of [gm,len]){await p.bringToFront();await p.setViewportSize({width:1440,height:900});}
+ await gm.locator('#gm-navigation a[href="#campaign"]').click();await gm.locator('#campaignPanel').waitFor({state:'visible'});
+ const api=(action,payload={})=>gm.evaluate(({action,payload})=>DND.api.request('campaign.'+action,payload),{action,payload});
+ const snap=()=>api('snapshot',{campaign_id:null});
+ await gm.locator('#campaignSelect option').first().waitFor({state:'attached'});
+ // A pre-command snapshot arrives after the save acknowledgement. It must never undo navigation.
+ let releaseSnapshot=()=>{},held=false;const snapshotGate=new Promise(r=>releaseSnapshot=r);
+ const stale=async route=>{const body=route.request().postDataJSON();if(!held&&body.p_action==='snapshot'){held=true;const previous=rpc('dnd_campaign_call',body);await gm.evaluate(()=>window.CAMPAIGN_SNAPSHOT_HELD=true);await snapshotGate;return route.fulfill({json:previous});}return route.fallback();};
+ await gm.route('**/rest/v1/rpc/dnd_campaign_call',stale);await gm.evaluate(()=>window.dispatchEvent(new Event('dnd:live-refresh')));await gm.waitForFunction(()=>window.CAMPAIGN_SNAPSHOT_HELD===true);
+ try{await gm.locator('#campaignMeta').evaluate(f=>f.closest('details').open=true);await gm.locator('#campaignNew').click();await gm.locator('#campaignMeta [name=title]').fill('Phase 6 Browserkampagne');await gm.locator('#campaignMeta [name=description]').fill('GM_CAMPAIGN_SECRET');await gm.locator('#campaignMeta button[type=submit]').click();await gm.waitForFunction(()=>document.getElementById('campaignNotice').textContent.includes('vom Server bestätigt'));}finally{releaseSnapshot();}
+ try{await gm.waitForFunction(()=>document.querySelector('#campaignSelect option:checked')?.textContent==='Phase 6 Browserkampagne');}catch(err){console.error('Campaign selection after save',await gm.evaluate(()=>({notice:document.getElementById('campaignNotice').textContent,selected:document.getElementById('campaignSelect').selectedOptions[0]?.textContent,title:document.querySelector('#campaignMeta [name=title]').value})));throw err;}finally{await gm.unroute('**/rest/v1/rpc/dnd_campaign_call',stale);}
+
+ const cid=await gm.locator('#campaignSelect').inputValue();
+ async function create(kind,title,body,fields={}){
+  await gm.locator('#campaignKind').selectOption(kind);await gm.locator('#campaignNewRecord').click();await gm.locator('#campaignEditor [name=title]').fill(title);await gm.locator('#campaignEditor [name=body]').fill(body);await gm.locator('#campaignEditor [name=private_notes]').fill('GM_RECORD_SECRET');
+  for(const [name,value]of Object.entries(fields)){const input=gm.locator(`#campaignEditor [name=${name}]`);if(await input.evaluate(x=>x.tagName==='SELECT'))await input.selectOption(String(value));else await input.fill(String(value));}
+  await gm.locator('#campaignEditor button[type=submit]').click();await gm.waitForFunction(t=>[...document.querySelectorAll('#campaignRecords article h3')].some(x=>x.textContent.includes(t)),title);await gm.locator('#campaignClose').click();
+  return (await api('snapshot',{campaign_id:cid})).records.find(r=>r.title===title);
+ }
+ async function publish(id){gm.once('dialog',d=>d.accept());await gm.locator(`[data-record="${id}"] [data-campaign="record.publish"]`).click();await gm.locator(`[data-record="${id}"] .campaign-state`).filter({hasText:'Freigegebener'}).waitFor();}
+ const malicious='<img src=x onerror="window.CAMPAIGN_XSS=1">';
+ const quest=await create('quest',malicious,'PUBLIC_QUEST',{status:'active',objectives:'Find the key',reward:'A promise'});await publish(quest.id);
+ assert(!(await len.evaluate(()=>DND.api.request('campaign.snapshot'))).records.some(r=>r.id===quest.id),'other campaign remains isolated before a new session starts');
+ const w=await gm.evaluate(()=>DND.api.request('workspace.snapshot'));if(['active','paused'].includes(w.session.status))await gm.evaluate(sid=>DND.api.request('workspace.session.end',{session_id:sid,request_id:crypto.randomUUID()}),w.session.id);
+ await gm.locator('#campaignStart').click();await len.waitForFunction(id=>document.querySelector(`#campaignRecords [data-record="${id}"]`),quest.id);
+ for(const p of [gm,len])assert.equal(await p.evaluate(()=>window.CAMPAIGN_XSS),undefined);
+ for(const role of ['len','gra','sas','pei']){const data=await pages[role].evaluate(()=>DND.api.request('campaign.snapshot'));assert.equal(data.campaign.id,cid);assert(!JSON.stringify(data).includes('GM_RECORD_SECRET'));assert(!JSON.stringify(data).includes('GM_CAMPAIGN_SECRET'));}
+ // Concurrent server changes preserve the user's stale draft and reject its overwrite.
+ await gm.locator(`[data-record="${quest.id}"] [data-campaign=edit]`).click();await gm.locator('#campaignEditor [name=body]').fill('LOCAL_DRAFT_KEEP');
+ const latest=(await api('snapshot',{campaign_id:cid})).records.find(r=>r.id===quest.id);await api('record.save',{campaign_id:cid,kind:'quest',id:latest.id,version:latest.version,title:latest.title,body:'REMOTE_DRAFT',data:latest.data,request_id:require('node:crypto').randomUUID()});
+ await gm.evaluate(()=>window.dispatchEvent(new Event('dnd:live-refresh')));assert.equal(await gm.locator('#campaignEditor [name=body]').inputValue(),'LOCAL_DRAFT_KEEP');await gm.locator('#campaignEditor button[type=submit]').click();await gm.locator('#campaignNotice').filter({hasText:'Versionskonflikt'}).waitFor();assert.equal(await gm.locator('#campaignEditor [name=body]').inputValue(),'LOCAL_DRAFT_KEEP');gm.once('dialog',d=>d.accept());await gm.locator('#campaignReload').click();await gm.waitForFunction(()=>document.getElementById('campaignEditor').hidden);
+ const npc=await create('npc','Captain Mira','PUBLIC_NPC');await publish(npc.id);
+ const journal=await create('journal','The first journey','PUBLIC_JOURNAL');await publish(journal.id);
+ const a=await create('node','Known harbour','PUBLIC_HARBOUR');await publish(a.id);const b=await create('node','SECRET_CAVE','HIDDEN_CAVE');
+ const edge=await create('edge','Old passage','PUBLIC_PASSAGE',{from:a.id,to:b.id});await publish(edge.id);assert(!(await len.evaluate(()=>DND.api.request('campaign.snapshot'))).records.some(r=>r.id===edge.id));
+ await gm.locator('#campaignKind').selectOption('node');await publish(b.id);await len.waitForFunction(id=>document.querySelector(`#campaignRecords [data-record="${id}"]`),edge.id);assert.match(await len.locator('#campaignGraph').innerText(),/Known harbour → SECRET_CAVE/);
+ const template=await create('statblock','Browser goblin','GM_STATS',{hp:12,ac:14,xp:100});
+ // Ensure a previous encounter is selected, as it is after a real combat/VTT session.
+ if(!await gm.evaluate(()=>DND.combat.current()?.combat?.id)){
+  await gm.evaluate(async()=>{const state=await DND.api.request('combat.snapshot');const old=await DND.api.request('combat.create',{title:'Previous encounter',session_id:state.session_id,request_id:crypto.randomUUID()});await DND.combat.open(old.id);});
+  await gm.waitForFunction(()=>DND.combat.current()?.combat?.title==='Previous encounter');
+  await gm.locator('#gm-navigation a[href="#campaign"]').click();
+ }
+ await gm.locator('#campaignKind').selectOption('encounter');await gm.locator('#campaignNewRecord').click();
+ await gm.locator('#campaignEditor [name=title]').fill('Four goblins');await gm.locator('[data-template]').selectOption(template.id);await gm.locator('[data-count]').fill('4');await gm.locator('#campaignEditor [name=loot]').fill('PRIVATE_PLANNED_LOOT');
+ assert.match(await gm.locator('#campaignDifficulty').innerText(),/Mittel.*800 angepasste EP/);
+ await gm.locator('#campaignEditor button[type=submit]').click();await gm.waitForFunction(()=>document.querySelector('#campaignRecords h3')?.textContent.includes('Four goblins'));await gm.locator('#campaignClose').click();
+ // Keep an old encounter response in flight while the builder opens the new canonical instance.
+ let releaseCombat=()=>{},combatHeld=false;const combatGate=new Promise(r=>releaseCombat=r);
+ const staleCombat=async route=>{const body=route.request().postDataJSON();if(!combatHeld&&body.p_action==='snapshot'){combatHeld=true;const previous=rpc('dnd_combat_call',body);await gm.evaluate(()=>window.CAMPAIGN_COMBAT_HELD=true);await combatGate;return route.fulfill({json:previous});}return route.fallback();};
+ await gm.route('**/rest/v1/rpc/dnd_combat_call',staleCombat);
+ await gm.evaluate(()=>{DND.combat.open(DND.combat.current().combat.id);});await gm.waitForFunction(()=>window.CAMPAIGN_COMBAT_HELD===true);
+ await gm.locator('#gm-navigation a[href="#campaign"]').click();
+ try{await gm.locator('[data-campaign="encounter.build"]').click();await gm.locator('#combatPanel').waitFor({state:'visible'});}finally{releaseCombat();}
+ try{await gm.waitForFunction(()=>DND.combat.current()?.combat?.participants.filter(p=>p.npc_template_id).length===4);}catch(err){console.error('Encounter navigation after builder',await gm.evaluate(()=>({combat:DND.combat.current()?.combat?.title,participants:DND.combat.current()?.combat?.participants.length,notice:document.getElementById('combatNotice').textContent})));throw err;}finally{await gm.unroute('**/rest/v1/rpc/dnd_combat_call',staleCombat);}
+ const combat=await gm.evaluate(()=>DND.combat.current().combat);assert(combat.participants.filter(p=>!p.char_key).every(p=>p.hp===12&&!p.visible));assert(!(await len.evaluate(()=>DND.api.request('campaign.snapshot'))).records.some(r=>r.kind==='encounter'||r.kind==='statblock'));
+
+ await gm.locator('#gm-navigation a[href="#campaign"]').click();await gm.locator('#campaignKind').selectOption('journal');await gm.locator('#campaignNewRecord').click();await gm.locator('#campaignEditor [name=title]').fill('Lost acknowledgement');await gm.locator('#campaignEditor [name=body]').fill('Saved exactly once');
+ const requests=[];let lost=false;const intercept=async route=>{const body=route.request().postDataJSON();if(body.p_action==='record.save'&&body.p_payload.title==='Lost acknowledgement'){requests.push(body);if(!lost){lost=true;rpc('dnd_campaign_call',body);return route.fulfill({status:503,json:{message:'Lost campaign reply'}});}}return route.fallback();};
+ await gm.route('**/rest/v1/rpc/dnd_campaign_call',intercept);await gm.locator('#campaignEditor button[type=submit]').click();await gm.locator('#campaignRetry').waitFor({state:'visible'});await gm.locator('#campaignRetry').click();await gm.locator('#campaignRetry').waitFor({state:'hidden'});assert.equal(requests.length,2);assert.deepEqual(requests[0],requests[1]);await gm.unroute('**/rest/v1/rpc/dnd_campaign_call',intercept);const result=await api('snapshot',{campaign_id:cid});assert.equal(result.records.filter(r=>r.title==='Lost acknowledgement').length,1);
+ for(const p of [gm,len]){await p.bringToFront();await p.setViewportSize({width:390,height:844});await p.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth+1);assert(await p.locator('#campaignPanel').isVisible());assert.equal(await p.locator('#campaignPanel img').count(),0);}
+ console.log('Campaign UI: isolated campaigns, explicit releases, all four players, quest/NPC/journal, directed graph privacy, CAS drafts, statblock/encounter builder, canonical combatants, lost acknowledgement retry, XSS and mobile passed.');
+};

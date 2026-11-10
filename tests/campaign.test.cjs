@@ -1,0 +1,4 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),{difficulty}=require('../src/core/campaign.js');
+test('DMG 2014 thresholds, XP award and adjusted XP stay distinct',()=>{const d=difficulty([3,3,3,3],[{xp:100,count:4}]);assert.equal(d.xp,400);assert.equal(d.adjusted,800);assert.equal(d.label,'Mittel');assert.deepEqual(d.thresholds,[300,600,900,1600]);});
+test('small and large parties shift encounter multipliers',()=>{assert.equal(difficulty([1,1],[{xp:50,count:1}]).multiplier,1.5);assert.equal(difficulty([1,1,1,1,1,1],[{xp:50,count:1}]).multiplier,.5);assert.equal(difficulty([20],[{xp:100,count:15}]).multiplier,5);});
+test('empty encounters and invalid imported values are handled explicitly',()=>{assert.equal(difficulty([1],[]).adjusted,0);for(const l of [[],[0],[21],[1.5]])assert.throws(()=>difficulty(l,[]));for(const members of [[{xp:10,count:47}],[{xp:NaN,count:1}],[{xp:10,count:-1}]])assert.throws(()=>difficulty([1],members));});
