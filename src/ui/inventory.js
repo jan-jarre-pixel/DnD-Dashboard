@@ -21,7 +21,7 @@
    if(!pending)pending={action,original:payload,payload:{...payload,request_id:crypto.randomUUID()}};revision++;busy=true;panel.inert=true;notice('Server bestätigt …');
    try{const r=await DND.api.request('inventory.'+pending.action,pending.payload);if(mine!==generation)return;pending=null;stockDirty=false;if(action==='table.save')dirtyForms.delete('inventoryTableForm');if(['item.create','item.set'].includes(action))dirtyForms.delete('inventoryItemForm');dirty=dirtyForms.size>0;notice(r.healing?'Verbraucht · Heilwurf '+r.dice.join(' + ')+' · Heilung '+r.healing+' TP':'Vom Server bestätigt.');return r;}catch(err){if(mine===generation){if(err.code&&!['08000','57014'].includes(err.code))pending=null;notice(err.message||'Antwort unklar. Aktion unverändert wiederholen.');}throw err;}finally{panel.inert=false;if(mine===generation){busy=false;$('inventoryBody').inert=!!pending;$('inventoryRetry').hidden=!pending;}}
   }
-  async function run(fn){try{await fn();}catch{/* Boundary preserves drafts and displays the server error. */}}
+  async function run(fn){try{await fn();}catch(err){if(err.message)notice(err.message);/* Preserve drafts for local validation and server errors. */}}
   const options=(rows,id)=>rows.map(r=>`<option value="${r.id}"${r.id===id?' selected':''}>${e(r.title)}</option>`).join('');
   const button=(action,label,id='',extra='',disabled=false)=>`<button type="button" data-inventory="${action}" data-id="${id}" ${extra}${disabled?' disabled':''}>${e(label)}</button>`;
   const scopeLabel=i=>i.scope==='character'?(snapshot.resources.find(r=>r.key===i.char_key)?.name||i.char_key):i.scope==='chest'?'Gruppentruhe':'Private Beute';
