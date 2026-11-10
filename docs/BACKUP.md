@@ -61,3 +61,19 @@ zusätzlich in eine weitere leere lokale Datenbank eingespielt und verglichen.
 SHA-256-Nachweise liegen neben den Dateien. Diese Dateien gehören nicht in Git
 oder öffentliche Actions-Artefakte; die Einschränkungen der Anwendungssicherung
 und der Workspace-Aufbewahrung aus dem obigen Abschnitt gelten weiter.
+
+## Phase 7 – Anwendungssicherung vom 2026-11-10
+
+Vor der Inventarmigration wurden alle 34 bestehenden Anwendungstabellen und
+38 auditierte Funktionen einschließlich Definitionen und Berechtigungen privat
+exportiert. Die Daten wurden mit aktiven Fremdschlüsseln lokal wiederhergestellt
+und exakt verglichen; die Migration erhält die bisherigen Datensätze,
+Funktions-OIDs, Definitionen und Rechte. Ein vollständiger SQL-Dump des
+migrierten Anwendungszustands wurde zusätzlich in einer zweiten leeren
+Datenbank eingespielt und unabhängig verglichen.
+
+Die privaten JSON-/SQL-Dateien und Prüfsummen liegen außerhalb von Git unter
+`/workspace/private-dnd-backup/phase7/`. Sie enthalten Anwendungsschemas,
+Spielstände und Code-Prüfwerte; Supabase Auth/Storage und Projektkonfiguration
+sind kein Bestandteil dieses Anwendungsbackups. Keine privaten Daten oder
+Zugangscodes in CI, Repository oder öffentliche Artefakte übernehmen.

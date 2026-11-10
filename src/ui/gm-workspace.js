@@ -4,7 +4,7 @@
  function init({getSnapshot,rpc,notice,refreshRoom,defaults={}}){
   const $=id=>document.getElementById(id),host=$('dashboard');
   const nav=document.createElement('aside');nav.id='gm-navigation';nav.className='gm-navigation';nav.hidden=true;
-  nav.innerHTML=`<p class="eyebrow">Control Room</p><nav aria-label="GM-Arbeitsbereiche">${[['session','Live-Session'],['prep','Vorbereitung'],['campaign','Kampagnen'],['combat','Kampf'],['map','Karten'],['group','Spielerstatus'],['history','Protokolle']].map(([id,title])=>`<a href="#${id}">${title}</a>`).join('')}</nav><button id="contextToggle" aria-controls="gm-context" aria-expanded="true">Kontextpanel schließen</button>`;
+  nav.innerHTML=`<p class="eyebrow">Control Room</p><nav aria-label="GM-Arbeitsbereiche">${[['session','Live-Session'],['prep','Vorbereitung'],['campaign','Kampagnen'],['items','Inventar & Generatoren'],['combat','Kampf'],['map','Karten'],['group','Spielerstatus'],['history','Protokolle']].map(([id,title])=>`<a href="#${id}">${title}</a>`).join('')}</nav><button id="contextToggle" aria-controls="gm-context" aria-expanded="true">Kontextpanel schließen</button>`;
   const main=document.createElement('div');main.className='gm-main';while(host.firstChild)main.append(host.firstChild);host.append(nav,main);
   const context=document.createElement('aside');context.id='gm-context';context.className='gm-context';context.hidden=true;host.append(context);
   context.innerHTML='<section class="paper"><h2>Charakter im Fokus</h2><label for="contextCharacter">Spielercharakter</label><select id="contextCharacter"></select><div id="contextStats"></div></section><section class="paper"><h2>Letzte Würfe</h2><div id="contextRolls"></div></section>';
@@ -27,14 +27,14 @@
   let loadedPlans=[],loadedArchives=[];let snapshot=null,plan=null,archive=null,planDirty=false,publishDirty=false,recapDirty=false,notesDirty=false,publishVersion=null,lastFetch=0,loading=false,busy=false;
   let previousView=null;let collapsed=matchMedia('(max-width:1050px)').matches;const pending=new Map();
   const owner=()=>root.DND.auth.identity()?.role==='owner';
-  const view=()=>['prep','history','group','combat','map','campaign'].includes(location.hash.slice(1))?location.hash.slice(1):'session';
+  const view=()=>['prep','history','group','combat','map','campaign','items'].includes(location.hash.slice(1))?location.hash.slice(1):'session';
   function layout(){
    const isOwner=owner(),active=view();if(active!==previousView){publishingDetails.open=active==='prep';previousView=active;}quickDice.hidden=!isOwner||active!=='session';host.classList.toggle('control-room',isOwner);host.classList.toggle('context-collapsed',collapsed);document.body.classList.toggle('control-room-page',isOwner);nav.hidden=!isOwner;context.hidden=!isOwner||collapsed;
    $('contextToggle').setAttribute('aria-expanded',String(!collapsed));$('contextToggle').textContent=collapsed?'Kontextpanel öffnen':'Kontextpanel schließen';
    for(const a of nav.querySelectorAll('a')){if(a.hash.slice(1)===active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
    prep.hidden=!isOwner||active!=='prep';history.hidden=!isOwner||active!=='history';publishing.hidden=!isOwner||!['prep','session'].includes(active);
    $('gmPanel').hidden=!isOwner||active!=='session';columns.hidden=isOwner&&!['session','group'].includes(active);partyPanel.hidden=isOwner&&active!=='group';dicePanel.hidden=isOwner&&active!=='session';events.hidden=isOwner&&active!=='session';
-   mobile.hidden=!isOwner||active!=='session';scene.hidden=isOwner&&['history','combat','map','campaign'].includes(active);
+   mobile.hidden=!isOwner||active!=='session';scene.hidden=isOwner&&['history','combat','map','campaign','items'].includes(active);
   }
   function fillSelect(id,items,valueKey,label){const el=$(id),old=el.value,signature=JSON.stringify(items);if(el.dataset.signature===signature)return;el.dataset.signature=signature;el.innerHTML='<option value="">Auswählen …</option>'+items.map(x=>`<option value="${e(x[valueKey])}">${e(label(x))}</option>`).join('');el.value=items.some(x=>String(x[valueKey])===old)?old:'';}
   function contextRender(){

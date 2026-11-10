@@ -68,3 +68,20 @@ Kampagnen-Ladeantworten sind zusätzlich an einen lokalen Änderungsstand gebund
 Der Kampfmanager prüft die beim Abruf ausgewählte Encounter-ID, bevor er eine
 Antwort übernimmt. Dadurch können verspätete Antworten weder eine bestätigte
 Kampagnenauswahl noch den Übergang vom Builder zur neuen Instanz zurücksetzen.
+
+## Inventar und Generatoren (Phase 7)
+
+`src/ui/inventory.js` nutzt `inventory.*` am gemeinsamen Client;
+`dnd_inventory_call` projiziert persönliches Inventar und die aktuelle Truhe
+serverseitig. Fünf private Tabellen speichern getrennte Mengenbestände,
+gewichtete Tabellen, unveränderliche Generatorvorschauen, Receipts und Protokoll.
+Übertragungen und Verbrauch sind atomar und versioniert. Heilung und Ressourcen
+schreiben dieselben Charakterfelder wie der Kampfmanager; es entsteht keine zweite
+TP- oder Ressourcenquelle. Generatorübernahmen rufen transaktional den bestehenden
+Kampagnen-RPC auf beziehungsweise erzeugen private Beute genau einmal.
+
+Lokale Mengen-/Formularentwürfe sind von Live-Snapshots getrennt; unklare
+Bestätigungen sperren Folgeaktionen bis zum identischen Retry. Ladeantworten
+prüfen Auth-Generation und lokalen Änderungsstand. `src/core/inventory.js`
+berechnet exakte Kupfer-/Gewichtssummen mit BigInt und validiert eigene Tabellen.
+Umfang und Grenzen: [Phase 7](PHASE-7.md).
