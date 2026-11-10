@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-09. **M0 sowie Phasen 1–4 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-10. **M0 sowie Phasen 1–5 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **8 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT).
-Phase 5 ist implementiert und in Abnahme; spätere Phasen sind offen. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **9 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP).
+Phase 5 ist abgeschlossen; Phase 6 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -37,7 +37,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Sessionzyklen und private Notizen rollenrichtig nutzbar.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 16 zusätzliche Workspace-DB-Szenarien, vollständiger GM-Zyklus einschließlich verlorener Antwort in drei Browsern bestanden; Migration, Restore und Veröffentlichung geprüft.
-- Offene Probleme: Karten/NPC-Verwaltung folgen später; Kampfbegegnungen sind in Phase 4 ergänzt. Entwürfe ohne Serverbestätigung sind flüchtig.
+- Offene Probleme: Karten sind in Phase 5 ergänzt; NPC-Verwaltung folgt in Phase 6. Kampfbegegnungen sind in Phase 4 ergänzt. Entwürfe ohne Serverbestätigung sind flüchtig.
 - Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-RT-001 – 3 Multiplayer und Würfel
@@ -53,16 +53,16 @@ Implementierungscommit.
 - Ziel/Abnahme: Atomare Aktionen, Runden, Sichtbarkeit geprüft.
 - Priorität: P1. Abhängigkeiten: DND-RT-001.
 - Implementierungsstatus: Produktiv bestätigt (lesend). Teststatus: 31 Node, 93 DB-Szenarien plus Parallelität/50 Würfe, 30 Rollen-/Viewport-Szenarien und drei parallele Mehrspieler-/Kampfdurchläufe bestanden; 19 lesende API-Prüfungen, Pages-Build und isolierter Restore aller 22 Tabellen bestanden.
-- Offene Probleme: Karten erst Phase 5, umfassender Encounter Builder Phase 6; manuelle Regelentscheidungen dokumentiert.
+- Offene Probleme: Karten in Phase 5 abgeschlossen, umfassender Encounter Builder Phase 6; manuelle Regelentscheidungen dokumentiert.
 - Commit/PR: [PR #9](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/9), Merge 8814d77803c6bf3ef49fe3d20dd63be3c2e2165c; PHASE-4.md.
 
 ## DND-MAP-001 – 5 Karten und VTT
 
 - Ziel/Abnahme: Tokenbesitz und geheime Objekte serverseitig geschützt.
 - Priorität: P1. Abhängigkeiten: DND-COMBAT-001.
-- Implementierungsstatus: Implementiert. Teststatus: Lokale Datenbank-, Browser- und Restore-Abnahme läuft.
-- Offene Probleme: Finale CI und produktive Abnahme laufen; Fog bewusst kachelweise.
-- Commit/PR: Branch feature/phase5-vtt; PHASE-5.md.
+- Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 34 Unit-Tests, 121 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien, drei vollständige Mehrspieler-/Kampf-/Kartenabläufe und native Select-Regression in allen drei Browsern bestanden. 20 Produktions-API-Schutzprüfungen und beide Loginseiten auf Desktop/Mobil bestanden. Die dokumentierten isolierten Restores bleiben erhalten.
+- Offene Probleme: Keine blockierenden Phase-5-Probleme. Fog bewusst in 256-Pixel-Kacheln; dynamische Sichtlinien folgen Phase 9. Produktive Spielaktionen mit Originalcodes wurden nicht für Tests verwendet.
+- Commit/PR: [PR #11](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/11), Merge 188ba1eaa5cca7e6f4d5f94462079ab39291b16d; vollständige CI-, Pages- und Produktionsnachweise in PHASE-5.md.
 
 ## DND-CAMPAIGN-001 – 6 Kampagnenverwaltung
 
@@ -144,7 +144,7 @@ Implementierungscommit.
 | 2 – Spieler-/GM-Dashboard | Abgeschlossen; lesend produktiv geprüft; PHASE-2.md |
 | 3 – Realtime und Multiplayer | Abgeschlossen; lesend produktiv geprüft; PHASE-3.md |
 | 4 – Kampfmanager | Abgeschlossen; lesend produktiv geprüft; PHASE-4.md |
-| 5 – Karten und VTT | Offen; nächster Schritt |
+| 5 – Karten und VTT | Abgeschlossen; lesend produktiv geprüft; PHASE-5.md |
 | 6 – Kampagnenverwaltung | Offen |
 | 7 – Inventar und Automatisierung | Offen |
 | 8 – Komfortfunktionen | Offen |

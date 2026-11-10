@@ -1,6 +1,6 @@
 # Phase 5 – Karten und Virtual Tabletop
 
-Status: Implementiert, Abnahme läuft. Kein erfolgreicher Produktiv-Spieltest behauptet.
+Status: Abgeschlossen; CI und Veröffentlichung bestanden, Produktion lesend geprüft. Kein Produktiv-Spieltest mit Originalcodes behauptet.
 Arbeitspaket: DND-MAP-001. Entwicklung ausschließlich in DnD-Dashboard.
 
 ## Bedienbare Funktionen
@@ -137,7 +137,7 @@ Phase legt man im vorhandenen Kampfmanager an und verknüpft ihre echte Instanz.
 Datei-Exporte/Importe und bequemere Backups folgen Phase 8; private Betriebssicherung
 und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
 
-## Nachweise und noch laufende Abnahme
+## Nachweise der Abnahme
 
 - Vorher-Sicherung aller 22 Anwendungstabellen und 29 Funktionsdefinitionen privat.
 - Isolierte Wiederherstellung exakt verglichen; vollständige neue Migration erhält
@@ -171,7 +171,7 @@ und isolierte Wiederherstellung sind schon Bestandteil dieser Abnahme.
   [RPC-Hinweis](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
   Neue Fremdschlüssel besitzen passende Indizes; unbenutzte neue Indizes sind
   vor echtem Spielbetrieb erwartbar.
-- Finale CI und Pages-Abnahme stehen noch aus.
+- Abschließende CI, Pages-Veröffentlichung und lesende Produktionsprüfung bestanden; siehe Abschlussnachweise.
   Original-Spielercodes werden nicht für positive Live-Tests benutzt.
 
 
@@ -219,3 +219,68 @@ WebKit ließ sich nach anfänglich fehlenden Systembibliotheken ohne Root-Instal
 mit lokal extrahierten Debian-Bibliotheken starten. Ein vollständiger gezielter
 Kartenablauf mit echter WebKit-Engine bestand anschließend lokal. Die CI verwendet
 weiter ihre unveränderte Installation der gepinnten Browser/Abhängigkeiten.
+
+
+## Abschlusskorrekturen für Browser und mobile Bedienung
+
+Kartenwerkzeuge wechseln auf kleinen Bildschirmen mit einer sinnvollen
+Flex-Basis in mehrere Zeilen. Beschriftungen bleiben lesbar; auch der
+Kartenkopf kann umbrechen. Sichtbare Werkzeugknöpfe werden auf mindestens
+44 × 44 CSS-Pixel geprüft.
+
+WebKit rechnete die Zeichenfläche langer nativer Select-Einträge zur
+Dokumentbreite, obwohl die HTML-Feldrahmen und Textbereiche innerhalb der
+Seite lagen. Die vollständige Ubuntu-26.04-CI meldete dadurch 419 statt
+390 Pixel. Ein isolierter Test mit einem erlaubten 100-Zeichen-Namen
+reproduzierte den Fehler auch auf Desktop. `contain: paint` begrenzt diese
+Zeichenfläche direkt am nativen Select. Die Begrenzung gilt für dieses Feld.
+Der vollständige Name bleibt im DOM und im nativen Auswahlmenü erhalten.
+
+`npm run test:layout` prüft die tatsächlichen Stylesheets ohne Datenbank:
+Desktop und Mobil, kurze/lange Auswahlwerte und Tastaturauswahl. Die Prüfung
+schlug unter Ubuntu-WebKit vor der CSS-Korrektur fehl und bestand danach
+unter WebKit und Chromium. Zusätzlich bestand unter Ubuntu-WebKit die
+Auswahl über den geöffneten nativen Dialog. Die CI führt diese Regression
+für alle drei Engines direkt nach der Browserinstallation aus.
+
+Die vollständige mobile Kartenprüfung aktiviert und verkleinert jedes
+Rollenfenster einzeln, wartet auf den Paint und prüft weiterhin die ganze
+Dokumentbreite mit unveränderter Fünf-Sekunden-Grenze. Fehlerdiagnosen
+berücksichtigen nun Scrollversatz, aktive Ansicht, Schrift und Textbereiche.
+Eine festhängende WebKit-Einrichtung vor Testbeginn führte außerdem zu einer
+Zehn-Minuten-Grenze ausschließlich für die Browserinstallation. Keine
+Browser-Engine und kein Prüfablauf wurden entfernt.
+
+Erneut bestanden: 34 Unit-Tests, Build, alle 121 DB-Szenarien einschließlich
+der bisherigen Parallelitätsprüfungen und 20 echte lesende/ablehnende
+Produktions-API-Prüfungen. Die vollständigen lokalen WebKit-Abläufe unter
+Debian 13 und Ubuntu 26.04 bestanden einschließlich 50 Tokens/500 Objekten
+und mobiler Prüfung. Gemessene lokale Zeiten bis zur Darstellung: 9506 bzw.
+9187 ms; keine Produktionslatenz-Zusage. Die abschließenden CI- und Pages-Nachweise
+stehen im folgenden Abschlussabschnitt.
+
+
+## Abschlussnachweise – 2026-11-10
+
+- [PR #11](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/11) ist integriert.
+  Geprüfter Feature-Commit: `17c1b64d6553f2d3dc8d3b048dda3144eab942d2`;
+  Merge: `188ba1eaa5cca7e6f4d5f94462079ab39291b16d`. Die Git-Bäume des
+  geprüften Features und dieses Merges sind identisch.
+- [Vollständige CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42696286956)
+  erfolgreich: Unit/Build und sämtliche Datenbank-, Rollen-, Layout- und
+  Mehrspieler-/Kampf-/Kartenprüfungen in Chromium, Firefox und WebKit.
+- [Pages-Veröffentlichung](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42771191972)
+  für den Merge erfolgreich. Die live ausgelieferten Dateien
+  `public/styles/vtt.css` und `src/ui/vtt.js` wurden bytegenau mit dem
+  geprüften Quellstand verglichen.
+- `npm run test:production` erfolgreich auf der echten
+  [öffentlichen Anwendung](https://jan-jarre-pixel.github.io/DnD-Dashboard/):
+  beide Loginseiten mit 1440 × 900 und 390 × 844 Pixeln, sechs Rollenoptionen,
+  echte Ablehnung absichtlich ungültiger Codes und keine JavaScript-Laufzeitfehler.
+- `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` erneut erfolgreich:
+  20 echte Lese-/Ablehnungsprüfungen einschließlich Karten-RPC und Edge-Transport.
+  Es wurden keine bestätigten Spieleraktionen oder Änderungen echter
+  Spielerwerte erzeugt.
+
+Damit ist DND-MAP-001 abgeschlossen. Der nächste offene Implementierungsschritt
+ist DND-CAMPAIGN-001 (Phase 6).
