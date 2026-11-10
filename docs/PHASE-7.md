@@ -1,6 +1,6 @@
 # Phase 7 – Inventar und Generatoren
 
-Status: Implementiert; abschließende CI und Veröffentlichung laufen.
+Status: **Abgeschlossen, veröffentlicht und lesend produktiv geprüft.**
 
 ## Bedienung und Umfang
 
@@ -73,6 +73,7 @@ Live-Ereignisse.
 Bei unklarer Antwort bleibt die Aktion unverändert wiederholbar und die übrige
 Bedienung gesperrt. Konflikte verbrauchen nichts. Lokale Formular- und Mengeneingaben
 bleiben bei Live-Updates erhalten; explizites Neuladen fragt vor dem Verwerfen.
+Ungültige eigene Tabellen zeigen einen Formatfehler und behalten den Entwurf.
 Veraltete Antworten können einen neu bestätigten Stand nicht zurücksetzen.
 Logout und Sitzungswiderruf entfernen private Antwortdaten und Formulare.
 
@@ -119,3 +120,33 @@ RLS-Tabellen ohne direkte Policies und ein zusätzliches tokengeprüftes
 `anon`-RPC. Die bisherige Auth-Passwortmeldung und die drei bisherigen
 unindizierten Fremdschlüssel bleiben unverändert; es entsteht kein neuer
 unindizierter Fremdschlüssel.
+
+## Abschlussnachweise – 2026-11-10
+
+- [PR #15](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/15) ist integriert.
+  Geprüfter Feature-Commit: `11c4f8f009b679401c72afb7e8b21828b0dcddfd`;
+  Merge: `0545892d7b6554f3c3b1dcda04945bc8caab76de`; identischer Git-Baum: `56c5ef047114c2dd8c48da94f91c6af60139a051`.
+- [Vollständige CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42845730707)
+  erfolgreich: 40 Unitprüfungen, Build, alle Datenbank- und Paralleltests,
+  30 Rollen-/Viewport-Szenarien, native Select-Regressionen und vollständige
+  Mehrspieler-/Kampf-/Karten-/Kampagnen-/Inventarabläufe in Chromium, Firefox
+  und WebKit. Die bestehende Notiz-/Journalprüfung wurde an die gezählte
+  Inventarbedienung angepasst; Freitext bleibt separat gespeichert.
+- [Pages-Veröffentlichung](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42851222554)
+  für den Merge erfolgreich. Alle zehn geänderten HTML-/JS-/CSS-Laufzeitdateien
+  stimmen bytegenau mit dem geprüften Quellstand überein.
+- `NODE_USE_ENV_PROXY=1 npm run test:production` erfolgreich: beide echten
+  Loginseiten auf 1440 × 900 und 390 × 844 Pixeln, Ablehnung ungültiger
+  Testcodes, sechs Rollenoptionen und keine JavaScript-Laufzeitfehler.
+- `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` erfolgreich: 22 echte
+  API-/Edge-Schutzprüfungen einschließlich Inventar-RPC. Positive Spielaktionen
+  verwenden isolierte Testdaten; Produktions-Spielstände wurden nicht durch
+  positive Testaktionen verändert.
+
+Zusätzlich gezielt lokal bestätigt: Wechsel der laufenden Kampagne nach dem
+GM-Login bei erhaltener anderer Vorbereitungsauswahl; danach dieselben
+Inventarprüfungen mit parallel geöffnetem Charakterbogen und Heilung ausgehend
+von reduzierten TP. Aktuelle Truhe und kanonische Charakterwerte bleiben korrekt.
+
+Damit ist DND-ITEM-001 abgeschlossen. Der nächste offene Schritt ist
+DND-UX-001 (Phase 8 – Komfort und Offline).
