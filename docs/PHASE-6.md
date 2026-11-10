@@ -76,7 +76,7 @@ Sitzungswiderruf löschen private Formulare und Antwortdaten aus dem DOM.
 
 ## Verifikation
 
-37 Unit-/Modell-/Layoutprüfungen und 16 zusätzliche Kampagnen-DB-Szenarien;
+37 Unit-/Modell-/Layoutprüfungen und 18 zusätzliche Kampagnen-DB-Szenarien;
 Bestandsregressionen für Rollen, Workspace, Echtzeit, Kampf und VTT. Browserflow
 prüft alle vier Spieler, Kampagnenwechsel, Freigaben, Quests/NPCs/Journal,
 Story-Knoten und verborgene Endpunkte, unveränderte lokale Konfliktentwürfe,
