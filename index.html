@@ -11,6 +11,9 @@
 <link rel="stylesheet" href="public/styles/combat.css">
 <link rel="stylesheet" href="public/styles/campaign.css">
 <link rel="stylesheet" href="public/styles/inventory.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="public/icons/dnd.svg" type="image/svg+xml">
+<link rel="stylesheet" href="public/styles/comfort.css">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
@@ -29,11 +32,13 @@
 <select onchange="advm=+this.value"><option value="0">Normal</option><option value="1">Vorteil</option><option value="-1">Nachteil</option></select></div>
 <div class="note" style="margin:6px 0">Vorteil/Nachteil gilt für einzelne W20-Würfe.</div><div id="dlog"></div></div>
 
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script defer src="public/vendor/supabase-2.119.0.js"></script>
 <script defer src="config.js"></script>
 <script defer src="src/core/model.js"></script>
 <script defer src="src/core/store.js"></script>
 <script defer src="src/data/client.js"></script>
+<script defer src="src/core/comfort.js"></script>
+<script defer src="src/data/offline.js"></script>
 <script defer src="src/data/live.js"></script>
 <script defer src="src/ui/components.js"></script>
 <script defer src="src/ui/shell.js"></script>
@@ -49,5 +54,6 @@
 <script defer src="src/ui/campaign.js"></script>
 <script defer src="src/core/inventory.js"></script>
 <script defer src="src/ui/inventory.js"></script>
+<script defer src="src/ui/comfort.js"></script>
 </body>
 </html>

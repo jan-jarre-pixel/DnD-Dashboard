@@ -25,7 +25,6 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
   // Redirect only the transport endpoint; the application and handler remain real.
   await context.addInitScript(()=>{const original=window.fetch;window.fetch=(url,options)=>original(typeof url==='string'&&url.includes('/functions/v1/dnd-events')?location.origin+'/events':url,options);});
   const page=await context.newPage();page.setDefaultTimeout(30000);page.on('pageerror',e=>failures.push(e.message));
-  await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.SUPABASE_BROWSER_BUNDLE||'/workspace/private-dnd-backup/supabase.js',contentType:'text/javascript'}));
   await page.route('https://*.supabase.co/rest/v1/rpc/*',r=>{try{return r.fulfill({json:rpc(r.request().url().split('/').pop(),r.request().postDataJSON())});}catch(e){return r.fulfill({status:400,json:{code:/Versionskonflikt/.test(e.message)?'40001':/abgelaufen/.test(e.message)?'28000':'P0001',message:e.message}});}});
   await page.goto(base+(sheet?'':'spieltisch.html'));await page.selectOption(sheet?'#loginCharacter':'#role',role);await page.fill(sheet?'#loginCode':'#accessCode',codes[role]);await page.locator(sheet?'#sheet form button[type=submit]':'#loginForm button[type=submit]').click();await page.getByText('Abmelden',{exact:true}).waitFor();await page.locator('.live-status').filter({hasText:'● Live'}).waitFor({timeout:15000});return page;
  }

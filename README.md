@@ -23,18 +23,21 @@ oder Kampagnenentwürfe. [Anleitung und Abnahme: Phase 7](docs/PHASE-7.md).
 Node >=22: `npm test`, `npm run build`.
 Für Browserprüfungen: `npm ci`, dann `npx playwright install --with-deps`.
 Optional vorhandenes Chromium über CHROMIUM_PATH verwenden:
-`CHROMIUM_PATH=/usr/bin/chromium SUPABASE_BROWSER_BUNDLE=/privater/pfad/supabase.js npm run test:browser`.
-Der Bundle-Pfad muss die unveränderte Datei von
-https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0 enthalten.
+`CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`.
+Die unveränderte Supabase-Bibliothek 2.119.0 liegt mit Lizenz und geprüftem
+SHA-256 unter `public/vendor`; die Laufzeit benötigt kein CDN.
 Ohne LOCAL_DB verwenden Browserprüfungen simulierte RPC-Antworten.
 Mit `LOCAL_DB=1` verwenden sie echte lokale PostgreSQL-RPCs.
 `BROWSER=chromium|firefox|webkit` wählt die Browser-Engine.
-`CAMPAIGN_ONLY=1 BROWSER=chromium SUPABASE_BROWSER_BUNDLE=/privater/pfad/supabase.js npm run test:multiplayer`
+`CAMPAIGN_ONLY=1 BROWSER=chromium npm run test:multiplayer`
 führt gezielt den Kampagnenablauf mit fünf Rollen und absichtlich verzögerten
 Antworten aus. Er benötigt dieselbe vorbereitete isolierte lokale Testdatenbank.
 `npm run test:layout` prüft lange native Kartennamen und die Tastaturauswahl
 auf Desktop/Mobil ohne Datenbank; die Browserinstallation ist dafür erforderlich.
 `INVENTORY_ONLY=1` führt entsprechend nur den Inventar-/Generatorablauf aus.
+`npm run test:comfort` prüft die Komfort-/Offline-/PWA-Funktionen mit echter lokaler
+Datenbank und Service Worker in `dist/`. Für lokale PWA-Nutzung `npm run build`
+ausführen und `dist/` über HTTP bereitstellen. [Phase-8-Anleitung](docs/PHASE-8.md).
 Die CI startet PostgreSQL ohne Netzwerk, initialisiert künstliche Testdaten
 und prüft alle drei Browser einschließlich Speicherung. `npm run test:db` prüft
 zusätzlich Rollen, Würfel, Geheimhaltung und parallele Anfragen lokal.

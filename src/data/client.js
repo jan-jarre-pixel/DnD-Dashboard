@@ -5,10 +5,11 @@
  let client,token='',current=null,generation=0;
  const rolls=new Map(),inflight=new Map();
  const store=(value)=>{try{if(value)sessionStorage.setItem(key,value);else sessionStorage.removeItem(key);}catch{/* Memory-only session remains usable. */}};
- const clear=()=>{rolls.clear();inflight.clear();generation++;token='';current=null;store('');DND.store.update({identity:null,connection:'signed-out'});};
+ const clear=()=>{DND.offline?.forget();rolls.clear();inflight.clear();generation++;token='';current=null;store('');DND.store.update({identity:null,connection:'signed-out'});};
  function api(){if(client)return client;const config=root.DND_CLOUD_CONFIG||{};if(!root.supabase?.createClient||!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||'')||!config.publishableKey)throw Error('Online-Konfiguration konnte nicht geladen werden.');return client=root.supabase.createClient(config.url,config.publishableKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});}
  async function call(name,params){const {data,error}=await api().rpc(name,params);if(error)throw error;return data;}
  async function request(operation,payload={}){
+  if(root.navigator?.onLine===false)throw Error('Offline: Aktion wurde nicht auf dem Server bestätigt.');
   if(!token)throw Error('Bitte mit deinem privaten Code anmelden.');
   const credentials=token,epoch=generation;
   const safe={...payload};delete safe.p_code;delete safe.p_actor;
@@ -23,11 +24,12 @@
   if(!/^[a-f0-9]{64}$/.test(result.token||''))throw Error('Ungültige Serverantwort');
   rolls.clear();inflight.clear();generation++;token=result.token;current=next;store(token);
   try{localStorage.removeItem(legacyKey);}catch{}
-  DND.store.update({identity:next,connection:'online'});return next;
+  const boundEpoch=generation;await DND.offline?.bind(next,token);if(boundEpoch!==generation)throw Error('Sitzung gewechselt. Anmeldung verworfen.');DND.store.update({identity:next,connection:'online'});return next;
  }
  async function restore(){
+  if(root.navigator?.onLine===false)throw Error('Offline: Gespeicherte Sitzung wurde nicht online geprüft.');
   if(!token){try{const saved=sessionStorage.getItem(key);if(/^[a-f0-9]{64}$/.test(saved||''))token=saved;}catch{}}
-  if(token){try{current=DND.model.identity(await request('identity'));DND.store.update({identity:current,connection:'online'});return current;}catch(e){if(e.code!=='28000')throw e;}}
+  if(token){try{const checked=DND.model.identity(await request('identity'));current=current&&['actor','role','identity_id','expires_at'].every(k=>current[k]===checked[k])?current:checked;const boundEpoch=generation;await DND.offline?.bind(current,token);if(boundEpoch!==generation)throw Error('Sitzung gewechselt.');DND.store.update({identity:current,connection:'online'});return current;}catch(e){if(e.code!=='28000')throw e;}}
   let legacy;try{legacy=JSON.parse(localStorage.getItem(legacyKey)||'null');}catch{}
   const actor=legacy?.role==='gm'?'gm':legacy?.char;
   if(Object.hasOwn(DND.model.actors,actor)&&typeof legacy?.code==='string'){try{return await signIn(actor,legacy.code);}catch(e){if(e.code==='28000'){try{localStorage.removeItem(legacyKey);}catch{}}throw e;}}

@@ -235,6 +235,7 @@
   document.addEventListener('visibilitychange',()=>{
     if (document.visibilityState==='visible') loadData(true);
   });
+  window.addEventListener('dnd:session-restored',()=>{if(state.role==='guest'&&!state.busy&&DND.auth.identity())loginInternal('player','','',true);});
   window.addEventListener('dnd:session-ended',()=>{clearInterval(state.polling);for(const t of Object.values(debounce))clearTimeout(t);state.pending={};state.versions={};state.conflict=null;document.getElementById('syncConflict')?.remove();state.role='guest';state.char='';S={};dirty={};draw();setSt('Sitzung abgelaufen. Bitte erneut anmelden.');});
   window.addEventListener('beforeunload',event=>{if(Object.keys(dirty).length){event.preventDefault();event.returnValue='';}});
   // Never reuse legacy offline player choice or local player copies without explicit import.

@@ -21,7 +21,6 @@ const path=require('node:path');
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   for(const role of ['len','gra','sas','pei','gm']){
    const context=await browser.newContext({viewport});const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[];const requests=[];page.on('pageerror',e=>errors.push(e.message));
-   await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.SUPABASE_BROWSER_BUNDLE||'/workspace/private-dnd-backup/supabase.js',contentType:'text/javascript'}));
    await page.route('https://*.supabase.co/**',r=>{
     let method=r.request().url().split('/').pop();let body=r.request().postDataJSON();requests.push({method,body});
     if(local){try{return r.fulfill({json:local.rpc(method,body)});}catch(e){return r.fulfill({status:400,json:{message:e.message}});}}

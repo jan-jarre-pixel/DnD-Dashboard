@@ -23,7 +23,7 @@ test('configuration contains only public Supabase key',()=>{
 });
 test('deployment excludes SQL, docs and tests',()=>{
  require('../scripts/build.cjs');
- assert.deepEqual(fs.readdirSync('dist').sort(),['.nojekyll','config.js','index.html','online.js','public','spieltisch.html','src']);
+ assert.deepEqual(fs.readdirSync('dist').sort(),['.nojekyll','config.js','index.html','manifest.webmanifest','online.js','public','spieltisch.html','src','sw.js']);
 });
 
 test('all extracted application scripts parse',()=>{
