@@ -3,7 +3,8 @@ module.exports=async(pages,{rpc,codes,sheet})=>{
  const {gm,len,gra}=pages,acceptDialog=d=>d.accept();for(const p of [gm,len,gra])p.on('dialog',acceptDialog);for(const p of [gm,len,gra]){await p.bringToFront();await p.setViewportSize({width:1440,height:900});}
  const api=(page,action,payload={})=>page.evaluate(({action,payload})=>DND.api.request('inventory.'+action,payload),{action,payload});
  await gm.locator('#gm-navigation a[href="#items"]').click();await gm.locator('#inventoryPanel').waitFor({state:'visible'});await gm.locator('#inventoryCampaign option').first().waitFor({state:'attached'});
- const cid=await gm.locator('#inventoryCampaign').inputValue();
+ // A GM may still prepare another campaign after the preceding session-switch scenario.
+ const cid=(await api(gm,'snapshot')).active_campaign_id;await gm.selectOption('#inventoryCampaign',cid);await gm.waitForFunction(cid=>document.getElementById('inventoryCampaign').value===cid&&document.getElementById('inventoryCampaignState').textContent.startsWith('Aktuelle Spielkampagne')&&!document.getElementById('inventoryPanel').inert,cid);
  async function create(title,p={}){
   await gm.locator('#inventoryCreateDetails').evaluate(d=>d.open=true);await gm.locator('#inventoryNewItem').click();if(p.heal_dice)await gm.locator('#inventoryItemForm details').evaluate(d=>d.open=true);
   for(const [name,value] of Object.entries({scope:'character',char_key:'len',title,quantity:3,notes:'PRIVATE_ITEM_NOTE',...p})){
