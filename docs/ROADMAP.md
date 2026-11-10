@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-10. **M0 sowie Phasen 1–5 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-10. **M0 sowie Phasen 1–6 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **9 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP).
-Phase 5 ist abgeschlossen; Phase 6 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **10 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN).
+Phase 6 ist abgeschlossen; Phase 7 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -37,7 +37,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Sessionzyklen und private Notizen rollenrichtig nutzbar.
 - Priorität: P0. Abhängigkeiten: DND-ARCH-001.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: 16 zusätzliche Workspace-DB-Szenarien, vollständiger GM-Zyklus einschließlich verlorener Antwort in drei Browsern bestanden; Migration, Restore und Veröffentlichung geprüft.
-- Offene Probleme: Karten sind in Phase 5 ergänzt; NPC-Verwaltung folgt in Phase 6. Kampfbegegnungen sind in Phase 4 ergänzt. Entwürfe ohne Serverbestätigung sind flüchtig.
+- Offene Probleme: Karten sind in Phase 5 ergänzt; NPC-Verwaltung ist in Phase 6 ergänzt. Kampfbegegnungen sind in Phase 4 ergänzt. Entwürfe ohne Serverbestätigung sind flüchtig.
 - Commit/PR: [PR #5](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/5), Merge df3ee3859ced44d90b1c4eab6447ea07cc4cc6da; PHASE-2.md.
 
 ## DND-RT-001 – 3 Multiplayer und Würfel
@@ -53,7 +53,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Atomare Aktionen, Runden, Sichtbarkeit geprüft.
 - Priorität: P1. Abhängigkeiten: DND-RT-001.
 - Implementierungsstatus: Produktiv bestätigt (lesend). Teststatus: 31 Node, 93 DB-Szenarien plus Parallelität/50 Würfe, 30 Rollen-/Viewport-Szenarien und drei parallele Mehrspieler-/Kampfdurchläufe bestanden; 19 lesende API-Prüfungen, Pages-Build und isolierter Restore aller 22 Tabellen bestanden.
-- Offene Probleme: Karten in Phase 5 abgeschlossen, umfassender Encounter Builder Phase 6; manuelle Regelentscheidungen dokumentiert.
+- Offene Probleme: Karten in Phase 5 abgeschlossen, Encounter-Planer in Phase 6 ergänzt; manuelle Regelentscheidungen dokumentiert.
 - Commit/PR: [PR #9](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/9), Merge 8814d77803c6bf3ef49fe3d20dd63be3c2e2165c; PHASE-4.md.
 
 ## DND-MAP-001 – 5 Karten und VTT
@@ -68,9 +68,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Mehrere Kampagnen; gemeinsame Gegnerinstanz und Sichtbarkeiten.
 - Priorität: P1. Abhängigkeiten: DND-MAP-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: NPCs, Quests, Journal, Story Graph, Encounter offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 37 Unitprüfungen, 139 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien und vollständige Mehrspieler-/Kampf-/Karten-/Kampagnenabläufe in drei Browsern bestanden. Gezielte Regressionen gegen veraltete Antworten, 21 produktive API-Schutzprüfungen, beide Live-Loginseiten auf Desktop/Mobil und zehn bytegleiche Laufzeitdateien bestätigt. Additive Migration und private Restores geprüft.
+- Offene Probleme: Keine blockierenden Phase-6-Probleme. Eine bestehende Vierergruppe und eine laufende Sitzung gleichzeitig; Freigaben sind explizit, Beute bleibt Planung. Inventarbuchungen folgen Phase 7, Offline/Import/Export Phase 8.
+- Commit/PR: [PR #13](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/13), Merge `076561fa7e838f9860830271661460706e403b44`; vollständige Nachweise und Bedienung in [PHASE-6.md](PHASE-6.md).
 
 ## DND-ITEM-001 – 7 Inventar und Generatoren
 
@@ -145,7 +145,7 @@ Implementierungscommit.
 | 3 – Realtime und Multiplayer | Abgeschlossen; lesend produktiv geprüft; PHASE-3.md |
 | 4 – Kampfmanager | Abgeschlossen; lesend produktiv geprüft; PHASE-4.md |
 | 5 – Karten und VTT | Abgeschlossen; lesend produktiv geprüft; PHASE-5.md |
-| 6 – Kampagnenverwaltung | Offen |
+| 6 – Kampagnenverwaltung | Abgeschlossen; lesend produktiv geprüft; PHASE-6.md |
 | 7 – Inventar und Automatisierung | Offen |
 | 8 – Komfortfunktionen | Offen |
 | 9 – Erweiterte VTT-Funktionen | Offen |

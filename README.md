@@ -5,7 +5,13 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phasen 1–5 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0 und Phasen 1–6 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+
+Im GM-Spieltisch öffnet **Kampagnen** das Kampagnenbuch mit NPCs, Quests,
+Gruppenjournal, Story Graph, Statblocks und Encounter-Planer. Die bestehende
+Gruppe kann mehrere Kampagnen vorbereiten; eine neue Sitzung bestimmt die
+Spielkampagne. Inhalte werden einzeln freigegeben. Anleitung und Abnahme:
+[Phase 6](docs/PHASE-6.md).
 
 ## Lokal prüfen
 
@@ -18,6 +24,9 @@ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0 enthalten.
 Ohne LOCAL_DB verwenden Browserprüfungen simulierte RPC-Antworten.
 Mit `LOCAL_DB=1` verwenden sie echte lokale PostgreSQL-RPCs.
 `BROWSER=chromium|firefox|webkit` wählt die Browser-Engine.
+`CAMPAIGN_ONLY=1 BROWSER=chromium SUPABASE_BROWSER_BUNDLE=/privater/pfad/supabase.js npm run test:multiplayer`
+führt gezielt den Kampagnenablauf mit fünf Rollen und absichtlich verzögerten
+Antworten aus. Er benötigt dieselbe vorbereitete isolierte lokale Testdatenbank.
 `npm run test:layout` prüft lange native Kartennamen und die Tastaturauswahl
 auf Desktop/Mobil ohne Datenbank; die Browserinstallation ist dafür erforderlich.
 Die CI startet PostgreSQL ohne Netzwerk, initialisiert künstliche Testdaten
@@ -30,7 +39,7 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1, #3, #5, #7, #9 und #11 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3, #5, #7, #9, #11 und #13 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
