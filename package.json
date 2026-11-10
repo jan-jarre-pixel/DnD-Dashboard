@@ -6,7 +6,8 @@
     "test": "node --test tests/*.test.cjs",
     "build": "node scripts/build.cjs",
     "test:browser": "node tests/browser.cjs",
-    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs && node tests/db/sessions.cjs && node tests/db/workspace.cjs && node tests/db/sync.cjs && node tests/db/sync-concurrency.cjs && node tests/db/combat.cjs",
+    "test:layout": "node tests/vtt-layout.cjs",
+    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs && node tests/db/sessions.cjs && node tests/db/workspace.cjs && node tests/db/sync.cjs && node tests/db/sync-concurrency.cjs && node tests/db/combat.cjs && node tests/db/vtt.cjs",
     "test:multiplayer": "node tests/multiplayer.cjs",
     "test:production": "node tests/production-readonly.cjs"
   },
