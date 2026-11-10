@@ -38,7 +38,8 @@ vor dem Neuladen offene Aktionen bestätigen und Entwürfe sichern.
 
 Die Entwicklungsprüfung der PWA verwendet `npm run build` und einen HTTP-Server
 für `dist/`, beispielsweise `python3 -m http.server 8000 --directory dist`.
-`sw.js` wird mit einer Prüfsumme der Laufzeitdateien erzeugt. Quell-HTML direkt
+`sw.js` wird mit einer Prüfsumme der Laufzeitdateien und des Worker-/Build-Codes erzeugt.
+Auch reine Worker-Updates verwenden einen neuen Cache. Quell-HTML direkt
 im Dateisystem ist kein unterstützter PWA-Betrieb. Produktion benötigt HTTPS;
 localhost ist für die lokale Prüfung geeignet.
 
@@ -117,7 +118,7 @@ bleiben kompatibel; die neue geprüfte Vorschau bezieht sich auf dieses JSON-For
 
 ## Verifikation
 
-53 Unitprüfungen einschließlich Format-/Grenzwertprüfungen, Auth-Lifecycle,
+54 Unitprüfungen einschließlich Format-/Grenzwertprüfungen, Auth-Lifecycle,
 Identitätsstabilität, Offline-Sperren, Service-Worker-Routing, Cache-Isolation und
 atomarer Shell-Installation. Die vorhandenen 165 Datenbankszenarien und
 Parallelitätsprüfungen bleiben erhalten; es ist keine neue Datenbankmigration nötig.
