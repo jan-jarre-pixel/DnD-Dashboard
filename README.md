@@ -5,13 +5,18 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phasen 1–6 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0 und Phasen 1–7 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 Im GM-Spieltisch öffnet **Kampagnen** das Kampagnenbuch mit NPCs, Quests,
 Gruppenjournal, Story Graph, Statblocks und Encounter-Planer. Die bestehende
 Gruppe kann mehrere Kampagnen vorbereiten; eine neue Sitzung bestimmt die
 Spielkampagne. Inhalte werden einzeln freigegeben. Anleitung und Abnahme:
 [Phase 6](docs/PHASE-6.md).
+
+Im Bereich **Inventar & Generatoren** verwaltet der GM persönliche Bestände,
+Gruppentruhe und private Beute. Verbrauch, Heilung und Ressourcen werden atomar
+bestätigt; lokale Generatoren übernehmen Ergebnisse einmalig als Gegenstände
+oder Kampagnenentwürfe. [Anleitung und Abnahme: Phase 7](docs/PHASE-7.md).
 
 ## Lokal prüfen
 
@@ -29,6 +34,7 @@ führt gezielt den Kampagnenablauf mit fünf Rollen und absichtlich verzögerten
 Antworten aus. Er benötigt dieselbe vorbereitete isolierte lokale Testdatenbank.
 `npm run test:layout` prüft lange native Kartennamen und die Tastaturauswahl
 auf Desktop/Mobil ohne Datenbank; die Browserinstallation ist dafür erforderlich.
+`INVENTORY_ONLY=1` führt entsprechend nur den Inventar-/Generatorablauf aus.
 Die CI startet PostgreSQL ohne Netzwerk, initialisiert künstliche Testdaten
 und prüft alle drei Browser einschließlich Speicherung. `npm run test:db` prüft
 zusätzlich Rollen, Würfel, Geheimhaltung und parallele Anfragen lokal.
@@ -39,7 +45,7 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1, #3, #5, #7, #9, #11 und #13 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3, #5, #7, #9, #11, #13 und #15 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
@@ -53,6 +59,8 @@ Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
 SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 **Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-7-Bericht: Inventar und Generatoren](docs/PHASE-7.md)
+- [Phase-6-Bericht: Kampagnenverwaltung](docs/PHASE-6.md)
 - [Phase-5-Bericht: Karten und VTT](docs/PHASE-5.md)
 - [Phase-4-Bericht: Kampfmanager und My Turn](docs/PHASE-4.md)
 - [Phase-3-Bericht: sichere Live-Ereignisse](docs/PHASE-3.md)
@@ -66,7 +74,7 @@ SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 - [Historische Multiplayer-Dokumentation](docs/legacy-multiplayer.md)
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
-in M0.md sowie PHASE-1.md bis PHASE-5.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+in M0.md sowie PHASE-1.md bis PHASE-7.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
