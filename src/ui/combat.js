@@ -16,13 +16,13 @@
   function layout(){panel.hidden=!identity||(owner()?(!tabletop||location.hash!=='#combat'):!snapshot?.combat);}
   function noticeState(data){const c=data?.combat,own=c?.participants.find(p=>p.char_key===actor()),active=c?.participants.find(p=>p.id===c.current_id);const text=c?`${c.title} · ${statusLabels[c.status]} · Runde ${c.round} · ${active?'Am Zug: '+active.name:'Spielleitung steuert die Szene'}${own?.id===c.current_id&&c.status==='active'&&data.session_status==='active'?' · Du bist am Zug':''}${data.session_status!=='active'?' · Sitzung nicht aktiv':''}`:'Noch kein Kampf ausgewählt.';if($('combatBanner').textContent!==text)$('combatBanner').textContent=text;}
   async function refresh(force=false){
-   if(!identity)return;if(loading){await loadDone;return refresh(force);}loading=true;let finish;loadDone=new Promise(r=>finish=r);const mine=generation;
-   try{const data=await DND.api.request('combat.snapshot',owner()&&selected?{id:selected}:{});if(mine!==generation)return;latest=data;noticeState(data);
+   if(!identity)return;if(loading){await loadDone;return refresh(force);}loading=true;let finish;loadDone=new Promise(r=>finish=r);const mine=generation,requestedId=selected;
+   try{const data=await DND.api.request('combat.snapshot',owner()&&selected?{id:selected}:{});if(mine!==generation||requestedId!==selected)return;latest=data;noticeState(data);
     if(!force&&JSON.stringify(snapshot)===JSON.stringify(data)){layout();return;}
     if(!force&&dirty){$('combatBanner').textContent+=' · Neuer Serverstand verfügbar; Eingaben vor erneutem Anwenden prüfen.';layout();return;}
     const changed=JSON.stringify(snapshot)!==JSON.stringify(data);snapshot=data;current=data;selected=data.combat?.id||selected;
     if(changed||force)render();layout();
-   }catch(err){if(mine===generation)note(err.message||'Kampfstand nicht aktuell.');}finally{if(mine===generation)loading=false;finish();}
+   }catch(err){if(mine===generation&&requestedId===selected)note(err.message||'Kampfstand nicht aktuell.');}finally{if(mine===generation)loading=false;finish();}
   }
   function button(action,label,disabled=false,extra=''){return `<button type="button" data-combat="${action}"${disabled?' disabled':''} ${extra}>${e(label)}</button>`;}
   function resources(p){if(!p.rs&&!p.sl)return '';return [['rsU',p.rs,p.rsU],['slU',p.sl,p.slU]].flatMap(([kind,text,used])=>String(text||'').split('\n').filter(x=>x.trim()).map((line,index)=>{const parts=line.split('|').map(x=>x.trim()),max=Number(parts[1]),left=Math.max(0,max-Number(used?.[index]||0));if(!Number.isInteger(max)||max<1||max>99)return '';return button('resource.use',`${kind==='slU'?'Zauberplatz Stufe ':''}${parts[0]} · ${left}/${max}`,left===0,`data-kind="${kind}" data-index="${index}"`);})).join('');}
