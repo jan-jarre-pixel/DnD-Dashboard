@@ -63,3 +63,8 @@ bestehender Clients gegen kampagnenübergreifende Aktivierung/Veröffentlichung.
 Der Builder ruft den bestehenden Kampf-RPC transaktional auf; HP bleiben im
 Charakterbogen beziehungsweise in `combatants`, Kartentoken referenzieren dieselbe
 Instanz. `src/core/campaign.js` liefert die ausdrücklich beratende DMG-2014-Schätzung.
+
+Kampagnen-Ladeantworten sind zusätzlich an einen lokalen Änderungsstand gebunden.
+Der Kampfmanager prüft die beim Abruf ausgewählte Encounter-ID, bevor er eine
+Antwort übernimmt. Dadurch können verspätete Antworten weder eine bestätigte
+Kampagnenauswahl noch den Übergang vom Builder zur neuen Instanz zurücksetzen.

@@ -47,3 +47,17 @@ Wiederherstellung den lokalen Dump in `dnd_verify` laden (auth-Stubs und pgcrypt
 vorbereiten); `node tests/db/compare-restores.cjs` prüft die beiden Kopien.
 Nie diese Testskripte oder historische Setup-Dateien auf Produktion anwenden.
 `tests/db/local.cjs` akzeptiert bewusst keine Remote-DB-Verbindungszeichenfolge.
+
+## Phase 6 – Anwendungssicherung vom 2026-11-10
+
+Unter `/workspace/private-dnd-backup/phase6/` liegen privat der Export aller
+29 bisherigen Anwendungstabellen, das Schema-Audit einschließlich 33 Funktionen,
+Tabellen-/Funktionsrechten und Sequenzstand sowie geprüfte SQL-Dumps vor/nach der
+additiven Migration. Der Quellstand ist als verifiziertes Git-Bundle gesichert.
+Die JSON-Sicherung wurde lokal in PostgreSQL 17 mit aktiven Fremdschlüsseln
+wiederhergestellt und exakt verglichen. Die Migration erhält Originaldaten,
+Funktions-OIDs, Definitionen und Rechte. Der daraus erzeugte SQL-Dump wurde
+zusätzlich in eine weitere leere lokale Datenbank eingespielt und verglichen.
+SHA-256-Nachweise liegen neben den Dateien. Diese Dateien gehören nicht in Git
+oder öffentliche Actions-Artefakte; die Einschränkungen der Anwendungssicherung
+und der Workspace-Aufbewahrung aus dem obigen Abschnitt gelten weiter.
