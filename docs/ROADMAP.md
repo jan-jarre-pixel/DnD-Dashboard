@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-10. **M0 sowie Phasen 1–7 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-10. **M0 sowie Phasen 1–8 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **11 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM).
-Phase 7 ist abgeschlossen; Phase 8 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **12 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM, UX).
+Phase 8 ist abgeschlossen; Phase 9 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -69,7 +69,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Mehrere Kampagnen; gemeinsame Gegnerinstanz und Sichtbarkeiten.
 - Priorität: P1. Abhängigkeiten: DND-MAP-001.
 - Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 37 Unitprüfungen, 139 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien und vollständige Mehrspieler-/Kampf-/Karten-/Kampagnenabläufe in drei Browsern bestanden. Gezielte Regressionen gegen veraltete Antworten, 21 produktive API-Schutzprüfungen, beide Live-Loginseiten auf Desktop/Mobil und zehn bytegleiche Laufzeitdateien bestätigt. Additive Migration und private Restores geprüft.
-- Offene Probleme: Keine blockierenden Phase-6-Probleme. Eine bestehende Vierergruppe und eine laufende Sitzung gleichzeitig; Freigaben sind explizit, Beute bleibt Planung. Inventarbuchungen sind in Phase 7 ergänzt; Offline/Import/Export folgen Phase 8.
+- Offene Probleme: Keine blockierenden Phase-6-Probleme. Eine bestehende Vierergruppe und eine laufende Sitzung gleichzeitig; Freigaben sind explizit, Beute bleibt Planung. Inventarbuchungen sind in Phase 7 ergänzt; Komfort und die beschriebenen Offline-/Dateifunktionen sind in Phase 8 ergänzt.
 - Commit/PR: [PR #13](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/13), Merge `076561fa7e838f9860830271661460706e403b44`; vollständige Nachweise und Bedienung in [PHASE-6.md](PHASE-6.md).
 
 ## DND-ITEM-001 – 7 Inventar und Generatoren
@@ -77,16 +77,16 @@ Implementierungscommit.
 - Ziel/Abnahme: Verbrauch atomar/idempotent; Generatorobjekte speicherbar.
 - Priorität: P1. Abhängigkeiten: DND-CAMPAIGN-001.
 - Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 40 Unitprüfungen, 165 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien und vollständige Mehrspieler-/Kampf-/Karten-/Kampagnen-/Inventarabläufe in drei Browsern bestanden. 22 produktive API-Schutzprüfungen, beide Live-Loginseiten auf Desktop/Mobil und zehn bytegleiche Laufzeitdateien bestätigt. Additive Migration, Originaldatenvergleich und zwei private Restores geprüft.
-- Offene Probleme: Keine blockierenden Phase-7-Probleme. Freitextausrüstung bleibt separat; automatische Regelwirkungen sind auf den beschriebenen Heileffekt begrenzt. Offline/Import/Export folgen Phase 8.
+- Offene Probleme: Keine blockierenden Phase-7-Probleme. Freitextausrüstung bleibt separat; automatische Regelwirkungen sind auf den beschriebenen Heileffekt begrenzt. Komfort und die beschriebenen Offline-/Dateifunktionen sind in Phase 8 ergänzt.
 - Commit/PR: [PR #15](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/15), Merge `0545892d7b6554f3c3b1dcda04945bc8caab76de`; Bedienung und Nachweise in [PHASE-7.md](PHASE-7.md).
 
 ## DND-UX-001 – 8 Komfort und Offline
 
 - Ziel/Abnahme: Offline klar gekennzeichnet; Version-/Rechteprüfung beim Sync.
 - Priorität: P2. Abhängigkeiten: DND-ITEM-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Suche, Shortcuts, PWA, Import/Export, Backup offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 54 Unitprüfungen, 165 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien, Komfort-/Offline-/PWA-Abläufe und vollständige Mehrspieler-/Kampf-/Karten-/Kampagnen-/Inventarabläufe in drei Browsern bestanden. 22 echte API-Schutzprüfungen, beide Live-Loginseiten auf Desktop/Mobil, 40 bytegleiche öffentliche Build-Dateien sowie öffentlicher Gast-PWA-Start mit Offline-Navigation zu beiden Einstiegspunkten bestätigt.
+- Offene Probleme: Keine blockierenden Phase-8-Probleme. Gespeicherte Offline-Entwürfe nur für eigene Notizfelder und innerhalb der Tabsitzung; Charakterdateien ersetzen keine vollständigen Datenbank-Dumps. Betriebssystem-Installation bleibt browserabhängig.
+- Commit/PR: [PR #17](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/17), Merge `90e8b0e79642c56ab0daa68a460efadd04326be9`; Bedienung, Grenzen und Nachweise in [PHASE-8.md](PHASE-8.md).
 
 ## DND-VTT-001 – 9 Erweiterte VTT-Funktionen
 
@@ -147,6 +147,6 @@ Implementierungscommit.
 | 5 – Karten und VTT | Abgeschlossen; lesend produktiv geprüft; PHASE-5.md |
 | 6 – Kampagnenverwaltung | Abgeschlossen; lesend produktiv geprüft; PHASE-6.md |
 | 7 – Inventar und Automatisierung | Abgeschlossen; lesend produktiv geprüft; PHASE-7.md |
-| 8 – Komfortfunktionen | Offen |
+| 8 – Komfortfunktionen | Abgeschlossen; lesend produktiv geprüft; PHASE-8.md |
 | 9 – Erweiterte VTT-Funktionen | Offen |
 | 10 – Gesamt-QA | Offen; phasenbezogene Prüfungen laufen bereits |

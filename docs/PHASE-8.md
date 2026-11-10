@@ -1,6 +1,6 @@
 # Phase 8 – Komfort und Offline
 
-Status: Implementiert; abschließende Prüfung und Veröffentlichung laufen.
+Status: **Abgeschlossen, veröffentlicht und lesend produktiv geprüft.**
 
 ## Suche und Tastatur
 
@@ -68,7 +68,7 @@ Es gibt keine automatische Hintergrundübernahme dieser Offline-Entwürfe. Nach
 der bestätigten Wiederverbindung laden Charakterseite und Spieltisch ihre
 Online-Ansichten wieder, ohne einen manuellen Reload zu verlangen.
 Bei einer verlorenen Antwort wird dieselbe unveränderliche Anfrage mit derselben
-Request-ID wiederholt, auch nach einem Neuladen des Tabs. Solange die Antwort
+Request-ID wiederholt, bei aktivierter Offline-Kopie auch nach einem Neuladen des Tabs. Solange die Antwort
 unklar ist, bleiben weitere Notizänderungen gesperrt. Die Aufbewahrung von
 Command-Receipts bleibt wie bisher 24 Stunden; lokale Kopien laufen vorher ab.
 
@@ -141,3 +141,33 @@ vollständig aus dem Cache funktionieren. Chromium verwendet den Offline-Schalte
 des Browsers. Backend-Anfragen laufen im Test über einen echten lokalen
 HTTP-Endpunkt, damit auch vom Service Worker gesteuerte Seiten keine
 Inspector-Routen zur Datenbank benötigen.
+
+## Abschlussnachweise – 2026-11-10
+
+- [PR #17](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/17) ist integriert.
+  Geprüfter Feature-Commit: `26c804af705a9bbb8d892066a8e224bc48848588`;
+  Merge: `90e8b0e79642c56ab0daa68a460efadd04326be9`; identischer Git-Baum: `659a1ce1693b08870de31caa5a5ade78ee844f6e`.
+- [Vollständige CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42904223205)
+  erfolgreich: 54 Unitprüfungen, Build, alle 165 DB-Szenarien und Paralleltests,
+  30 Rollen-/Viewport-Szenarien sowie die neuen Komfort-/Datei-/Offline-/PWA-
+  Abläufe und die vollständige bisherige Mehrspieler-/Kampf-/Karten-/Kampagnen-/
+  Inventarregression in Chromium, Firefox und WebKit.
+- [Pages-Veröffentlichung](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42909231545)
+  für den Merge erfolgreich. Alle 40 öffentlichen Build-Dateien (ohne
+  `.nojekyll`) stimmen bytegenau mit dem geprüften Build überein, einschließlich
+  generiertem Service Worker, Manifest, Icon und lokal gepinnter Bibliothek.
+- `NODE_USE_ENV_PROXY=1 npm run test:production` erfolgreich: beide echten
+  Loginseiten auf 1440 × 900 und 390 × 844 Pixeln, sechs Rollenoptionen und
+  echte Ablehnung ungültiger Testcodes ohne JavaScript-Laufzeitfehler.
+- `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` erfolgreich: 22 echte
+  API-/Edge-Schutzprüfungen. Es wurden keine bestätigten Produktions-Spielaktionen
+  mit Originalcodes erzeugt.
+- Öffentliche Gast-PWA zusätzlich geprüft: Service-Worker-Installation und
+  ausschließlich öffentlicher Cache, Offline-Navigation zu beiden Einstiegspunkten,
+  klare Offline-Anzeige, keine gecachte Online-Identität und null Backend-Anfragen.
+- Keine Datenbankmigration und keine neuen Serverrechte. Private Quellen-/
+  Prüfnachweise und SHA-256-Prüfsummen bleiben außerhalb des Repositorys unter
+  `/workspace/private-dnd-backup/phase8/`.
+
+Damit ist DND-UX-001 abgeschlossen. Der nächste offene Schritt ist
+DND-VTT-001 (Phase 9 – erweiterte VTT-Funktionen).
