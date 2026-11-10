@@ -4,7 +4,14 @@ module.exports=async(pages,{rpc})=>{
  await gm.locator('#gm-navigation a[href="#campaign"]').click();await gm.locator('#campaignPanel').waitFor({state:'visible'});
  const api=(action,payload={})=>gm.evaluate(({action,payload})=>DND.api.request('campaign.'+action,payload),{action,payload});
  const snap=()=>api('snapshot',{campaign_id:null});
- await gm.locator('#campaignMeta').evaluate(f=>f.closest('details').open=true);await gm.locator('#campaignNew').click();await gm.locator('#campaignMeta [name=title]').fill('Phase 6 Browserkampagne');await gm.locator('#campaignMeta [name=description]').fill('GM_CAMPAIGN_SECRET');await gm.locator('#campaignMeta button[type=submit]').click();await gm.waitForFunction(()=>document.querySelector('#campaignSelect option:checked')?.textContent==='Phase 6 Browserkampagne');
+ await gm.locator('#campaignSelect option').first().waitFor({state:'attached'});
+ // A pre-command snapshot arrives after the save acknowledgement. It must never undo navigation.
+ let releaseSnapshot=()=>{},held=false;const snapshotGate=new Promise(r=>releaseSnapshot=r);
+ const stale=async route=>{const body=route.request().postDataJSON();if(!held&&body.p_action==='snapshot'){held=true;const previous=rpc('dnd_campaign_call',body);await gm.evaluate(()=>window.CAMPAIGN_SNAPSHOT_HELD=true);await snapshotGate;return route.fulfill({json:previous});}return route.fallback();};
+ await gm.route('**/rest/v1/rpc/dnd_campaign_call',stale);await gm.evaluate(()=>window.dispatchEvent(new Event('dnd:live-refresh')));await gm.waitForFunction(()=>window.CAMPAIGN_SNAPSHOT_HELD===true);
+ try{await gm.locator('#campaignMeta').evaluate(f=>f.closest('details').open=true);await gm.locator('#campaignNew').click();await gm.locator('#campaignMeta [name=title]').fill('Phase 6 Browserkampagne');await gm.locator('#campaignMeta [name=description]').fill('GM_CAMPAIGN_SECRET');await gm.locator('#campaignMeta button[type=submit]').click();await gm.waitForFunction(()=>document.getElementById('campaignNotice').textContent.includes('vom Server bestätigt'));}finally{releaseSnapshot();}
+ try{await gm.waitForFunction(()=>document.querySelector('#campaignSelect option:checked')?.textContent==='Phase 6 Browserkampagne');}catch(err){console.error('Campaign selection after save',await gm.evaluate(()=>({notice:document.getElementById('campaignNotice').textContent,selected:document.getElementById('campaignSelect').selectedOptions[0]?.textContent,title:document.querySelector('#campaignMeta [name=title]').value})));throw err;}finally{await gm.unroute('**/rest/v1/rpc/dnd_campaign_call',stale);}
+
  const cid=await gm.locator('#campaignSelect').inputValue();
  async function create(kind,title,body,fields={}){
   await gm.locator('#campaignKind').selectOption(kind);await gm.locator('#campaignNewRecord').click();await gm.locator('#campaignEditor [name=title]').fill(title);await gm.locator('#campaignEditor [name=body]').fill(body);await gm.locator('#campaignEditor [name=private_notes]').fill('GM_RECORD_SECRET');
