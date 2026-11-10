@@ -131,9 +131,10 @@ Update-Aktivierung, fremde Caches, private Suchergebnisse, GM-Leserechte,
 390-Pixel-Darstellung, konkurrierende lokale Kopien, Ablauf und Logout-Bereinigung.
 
 Playwright-WebKit blockiert mit `context.setOffline(true)` bereits die Navigation
-einer minimalen korrekt gecachten Testseite. Der WebKit-Test schaltet deshalb
-den tatsächlichen lokalen HTTP-Server ab und blockiert externe/API-Anfragen;
-die Navigation muss weiterhin vollständig aus dem Cache funktionieren.
-Chromium und Firefox verwenden den Offline-Schalter des Browsers. Backend-Anfragen
-laufen im Test über einen echten lokalen HTTP-Endpunkt, damit auch vom Service
-Worker gesteuerte Seiten keine Inspector-Routen zur Datenbank benötigen.
+einer minimalen korrekt gecachten Testseite; Firefox meldet im selben Schritt
+`NS_ERROR_OFFLINE`. Diese beiden Tests schalten deshalb den tatsächlichen lokalen
+HTTP-Server ab und blockieren externe/API-Anfragen; die Navigation muss weiterhin
+vollständig aus dem Cache funktionieren. Chromium verwendet den Offline-Schalter
+des Browsers. Backend-Anfragen laufen im Test über einen echten lokalen
+HTTP-Endpunkt, damit auch vom Service Worker gesteuerte Seiten keine
+Inspector-Routen zur Datenbank benötigen.
