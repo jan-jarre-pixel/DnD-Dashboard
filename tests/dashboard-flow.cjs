@@ -15,9 +15,10 @@ module.exports=async function dashboardFlow(page,local,role,viewport){
   await page.getByRole('link',{name:'Full Sheet',exact:true}).click();assert((await page.locator('#sheet .hp').innerText()).includes(String(hp-2)));
   await page.locator('.app-navigation').getByRole('link',{name:'Inventar',exact:true}).click();
   await page.fill('#inventory-text','Testseil\n2 Heiltränke');await saved();
-  await page.fill('#item-use','Heiltrank');await page.getByRole('button',{name:'Verwendung im Journal notieren'}).click();await saved();assert(character().n.includes('Heiltrank verwendet'));
+  assert.equal(character().gear,'Testseil\n2 Heiltränke');assert.equal(await page.locator('#item-use').count(),0);
+  await page.locator('#inventoryPanel').waitFor({state:'visible'});await page.locator('#inventoryRows').getByText('Hier sind noch keine zählbaren Gegenstände vorhanden.',{exact:true}).waitFor();
   await page.locator('.app-navigation').getByRole('link',{name:'Journal & Quests',exact:true}).click();
-  assert((await page.inputValue('#journal-text')).includes('Heiltrank verwendet'));await page.fill('#quest-text','Die Brücke untersuchen');await saved();
+  await page.fill('#journal-text','Reise zur alten Brücke');await saved();assert.equal(character().n,'Reise zur alten Brücke');await page.fill('#quest-text','Die Brücke untersuchen');await saved();
   await page.reload();await page.locator('#quest-text').waitFor();assert.equal(await page.inputValue('#quest-text'),'Die Brücke untersuchen');
   await page.getByRole('link',{name:'Full Sheet',exact:true}).click();await page.getByRole('heading',{name:'Ausrüstung & Items',exact:true}).waitFor();assert((await page.locator('#sheet').innerText()).includes('Testseil'));assert((await page.locator('#sheet').innerText()).includes('Die Brücke untersuchen'));
   await page.getByRole('link',{name:'Quick View',exact:true}).click();

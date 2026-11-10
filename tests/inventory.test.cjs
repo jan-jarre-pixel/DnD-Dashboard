@@ -1,0 +1,4 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),{totals,entries}=require('../src/core/inventory.js');
+test('stock value and weight use exact integer arithmetic beyond safe floating point totals',()=>{const t=totals(Array.from({length:100},()=>({quantity:999999,unit_cp:1000000000,weight_g:1000000})));assert.equal(t.copper,'99999900000000000');assert.equal(t.grams,'99999900000000');assert.equal(t.units,'99999900');});
+test('item units and copper values reject malformed stock',()=>{for(const quantity of [-1,.5,NaN,Infinity])assert.throws(()=>totals([{quantity,unit_cp:1,weight_g:1}]));assert.equal(totals([]).copper,'0');});
+test('weighted table parser preserves text delimiters and enforces usable bounds',()=>{assert.deepEqual(entries('2 | Old bridge | A | B'),[{weight:2,title:'Old bridge',body:'A | B'}]);for(const text of ['', '0 | invalid | none','101 | invalid | none','1 | | none'])assert.throws(()=>entries(text));});

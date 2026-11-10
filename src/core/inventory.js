@@ -1,0 +1,6 @@
+/* Integer stock accounting. Currency is copper; weight is grams. No floating-point totals. */
+((root)=>{'use strict';
+ function totals(items){let copper=0n,grams=0n,units=0n;for(const i of items){for(const k of ['quantity','unit_cp','weight_g'])if(!Number.isSafeInteger(i[k])||i[k]<0)throw Error('Ungültiger Bestand');const q=BigInt(i.quantity);units+=q;copper+=q*BigInt(i.unit_cp);grams+=q*BigInt(i.weight_g);}return {copper:copper.toString(),grams:grams.toString(),units:units.toString(),gold:(copper/100n).toLocaleString('de-DE')+' GM + '+(copper%100n).toString()+' KM',weight:(grams/1000n).toLocaleString('de-DE')+','+(grams%1000n).toString().padStart(3,'0')+' kg'};}
+ function entries(text){const rows=String(text).split('\n').filter(l=>l.trim()).map(l=>{const [w,title,...body]=l.split('|');const weight=Number(w);if(!Number.isInteger(weight)||weight<1||weight>100||!title?.trim()||title.trim().length>100||body.join('|').trim().length>2000)throw Error('Format: Gewicht 1–100 | Titel | Text');return {weight,title:title.trim(),body:body.join('|').trim()};});if(!rows.length||rows.length>100)throw Error('1–100 Einträge erforderlich.');return rows;}
+ const api=Object.freeze({totals,entries});if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.DND.inventoryRules=api;
+})(globalThis);

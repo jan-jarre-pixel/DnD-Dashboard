@@ -32,7 +32,7 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npx playwright install --with-deps ${{ matrix.browser }}
-        timeout-minutes: 10
+        timeout-minutes: 20
       - run: npm run test:layout
         env:
           BROWSER: ${{ matrix.browser }}
