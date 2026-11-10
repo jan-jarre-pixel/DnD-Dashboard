@@ -46,16 +46,15 @@ jobs:
           docker exec dnd-m0-postgres createdb -U postgres dnd_test
           node tests/db/setup.cjs
       - run: npm run test:db
-      - name: Fetch pinned public browser library
-        run: curl --fail --show-error --location https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0 -o /tmp/supabase.js
       - run: npm run test:browser
         env:
           BROWSER: ${{ matrix.browser }}
           LOCAL_DB: '1'
-          SUPABASE_BROWSER_BUNDLE: /tmp/supabase.js
+      - run: npm run test:comfort
+        env:
+          BROWSER: ${{ matrix.browser }}
       - run: npm run test:multiplayer
         env:
           BROWSER: ${{ matrix.browser }}
-          SUPABASE_BROWSER_BUNDLE: /tmp/supabase.js
       - if: always()
         run: docker rm -f dnd-m0-postgres

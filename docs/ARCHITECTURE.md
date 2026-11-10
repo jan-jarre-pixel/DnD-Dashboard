@@ -85,3 +85,19 @@ Bestätigungen sperren Folgeaktionen bis zum identischen Retry. Ladeantworten
 prüfen Auth-Generation und lokalen Änderungsstand. `src/core/inventory.js`
 berechnet exakte Kupfer-/Gewichtssummen mit BigInt und validiert eigene Tabellen.
 Umfang und Grenzen: [Phase 7](PHASE-7.md).
+
+## Komfort und Offline (Phase 8)
+
+`src/core/comfort.js` validiert versionierte Bogen-Dateien, ermittelt Feldänderungen
+und durchsucht berechtigte Textprojektionen. `src/data/offline.js` hält ausschließlich
+eigene Bogenkopien und Notizentwürfe; opt-in AES-GCM in IndexedDB, tab-/tokengebunden,
+mit Ablauf und Schutz gegen konkurrierende lokale Schreibzugriffe. Bestätigte
+Serveridentität und Charakter-CAS bleiben für jede Synchronisierung erforderlich.
+Die erneute Prüfung derselben Identität behält ihre Objektreferenz, damit sie
+keine fremden Modulformulare zurücksetzt. Unklare Requests behalten ihre IDs.
+
+`src/ui/comfort.js` verbindet Suche, Shortcuts, Dateivorschau und Offline-Anzeige.
+Der generierte Service Worker cached ausschließlich öffentliche App-Dateien,
+inklusive der unveränderten lokal gepinnten SDK-Bibliothek. Private Datenantworten
+und POSTs werden nicht übernommen; Updates werden ausdrücklich aktiviert.
+[Umfang und Grenzen](PHASE-8.md).

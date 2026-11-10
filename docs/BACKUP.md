@@ -77,3 +77,19 @@ Die privaten JSON-/SQL-Dateien und Prüfsummen liegen außerhalb von Git unter
 Spielstände und Code-Prüfwerte; Supabase Auth/Storage und Projektkonfiguration
 sind kein Bestandteil dieses Anwendungsbackups. Keine privaten Daten oder
 Zugangscodes in CI, Repository oder öffentliche Artefakte übernehmen.
+
+## Phase 8 – herunterladbare Charakterdateien
+
+Unter **Suche & Werkzeuge → Charakterdateien** können Spieler ihren bestätigten
+Bogen beziehungsweise ihren lokalen Entwurf als versioniertes JSON herunterladen.
+Die Spielleitung kann alle vier Bogenplätze exportieren. Dateien bleiben privat.
+Der Import ist nur für den eigenen Spielerbogen möglich, mit Feldvorschau,
+ausdrücklicher Bestätigung und erneuter Server-/Versionsprüfung. Details und
+Größengrenzen stehen in [PHASE-8.md](PHASE-8.md).
+
+Diese Benutzerdateien sind keine vollständigen Datenbank-Dumps: Gezählte Bestände,
+Kampagnen, Karten und Auth/Storage gehören nicht zum Bogenformat. Die privaten
+Anwendungs-Dumps und ihr geprüfter Restore-Prozess aus den vorherigen Abschnitten
+bleiben für eine vollständige Wiederherstellung maßgeblich. Die verschlüsselte
+Offline-Kopie ist zeitlich begrenzt und an die Sitzung eines Tabs gebunden; sie
+ersetzt keinen dauerhaft aufbewahrten Export.
