@@ -48,7 +48,13 @@ Spieler-Dashboard, Charaktereditor, Inventar, Journal, GM-Gruppenübersicht,
 Sitzungsplanung, Kampagne und Gegenstände sowie das geöffnete Würfelpanel und den
 Komfortdialog mit aufgeklappten Bereichen. Das ergibt 48 WCAG-Regelscans pro Engine
 mit axe-core 4.14.0 (WCAG 2 A/AA, 2.1 A/AA und 2.2 AA). Dazu kommen Label-Fokus,
-Tab-Reihenfolge und Gast-Reflow bei 320 CSS-Pixeln. Die bestehenden Rollen-/Layout-,
+Tab-Reihenfolge und Gast-Reflow bei 320 CSS-Pixeln. Der Rollen-Smoke simuliert einen nicht verfügbaren Ereignisstream über einen
+lokalen HTTP-503-Endpunkt. Dadurch prüft er den Polling-Fallback ohne künstliche
+Cross-Origin-Fehler im WebKit-Testtransport; echte Seitenfehler und unerwartete
+externe Anfragen bleiben harte Fehler. Die Mehrspielersuite betreibt separat den
+tatsächlichen Ereignis-Handler.
+
+Die bestehenden Rollen-/Layout-,
 Komfort- und Mehrspielertests decken weitere interaktive Zustände, Dialoge,
 Tastatursteuerung und reduzierte Bewegung ab.
 
