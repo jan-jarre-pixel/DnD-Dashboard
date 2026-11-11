@@ -128,3 +128,11 @@ neuen Browserablauf mit fünf Rollen aus. `BROWSER=firefox` beziehungsweise
 `BROWSER=webkit` verwendet die jeweilige Engine. Der vollständige Mehrspielertest
 führt denselben neuen Ablauf zusätzlich zu Kampf, Karten, Kampagnen und Inventar
 aus. Positive Prüfungen verwenden ausschließlich die isolierte lokale Datenbank.
+
+Die zusätzliche Migration `20261111074810_phase9_sight_performance.sql` ersetzt
+nur das private Sichtkegel-Prädikat durch native PostgreSQL-Geometrie mit
+vorgeschalteter Bereichsprüfung. Ein deterministischer Vergleich von 500 Fällen
+gegen die algebraische Referenz sowie eine Lastkarte mit 50 Tokens,
+500 Objekten, 64 aktiven Geometrien, acht Sicht-Tokens und acht Lichtern sichern
+die Freigaben und die Abfragekosten ab. Beide Lichtmodi und Cache-Wiederverwendung
+werden innerhalb eines dreisekündigen SQL-Zeitlimits geprüft.
