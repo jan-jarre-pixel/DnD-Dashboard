@@ -50,6 +50,12 @@ jobs:
         env:
           BROWSER: ${{ matrix.browser }}
           LOCAL_DB: '1'
+      - run: npm run test:security
+        env:
+          BROWSER: ${{ matrix.browser }}
+      - run: npm run test:qa
+        env:
+          BROWSER: ${{ matrix.browser }}
       - run: npm run test:comfort
         env:
           BROWSER: ${{ matrix.browser }}
