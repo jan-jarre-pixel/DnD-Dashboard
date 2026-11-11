@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-10. **M0 sowie Phasen 1–8 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-11. **M0 sowie Phasen 1–9 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **12 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM, UX).
-Phase 8 ist abgeschlossen; Phase 9 ist der nächste offene Implementierungsschritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **13 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM, UX, VTT).
+Phase 9 ist abgeschlossen; Phase 10 (Sicherheitsabnahme und Gesamt-QA) ist der nächste offene Schritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -61,7 +61,7 @@ Implementierungscommit.
 - Ziel/Abnahme: Tokenbesitz und geheime Objekte serverseitig geschützt.
 - Priorität: P1. Abhängigkeiten: DND-COMBAT-001.
 - Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 34 Unit-Tests, 121 DB-Szenarien mit Parallelitätsprüfungen, 30 Rollen-/Viewport-Szenarien, drei vollständige Mehrspieler-/Kampf-/Kartenabläufe und native Select-Regression in allen drei Browsern bestanden. 20 Produktions-API-Schutzprüfungen und beide Loginseiten auf Desktop/Mobil bestanden. Die dokumentierten isolierten Restores bleiben erhalten.
-- Offene Probleme: Keine blockierenden Phase-5-Probleme. Fog bewusst in 256-Pixel-Kacheln; dynamische Sichtlinien folgen Phase 9. Produktive Spielaktionen mit Originalcodes wurden nicht für Tests verwendet.
+- Offene Probleme: Keine blockierenden Phase-5-Probleme. Bildfreigabe konservativ in 256-Pixel-Kacheln; persönliche Sicht, Licht, Türen und Kartenebenen sind in Phase 9 ergänzt. Produktive Spielaktionen mit Originalcodes wurden nicht für Tests verwendet.
 - Commit/PR: [PR #11](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/11), Merge 188ba1eaa5cca7e6f4d5f94462079ab39291b16d; vollständige CI-, Pages- und Produktionsnachweise in PHASE-5.md.
 
 ## DND-CAMPAIGN-001 – 6 Kampagnenverwaltung
@@ -92,9 +92,9 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Stabile Basis; Sichtbarkeit ohne Datenlecks.
 - Priorität: P2. Abhängigkeiten: DND-UX-001.
-- Implementierungsstatus: Offen. Teststatus: Nicht getestet.
-- Offene Probleme: Licht, Türen, Sichtlinien, Ebenen offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 54 Unitprüfungen, 191 DB-Szenarien mit bestehenden Parallelitätsprüfungen und acht neuen Tür-/Bewegungsrennen, 30 Rollen-/Viewport-Szenarien, drei Komfort-/PWA-Abläufe und vollständige Mehrspieler-/Kampf-/Karten-/Kampagnen-/Inventar-/Sichtabläufe in Chromium, Firefox und WebKit bestanden. Produktive Migration mit Daten-/Rechtevergleich, private Restores, 23 echte API-Schutzprüfungen, beide Loginseiten auf Desktop/Mobil, 40 bytegleiche öffentliche Build-Dateien und öffentlicher Gast-PWA-Start bestätigt.
+- Offene Probleme: Keine blockierenden Phase-9-Probleme. Ganze Bildkacheln werden konservativ freigegeben; keine pixelgenaue Maskierung oder automatische D&D-Regelauslegung. Neue Advisor-Infos betreffen beabsichtigte private RLS-Sperren und noch ungenutzte Indizes; keine neue Warnung oder unindizierte FK. Grenzen und Prüfumfang in PHASE-9.md.
+- Commit/PR: [PR #19](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/19), Merge `d9facfb6ecdd5e3302eaf13fbeebcb5aac39de18`; Bedienung und Nachweise in [PHASE-9.md](PHASE-9.md).
 
 ## DND-SEC-001 – 10 Sicherheitsabnahme
 
@@ -148,5 +148,5 @@ Implementierungscommit.
 | 6 – Kampagnenverwaltung | Abgeschlossen; lesend produktiv geprüft; PHASE-6.md |
 | 7 – Inventar und Automatisierung | Abgeschlossen; lesend produktiv geprüft; PHASE-7.md |
 | 8 – Komfortfunktionen | Abgeschlossen; lesend produktiv geprüft; PHASE-8.md |
-| 9 – Erweiterte VTT-Funktionen | Offen |
+| 9 – Erweiterte VTT-Funktionen | Abgeschlossen; lesend produktiv geprüft; PHASE-9.md |
 | 10 – Gesamt-QA | Offen; phasenbezogene Prüfungen laufen bereits |
