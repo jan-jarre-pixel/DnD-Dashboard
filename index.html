@@ -28,8 +28,8 @@
 <div id="toast" role="status" aria-live="polite"></div>
 <button aria-expanded="false" aria-label="Würfel öffnen" aria-controls="dpan" id="dfab" onclick="var o=document.getElementById('dpan');var open=o.style.display!='block';o.style.display=open?'block':'none';this.setAttribute('aria-expanded',String(open))">🎲</button>
 <div id="dpan"><div class="row"><button class="b" onclick="rf(4)">W4</button><button class="b" onclick="rf(6)">W6</button><button class="b" onclick="rf(8)">W8</button><button class="b" onclick="rf(10)">W10</button><button class="b" onclick="rf(12)">W12</button><button class="b" onclick="rf(20)">W20</button><button class="b" onclick="rf(100)">W100</button></div>
-<div class="row" style="margin-top:8px"><input id="dcnt" class="n" type="number" min="1" value="1"> ×  Mod <input id="dmod" class="n" type="number" value="0">
-<select onchange="advm=+this.value"><option value="0">Normal</option><option value="1">Vorteil</option><option value="-1">Nachteil</option></select></div>
+<div class="row" style="margin-top:8px"><input aria-label="Anzahl Würfel" id="dcnt" class="n" type="number" min="1" value="1"> ×  Mod <input aria-label="Wurfmodifikator" id="dmod" class="n" type="number" value="0">
+<select aria-label="Vorteil oder Nachteil" onchange="advm=+this.value"><option value="0">Normal</option><option value="1">Vorteil</option><option value="-1">Nachteil</option></select></div>
 <div class="note" style="margin:6px 0">Vorteil/Nachteil gilt für einzelne W20-Würfe.</div><div id="dlog"></div></div>
 
 <script defer src="public/vendor/supabase-2.119.0.js"></script>

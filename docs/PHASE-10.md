@@ -10,7 +10,7 @@ Ausgangsstand: `758a04dd68c463f72b9fa357441a5966c1b2776f` (Phase 9).
 | S10-XSS-001 | Spielertext in Zauberplatz-Label/-Anzahl wurde in der GM-Gruppenübersicht als HTML ausgegeben. Gesamte Zelle wird jetzt escaped. Vorher im isolierten Browser mit harmlosem JavaScript-Marker reproduziert, danach kein Marker und keine injizierten Elemente. | `tests/render-security.test.cjs`, `tests/security-browser.cjs`: gespeicherter Spielertext → GM-Übersicht, eigener Editor, unveränderte Textwerte |
 | S10-XSS-002 | Die frei bearbeitbare Platzstufe einer Kampfaktion wurde im Buttontext als HTML ausgegeben. Auch dieser Text wird jetzt escaped. | Eigener zuerst fehlgeschlagener Unitfall; Browser öffnet denselben Spielerbogen über die GM-Navigation und wechselt in den Kampfmodus. |
 | S10-DOS-001 | Ressourcenanzahlen konnten beliebig viele interaktive Elemente erzeugen. Darstellung auf 30 Zeilen je Ressourcenliste und 99 Einheiten je Zeile begrenzt; nicht endliche Zahlen erzeugen keine Einheiten. Hinweis erklärt die Begrenzung. Gespeicherter Text und Export bleiben vollständig. | Zuerst fehlgeschlagene Mengen-/Zeilen-Unitfälle; Browser lädt 200 Zeilen mit jeweils einer Milliarde Einheiten und prüft die feste DOM-Obergrenze. |
-| S10-A11Y-001 | Stammdaten, Fertigkeitsauswahl, Rettungswurf-Checkboxen und Textbereiche im alten Charaktereditor hatten keine programmatisch verbundenen Namen. Labels/IDs bzw. verständliche ARIA-Namen ergänzt. | Axe-WCAG-A/AA, Labelklick fokussiert Namensfeld, Tab wechselt zum nächsten Stammdatenfeld. |
+| S10-A11Y-001 | Würfelpanel, Stammdaten, Fertigkeitsauswahl, Rettungswurf-Checkboxen und Textbereiche im alten Charaktereditor hatten keine programmatisch verbundenen Namen. Labels/IDs bzw. verständliche ARIA-Namen ergänzt; lesender Offline-Stand im Komfortdialog als benannten Bereich ausgezeichnet. | Axe-WCAG-A/AA, Labelklick fokussiert Namensfeld, Tab wechselt zum nächsten Stammdatenfeld. |
 | S10-UX-001 | Der GM-Schreibschutz deaktivierte auch reine Charakterlinks in der Gruppenübersicht. Diese Navigation ist wieder bedienbar; Schreibaktionen bleiben gesperrt und serverseitig autorisiert. | Browser navigiert ohne JavaScript-Umgehung von Übersicht zu Charakter und Kampfmodus. |
 
 ## Sicherheitsgrenzen und Nachweise
@@ -42,10 +42,11 @@ liefert die konkrete Leistungsabnahme, keine Prognose unbegrenzter Skalierung.
 ## Gesamt-QA und Grenzen
 
 Die CI führt Unit-/Buildprüfungen sowie die gesamte DB- und Browserfolge je in
-Chromium, Firefox und WebKit aus. Neue `test:qa`-Prüfungen scannen zehn Oberflächen
+Chromium, Firefox und WebKit aus. Neue `test:qa`-Prüfungen scannen zehn Oberflächen plus geöffnete Werkzeuge
 in dunklem/hellem Farbschema und auf Desktop/Mobil: beide Gastseiten,
 Spieler-Dashboard, Charaktereditor, Inventar, Journal, GM-Gruppenübersicht,
-Sitzungsplanung, Kampagne und Gegenstände. Das ergibt 40 WCAG-Regelscans pro Engine
+Sitzungsplanung, Kampagne und Gegenstände sowie das geöffnete Würfelpanel und den
+Komfortdialog mit aufgeklappten Bereichen. Das ergibt 48 WCAG-Regelscans pro Engine
 mit axe-core 4.14.0 (WCAG 2 A/AA, 2.1 A/AA und 2.2 AA). Dazu kommen Label-Fokus,
 Tab-Reihenfolge und Gast-Reflow bei 320 CSS-Pixeln. Die bestehenden Rollen-/Layout-,
 Komfort- und Mehrspielertests decken weitere interaktive Zustände, Dialoge,
@@ -54,7 +55,7 @@ Tastatursteuerung und reduzierte Bewegung ab.
 Automatische Regelscans beweisen keine vollständige WCAG-Konformität. Physische
 Screenreader-/Betriebssystemkombinationen und native App-Installation sind damit
 nicht vollständig abgenommen. Verborgene und unbesuchte dynamische Zustände sind
-nicht pauschal von den 40 Scans erfasst. Es gibt keine externe Penetrationstest-
+nicht pauschal von den 48 Scans erfasst. Es gibt keine externe Penetrationstest-
 Zertifizierung und keine Aussage über unbegrenzt große Kampagnen.
 
 Der vorhandene Lastvertrag prüft 50 Tokens, 500 Objekte, 64 aktive Geometrien,
