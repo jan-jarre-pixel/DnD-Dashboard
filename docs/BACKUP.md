@@ -99,3 +99,21 @@ Ebenen-/Sichtfelder an bestehenden Kartentabellen. Anwendungssicherungen und
 Restores umfassen nun 41 Tabellen. Alle Ebenenbilder liegen weiter in privaten
 Kacheldaten; eine Charakter-JSON-Datei enthält diese Daten nicht. Wiederherstellen
 muss auch die Ebenen-Fremdschlüssel und den Trigger zur ersten Kartenebene erhalten.
+
+
+## Phase-10-Abnahme
+
+Eine neue private Anwendungssicherung mit allen erfassten Daten aus 41 Tabellen
+und 55 Funktionsdefinitionen wurde lokal rekonstruiert und anschließend aus einem
+SQL-Dump unabhängig wiederhergestellt. Zusätzlich stimmen Tabellen- und
+Spaltenrechte, RLS-Flags, Policies, Constraints sowie Funktionsdefinitionen,
+Konfigurationen und Rechte mit dem lesend erfassten produktiven Katalog überein.
+Die Artefakte und SHA-256-Dateiliste liegen privat außerhalb von Git unter
+`/workspace/private-dnd-backup/phase10/`. Vollständige verwaltete Auth-/Storage-Daten
+sind weiterhin nicht enthalten.
+
+Spaltenrechte gesondert erfassen und nach dem Wiederaufbau der Tabellenrechte
+wiederherstellen. Im Bestand betrifft das `UPDATE(sheet)` für `authenticated`
+auf `public.character_slots`; RLS begrenzt weiterhin auf den jeweiligen Besitzer.
+Der private Restore prüft diese Rechte ausdrücklich, einschließlich des erneuten
+SQL-Dump-Restores. Produktive Wiederherstellungen bleiben separat freizugeben.
