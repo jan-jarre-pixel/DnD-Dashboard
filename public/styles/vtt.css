@@ -5,3 +5,4 @@
 @media(max-width:600px){.vtt-panel .buttonbar>button{flex:1 1 140px}.vtt-panel .section-head{flex-wrap:wrap}}
 /* WebKit otherwise includes native option paint beyond the sized select box. */
 .vtt-panel select{contain:paint}
+.vtt-feature{pointer-events:none}.vtt-feature line{stroke:#e6e0d2;stroke-width:5}.vtt-feature.door line{stroke:#e99b66;stroke-width:8}.vtt-feature.door.open line{stroke:#90dfbc;stroke-dasharray:8 6}.vtt-feature.door.locked line{stroke:#ed7185}.vtt-feature.light circle{fill:#f3d37b18;stroke:#f3d37b;stroke-width:2;stroke-dasharray:7 5}.vtt-feature.disabled{opacity:.3}#mapVisionPreview{width:min(90vw,850px);max-height:90vh;overflow:auto;background:#171d29;color:#fff2da;border:1px solid #d8bd83;border-radius:.7rem}#mapVisionPreview::backdrop{background:#000a}#mapVisionPreview svg{display:block;width:100%;max-height:65vh}#mapVisionPreview button{min-height:44px}#mapAdvanced form{padding-block:.7rem;border-bottom:1px solid var(--border,#796745)}

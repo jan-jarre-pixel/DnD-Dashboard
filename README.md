@@ -41,6 +41,8 @@ Antworten aus. Er benötigt dieselbe vorbereitete isolierte lokale Testdatenbank
 `npm run test:layout` prüft lange native Kartennamen und die Tastaturauswahl
 auf Desktop/Mobil ohne Datenbank; die Browserinstallation ist dafür erforderlich.
 `INVENTORY_ONLY=1` führt entsprechend nur den Inventar-/Generatorablauf aus.
+`VISION_ONLY=1` prüft gezielt persönliche Sicht, Licht, Türen und Kartenebenen;
+Bedienung und Grenzen stehen in [PHASE-9.md](docs/PHASE-9.md).
 `npm run test:comfort` prüft die Komfort-/Offline-/PWA-Funktionen mit echter lokaler
 Datenbank und Service Worker in `dist/`. Für lokale PWA-Nutzung `npm run build`
 ausführen und `dist/` über HTTP bereitstellen. [Phase-8-Anleitung](docs/PHASE-8.md).
