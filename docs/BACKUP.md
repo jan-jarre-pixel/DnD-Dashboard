@@ -93,3 +93,9 @@ Anwendungs-Dumps und ihr geprüfter Restore-Prozess aus den vorherigen Abschnitt
 bleiben für eine vollständige Wiederherstellung maßgeblich. Die verschlüsselte
 Offline-Kopie ist zeitlich begrenzt und an die Sitzung eines Tabs gebunden; sie
 ersetzt keinen dauerhaft aufbewahrten Export.
+
+Phase 9 ergänzt `game_private.vtt_levels` und `game_private.vtt_features` sowie
+Ebenen-/Sichtfelder an bestehenden Kartentabellen. Anwendungssicherungen und
+Restores umfassen nun 41 Tabellen. Alle Ebenenbilder liegen weiter in privaten
+Kacheldaten; eine Charakter-JSON-Datei enthält diese Daten nicht. Wiederherstellen
+muss auch die Ebenen-Fremdschlüssel und den Trigger zur ersten Kartenebene erhalten.

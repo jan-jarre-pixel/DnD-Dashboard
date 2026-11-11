@@ -30,6 +30,7 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
  }
  try{
   for(const role of roles)pages[role]=await open(role);
+  if(process.env.VISION_ONLY==='1'){await require('./vision-flow.cjs')(pages,{rpc,codes});const token=await pages.gm.evaluate(()=>sessionStorage.getItem('dnd_session_v1'));rpc('dnd_sign_out',{p_token:token});await pages.gm.locator('#loginPanel').waitFor({state:'visible',timeout:15000});assert(await pages.gm.locator('#mapVisionPreview').isHidden());assert.equal(await pages.gm.locator('#mapVisionPreview svg').textContent(),'');assert.deepEqual(failures,[]);return;}
   if(process.env.INVENTORY_ONLY==='1'){await require('./inventory-flow.cjs')(pages,{rpc,codes});assert.deepEqual(failures,[]);return;}
   if(process.env.CAMPAIGN_ONLY==='1'){await require('./campaign-flow.cjs')(pages,{rpc,codes});assert.deepEqual(failures,[]);return;}
   await pages.gm.waitForFunction(()=>document.getElementById('onlineText').textContent==='5 / 5 Teilnehmer online');
@@ -62,8 +63,9 @@ const engine=process.env.BROWSER||'chromium',roles=Object.keys(codes),failures=[
   await require('./vtt-flow.cjs')(pages,{rpc,codes,open});
   await require('./campaign-flow.cjs')(pages,{rpc,codes});
   await require('./inventory-flow.cjs')(pages,{rpc,codes,sheet:first});
+  await require('./vision-flow.cjs')(pages,{rpc,codes});
   // Authentication revocation terminates the next poll and clears private DOM.
-  const gmToken=await pages.gm.evaluate(()=>sessionStorage.getItem('dnd_session_v1'));rpc('dnd_sign_out',{p_token:gmToken});await pages.gm.locator('#loginPanel').waitFor({state:'visible',timeout:15000});assert(!await pages.gm.locator('body').textContent().then(x=>x.includes('GM_SECRET_MULTIPLAYER')));assert.equal(await pages.gm.locator('#inventoryRows').textContent(),'');assert.equal(await pages.gm.locator('#inventoryGenerated').textContent(),'');assert.equal(await pages.gm.locator('#campaignRecords').textContent(),'');assert.equal(await pages.gm.locator('#mapBoard image').count(),0);assert.equal(await pages.gm.evaluate(()=>DND.vtt.current()),null);
+  const gmToken=await pages.gm.evaluate(()=>sessionStorage.getItem('dnd_session_v1'));rpc('dnd_sign_out',{p_token:gmToken});await pages.gm.locator('#loginPanel').waitFor({state:'visible',timeout:15000});assert(!await pages.gm.locator('body').textContent().then(x=>x.includes('GM_SECRET_MULTIPLAYER')));assert.equal(await pages.gm.locator('#inventoryRows').textContent(),'');assert.equal(await pages.gm.locator('#inventoryGenerated').textContent(),'');assert.equal(await pages.gm.locator('#campaignRecords').textContent(),'');assert.equal(await pages.gm.locator('#mapBoard image').count(),0);assert.equal(await pages.gm.evaluate(()=>DND.vtt.current()),null);assert(await pages.gm.locator('#mapVisionPreview').isHidden());assert.equal(await pages.gm.locator('#mapVisionPreview svg').textContent(),'');
   assert.deepEqual(failures,[]);console.log(`${engine}: GM + four simultaneous players, public/private rolls, HP/conditions, CAS draft recovery, offline presence, missed-event replay, stream renewal and revocation passed. Local observed five-roll delivery: ${latency} ms.`);
  }finally{await browser.close();for(const abort of aborts)abort.abort();server.closeAllConnections();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

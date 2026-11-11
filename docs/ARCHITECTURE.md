@@ -101,3 +101,16 @@ Der generierte Service Worker cached ausschließlich öffentliche App-Dateien,
 inklusive der unveränderten lokal gepinnten SDK-Bibliothek. Private Datenantworten
 und POSTs werden nicht übernommen; Updates werden ausdrücklich aktiviert.
 [Umfang und Grenzen](PHASE-8.md).
+
+## Phase 9: Ebenen und persönliche Sicht
+
+Der Karten-RPC erweitert die bestehende Autorität um bis zu vier Bild-/Nebelebenen,
+private Wände/Lichter und Türen. Persönliche Sicht ist ein ausdrücklicher Modus;
+serverseitige Projektionen kombinieren eigene freigegebene Sicht-Tokens, Licht,
+Dunkelsicht und vollständige Sichtkegel mit der bisherigen Nebelfreigabe. Ganze
+Bildkacheln werden konservativ freigegeben; es gibt keinen öffentlichen Vollbildpfad.
+Player-Payloads erhalten nur die aktive Ebene und berechtigte Türdarstellungen.
+Tokenbewegungen prüfen die volle Fläche gegen aktive Wände/geschlossene Türen.
+Sichtänderungen invalidieren Layoutversionen; Entwürfe und Receipts behalten
+bestehende CAS-/Retry-Regeln. Die lesende GM-Vorschau verwendet dieselbe Projektion
+wie die gewählte Spieleridentität, ohne die Sitzung zu wechseln. Details: PHASE-9.md.
