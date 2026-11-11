@@ -1,9 +1,9 @@
 # Zentrale Roadmap
 
-Stand: 2026-11-11. **M0 sowie Phasen 1–9 sind abgeschlossen und lesend produktiv geprüft.**
+Stand: 2026-11-11. **M0 sowie Phasen 1–10 sind abgeschlossen und lesend produktiv geprüft.**
 Der Bestandsaudit aus Phase 0 wurde im Rahmen von M0 und der Migrationsabnahme
-fortgeführt. Abgeschlossene Arbeitspakete: **13 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM, UX, VTT).
-Phase 9 ist abgeschlossen; Phase 10 (Sicherheitsabnahme und Gesamt-QA) ist der nächste offene Schritt. Positive Rollen-/Speicherprüfungen verwenden isolierte
+fortgeführt. Abgeschlossene Arbeitspakete: **15 von 15** (MIG, ARCH, AUTH, UI, PLAYER, GM, RT, COMBAT, MAP, CAMPAIGN, ITEM, UX, VTT, SEC, QA).
+Phase 10 (Sicherheitsabnahme und Gesamt-QA) ist abgeschlossen; Nachweise und verbleibende Prüfgrenzen stehen in PHASE-10.md. Positive Rollen-/Speicherprüfungen verwenden isolierte
 Daten; Produktionsprüfungen bleiben lesend. Jede Aufgabe
 führt ihre tatsächlichen PRs und Nachweise; offene Pakete haben noch keinen
 Implementierungscommit.
@@ -100,17 +100,17 @@ Implementierungscommit.
 
 - Ziel/Abnahme: Konkrete Regressionstests für jeden Sicherheitsbefund.
 - Priorität: P0. Abhängigkeiten: Alle Implementierungsphasen.
-- Implementierungsstatus: Offen. Teststatus: M0-Teilprüfung vorhanden.
-- Offene Probleme: IDOR, XSS, Replay, Rennen umfassend offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Abgeschlossen und veröffentlicht. Teststatus: Zwei gespeicherte XSS-Ausgaben und unbeschränkte Ressourcenanzeige mit konkreten Regressionen geschlossen; vollständige Rechteprüfung aller 41 Tabellen/55 Funktionen/17 RPCs; IDOR-, Replay-, Ablauf- und Rennfälle im vollständigen Drei-Browser-Lauf bestanden.
+- Offene Probleme: Keine blockierenden Befunde im dokumentierten Umfang. Keine externe Penetrationstest-Zertifizierung; bekannte Advisor-Hinweise und Kompatibilitätsgrenzen in PHASE-10.md.
+- Commit/PR: [PR #21](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/21), Merge `8380122ab7ba42b4a472c8e90ecf72d96e8938c8`; PHASE-10.md.
 
 ## DND-QA-001 – 10 Gesamt-QA und Release
 
 - Ziel/Abnahme: DoD aller Funktionen; keine unbelegten Produktivbehauptungen.
 - Priorität: P0. Abhängigkeiten: DND-SEC-001.
-- Implementierungsstatus: Offen. Teststatus: M0-Teilprüfung vorhanden.
-- Offene Probleme: Cross-Browser, Last, A11y, Performance offen.
-- Commit/PR: Noch keiner.
+- Implementierungsstatus: Abgeschlossen, veröffentlicht und lesend produktiv geprüft. Teststatus: 58 Unitprüfungen, 197 DB-Szenarien plus Rennen/Geometrie/Last, 30 Rollen-/Viewport-Szenarien, 144 WCAG-Regelscans und komplette Komfort-/Mehrspielerabläufe in Chromium, Firefox und WebKit. Frische private Restores, 23 echte API-Schutzprüfungen, beide produktiven Loginseiten, 40 bytegleiche Dateien und Gast-PWA offline bestätigt.
+- Offene Probleme: Keine blockierenden Phase-10-Probleme. Automatische WCAG-Prüfung ersetzt keine vollständige Zertifizierung oder Tests aller physischen Screenreader-/Betriebssystemkombinationen. Lastumfang und Betriebsgrenzen in PHASE-10.md.
+- Commit/PR: [PR #21](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/21), Merge `8380122ab7ba42b4a472c8e90ecf72d96e8938c8`; PHASE-10.md.
 
 
 ## DND-AUTH-001 – Phase-1-Sitzungsbasis
@@ -131,7 +131,7 @@ Implementierungscommit.
 - Implementierungsstatus: Produktiv bestätigt. Teststatus: Kontrastprüfungen,
   Chromium/Firefox/WebKit-CI und echte Desktop-/Mobil-Ladeprüfung bestanden.
 - Offene Probleme: Neue Dashboards sind in Phase 2 abgeschlossen;
-  Gesamt-WCAG-Abnahme folgt in Phase 10.
+  Automatische WCAG-Regelscans und Tastaturprüfungen sind in Phase 10 abgeschlossen; Grenzen vollständiger Konformität stehen in PHASE-10.md.
 - Commit/PR: [PR #3](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/3); PHASE-1.md.
 
 
@@ -149,4 +149,4 @@ Implementierungscommit.
 | 7 – Inventar und Automatisierung | Abgeschlossen; lesend produktiv geprüft; PHASE-7.md |
 | 8 – Komfortfunktionen | Abgeschlossen; lesend produktiv geprüft; PHASE-8.md |
 | 9 – Erweiterte VTT-Funktionen | Abgeschlossen; lesend produktiv geprüft; PHASE-9.md |
-| 10 – Gesamt-QA | Offen; phasenbezogene Prüfungen laufen bereits |
+| 10 – Gesamt-QA | Abgeschlossen; lesend produktiv geprüft; PHASE-10.md |

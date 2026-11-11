@@ -5,7 +5,7 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phasen 1–9 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0 und Phasen 1–10 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 Im GM-Spieltisch öffnet **Kampagnen** das Kampagnenbuch mit NPCs, Quests,
 Gruppenjournal, Story Graph, Statblocks und Encounter-Planer. Die bestehende
@@ -29,10 +29,17 @@ Ebenenbilder, Wände, schaltbare Türen und Lichtquellen. Persönliche Sicht wir
 serverseitig aus den eigenen Tokens berechnet. Die vereinfachte GM-Vorschau zeigt
 die berechtigten Bildkacheln, Tokens und Türen. [Anleitung und Abnahme: Phase 9](docs/PHASE-9.md).
 
+Phase 10 schließt die Sicherheits- und Gesamt-QA ab: gespeicherte HTML-Ausgaben
+gehärtet, Ressourcenanzeigen begrenzt und Editor-Beschriftungen ergänzt.
+[Abnahme, Testmatrix und Grenzen: Phase 10](docs/PHASE-10.md).
+Installierte PWAs über **Suche & Werkzeuge → App installieren & Tastatur** auf
+Updates prüfen und **Neue App-Version laden**, damit die Korrekturen offline ankommen.
+
 ## Lokal prüfen
 
 Node >=22: `npm test`, `npm run build`.
-Für Browserprüfungen: `npm ci`, dann `npx playwright install --with-deps`.
+Für Browserprüfungen mit axe-core Node >=22.12.0 verwenden: `npm ci`, dann
+`npx playwright install --with-deps`.
 Optional vorhandenes Chromium über CHROMIUM_PATH verwenden:
 `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`.
 Die unveränderte Supabase-Bibliothek 2.119.0 liegt mit Lizenz und geprüftem
@@ -48,6 +55,10 @@ auf Desktop/Mobil ohne Datenbank; die Browserinstallation ist dafür erforderlic
 `INVENTORY_ONLY=1` führt entsprechend nur den Inventar-/Generatorablauf aus.
 `VISION_ONLY=1` prüft gezielt persönliche Sicht, Licht, Türen und Kartenebenen;
 Bedienung und Grenzen stehen in [PHASE-9.md](docs/PHASE-9.md).
+`npm run test:security` prüft gespeicherte Spieler→GM-XSS und begrenzte Ressourcenanzeigen.
+`npm run test:qa` prüft 48 WCAG-A/AA-Ansichten pro Engine sowie Label-Fokus, Tastatur
+und Gast-Reflow. Beide benötigen die vorbereitete isolierte Datenbank; die CI
+führt sie vor Komfort und Mehrspielerabläufen aus.
 `npm run test:comfort` prüft die Komfort-/Offline-/PWA-Funktionen mit echter lokaler
 Datenbank und Service Worker in `dist/`. Für lokale PWA-Nutzung `npm run build`
 ausführen und `dist/` über HTTP bereitstellen. [Phase-8-Anleitung](docs/PHASE-8.md).
@@ -61,7 +72,7 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1, #3, #5, #7, #9, #11, #13, #15, #17 und #19 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3, #5, #7, #9, #11, #13, #15, #17, #19 und #21 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
@@ -75,6 +86,7 @@ Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
 SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 **Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-10-Bericht: Sicherheitsabnahme, Gesamt-QA und Release](docs/PHASE-10.md)
 - [Phase-9-Bericht: Licht, Türen, Sichtlinien und Ebenen](docs/PHASE-9.md)
 - [Phase-8-Bericht: Komfort und Offline](docs/PHASE-8.md)
 - [Phase-7-Bericht: Inventar und Generatoren](docs/PHASE-7.md)
@@ -92,7 +104,7 @@ SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 - [Historische Multiplayer-Dokumentation](docs/legacy-multiplayer.md)
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
-in M0.md sowie PHASE-1.md bis PHASE-9.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+in M0.md sowie PHASE-1.md bis PHASE-10.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.
