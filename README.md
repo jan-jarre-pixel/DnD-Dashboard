@@ -5,7 +5,7 @@ Entwicklung ausschließlich in `jan-jarre-pixel/DnD-Dashboard`.
 Verlustfreie Übernahme des D&D-Verzeichnisses aus `sideline26`, Commit
 `94bc4c75a853b1f03508a4f56446b3c1a7e8386e`. Das Quellrepository bleibt unverändert.
 
-Live (M0 und Phasen 1–8 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
+Live (M0 und Phasen 1–9 lesend produktiv geprüft): https://jan-jarre-pixel.github.io/DnD-Dashboard/
 
 Im GM-Spieltisch öffnet **Kampagnen** das Kampagnenbuch mit NPCs, Quests,
 Gruppenjournal, Story Graph, Statblocks und Encounter-Planer. Die bestehende
@@ -23,6 +23,11 @@ Importvorschau und eine installierbare App. Eigene Bogenkopien und Notizentwürf
 können ausdrücklich verschlüsselt für den aktuellen Tab offline bereitgehalten
 werden; Synchronisierung prüft Rechte und Version erneut.
 [Anleitung und Abnahme: Phase 8](docs/PHASE-8.md).
+
+Unter **Karten → Ebenen, Licht & Sichtlinien** ergänzt die Spielleitung eigene
+Ebenenbilder, Wände, schaltbare Türen und Lichtquellen. Persönliche Sicht wird
+serverseitig aus den eigenen Tokens berechnet. Die vereinfachte GM-Vorschau zeigt
+die berechtigten Bildkacheln, Tokens und Türen. [Anleitung und Abnahme: Phase 9](docs/PHASE-9.md).
 
 ## Lokal prüfen
 
@@ -56,7 +61,7 @@ mit ungültigen Testcodes und direkten Lesezugriffen, ohne Daten zu ändern.
 öffentliche Stylesheets und `.nojekyll`; keine SQL-Dateien, Tests oder Sicherungen.
 GitHub Pages muss im Repository unter Settings → Pages → Source auf
 **GitHub Actions** eingestellt sein; dies ist für dieses Repository bestätigt.
-PRs #1, #3, #5, #7, #9, #11, #13, #15 und #17 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
+PRs #1, #3, #5, #7, #9, #11, #13, #15, #17 und #19 sind integriert; Pages-Deployment und öffentliche Oberfläche sind geprüft.
 Die bestehenden Codes bleiben gültig. Die neue Anwendung tauscht sie beim Login
 gegen eine bis zu zwölf Stunden gültige Sitzung dieses Tabs aus.
 
@@ -70,6 +75,7 @@ Bogen-Renderer. `public/styles` enthält Design Tokens und Stylesheets.
 SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 **Historische Setup-Dateien niemals erneut auf Produktion anwenden.**
 
+- [Phase-9-Bericht: Licht, Türen, Sichtlinien und Ebenen](docs/PHASE-9.md)
 - [Phase-8-Bericht: Komfort und Offline](docs/PHASE-8.md)
 - [Phase-7-Bericht: Inventar und Generatoren](docs/PHASE-7.md)
 - [Phase-6-Bericht: Kampagnenverwaltung](docs/PHASE-6.md)
@@ -86,7 +92,7 @@ SQL-Dateien daneben bleiben unveränderte Audit-/Recovery-Unterlagen.
 - [Historische Multiplayer-Dokumentation](docs/legacy-multiplayer.md)
 
 Historische Dokumentation beschreibt den alten Betrieb; aktuelle Prüfstände stehen
-in M0.md sowie PHASE-1.md bis PHASE-8.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
+in M0.md sowie PHASE-1.md bis PHASE-9.md. Zugangscodes, private Spielstände und Sicherungen gehören niemals in Git.
 
 Explizite lesende Produktionskontrolle: `npm run test:production`. Sie prüft
 Desktop/Mobil mit ungültigen Codes und erzeugt keine bestätigten Spieleraktionen.

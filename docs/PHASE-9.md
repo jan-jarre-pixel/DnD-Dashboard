@@ -1,6 +1,6 @@
 # Phase 9 – Licht, Türen, Sichtlinien und Ebenen
 
-Status: Implementiert; abschließende Prüfung und Veröffentlichung laufen.
+Status: **Abgeschlossen, veröffentlicht und lesend produktiv geprüft.**
 Arbeitspaket: DND-VTT-001.
 
 ## Bedienung
@@ -34,7 +34,9 @@ Für persönliche Sicht:
 6. **Spielersicht prüfen** zeigt eine lesende Vorschau der tatsächlich vom
    Server erlaubten veröffentlichten Karte für den gewählten Spieler. Diese
    Vorschau erhält dieselbe Projektion wie der betreffende Spieler. Sie liefert
-   weder eine private Karte noch eine andere vorbereitete Ebene aus.
+   weder eine private Karte noch eine andere vorbereitete Ebene aus. Die
+   vereinfachte Momentaufnahme zeichnet Bildkacheln, Tokens und Türen; Props,
+   Effekte, Raster, Messungen und Pings erscheinen in der Hauptkartenansicht.
 
 ## Kartenebenen
 
@@ -136,3 +138,70 @@ gegen die algebraische Referenz sowie eine Lastkarte mit 50 Tokens,
 500 Objekten, 64 aktiven Geometrien, acht Sicht-Tokens und acht Lichtern sichern
 die Freigaben und die Abfragekosten ab. Beide Lichtmodi und Cache-Wiederverwendung
 werden innerhalb eines dreisekündigen SQL-Zeitlimits geprüft.
+
+## Abschlussnachweise – 2026-11-11
+
+- [PR #19](https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/19) ist integriert.
+  Geprüfter Feature-Commit: `86e2af2c2ad291435c2e31f6db129ca1bbec6be3`;
+  Merge: `d9facfb6ecdd5e3302eaf13fbeebcb5aac39de18`; identischer Git-Baum: `a73e47f055efab026f3a715ace4a9f287e099fbf`.
+- [Vollständige CI](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42982269266)
+  erfolgreich: 54 Unitprüfungen, Build, 191 DB-Szenarien und Paralleltests
+  einschließlich acht echter Tür-/Bewegungsrennen, 30 Rollen-/Viewport-Szenarien,
+  500 deterministische Geometrievergleiche und die aktive Lastkarte mit 50 Tokens,
+  500 Objekten, 64 Geometrien, acht Sichtquellen und acht Lichtern unter einem
+  dreisekündigen SQL-Zeitlimit, Layout- und Komfort-/PWA-Prüfungen sowie die
+  vollständigen bisherigen
+  Mehrspieler-/Kampf-/Karten-/Kampagnen-/Inventarabläufe und der neue persönliche
+  Sicht-/Licht-/Tür-/Ebenenablauf in Chromium, Firefox und WebKit. Der neue Ablauf
+  bestand zusätzlich lokal in allen drei Engines; eine geöffnete Vorschau wurde
+  nach echtem Sitzungswiderruf geleert.
+- Produktive Migration `20261111073102_phase9_advanced_vtt` erfolgreich.
+  SQL-SHA-256: `139a8b8ca1ccdbd3dd76260eba5ad1c0aaa47e96ee3193b2c56fcbbc41f5db37`.
+  Die CLI-Dateien wurden bei identischem SQL-Inhalt an die tatsächliche
+  Migrationshistorie angepasst. Alle ursprünglichen Felder der 39 bisherigen
+  Anwendungstabellen, alle 44 bisherigen Funktions-OIDs und Rechte sowie alle
+  40 unveränderten Funktionsdefinitionen vor/nach Anwendung exakt gleich.
+  Zwei neue private Tabellen mit RLS und gesperrten direkten anon/authenticated-
+  Leserechten bestätigt; insgesamt 41 Anwendungstabellen und 55 Funktionen.
+- Ergänzende produktive Migration `20261111074810_phase9_sight_performance`
+  erfolgreich; SHA-256: `b328b194dc26513866a94065c3fe5768496ada086e5504f395c401b308914747`.
+  Nur das private Sichtkegel-Prädikat wurde ersetzt; Daten und alle 55 vorhandenen
+  Funktions-OIDs/Rechte blieben gleich. Die zusätzliche Lastprüfung hatte vorher
+  ein 15-Sekunden-Zeitlimit überschritten. Native Geometrie und sichere
+  Bereichsfilter ergaben bei unveränderten Freigaben lokal 315 beziehungsweise
+  444 ms für die beiden Lichtmodi einschließlich docker/psql. Das sind lokale
+  Beobachtungen, keine zugesicherten Produktionslatenzen.
+- Frische private Sicherung lokal wiederhergestellt und Migration darauf geprüft.
+  Anschließend den vollständigen SQL-Dump unabhängig in eine zweite Datenbank
+  wiederhergestellt: alle 41 Anwendungstabellen, Definitionen, effektiven Grants,
+  RLS und Sequenzzustand identisch. Private Quellen, SQL-Dumps, Prüflogs und
+  SHA-256-Prüfsummen bleiben unter `/workspace/private-dnd-backup/phase9/`.
+- [Pages-Veröffentlichung](https://github.com/jan-jarre-pixel/DnD-Dashboard/actions/runs/42986538545)
+  für den Merge erfolgreich. Alle 40 öffentlichen Build-Dateien (ohne
+  `.nojekyll`) stimmen bytegenau mit dem geprüften Build überein, einschließlich
+  geändertem VTT-Controller, Stylesheet und generiertem Service Worker.
+- `NODE_USE_ENV_PROXY=1 npm run test:production` bestanden: beide echten
+  Loginseiten auf 1440 × 900 und 390 × 844 Pixeln, sechs Rollenoptionen, echte
+  Ablehnung ungültiger Codes und keine JavaScript-Laufzeitfehler.
+- `NODE_USE_ENV_PROXY=1 node tests/live-readonly.cjs` bestanden: 23 echte
+  API-/Edge-Schutzprüfungen einschließlich der GM-Spielersicht-Vorschau.
+  Positive Spielaktionen verwenden ausschließlich künstliche lokale Daten;
+  es wurden keine bestätigten Produktions-Spielaktionen mit Originalcodes erzeugt.
+- Öffentliche Gast-PWA erneut geprüft: ausschließlich öffentlicher Cache,
+  Offline-Navigation zu beiden Einstiegspunkten, klare Offline-Anzeige,
+  keine gespeicherte Online-Identität und null Backend-Anfragen.
+
+Die Advisor-Ausgabe wurde vor/nach der Migration verglichen. Keine neue Warnung
+und kein neuer unindizierter Fremdschlüssel. Zwei zusätzliche
+[RLS-ohne-Policy-Infos](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)
+entsprechen den absichtlich nur über geprüfte RPCs zugänglichen privaten Tabellen.
+Drei zusätzliche
+[Unused-Index-Infos](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index)
+betreffen die neuen Map-/Ebenenindizes vor echtem Spielbetrieb. Die bisherigen
+17 intern tokengeprüften, anonym aufrufbaren Definer-RPC-Hinweise, die bisherige
+Passwortschutz-Warnung für die unbenutzte Passwortanmeldung und drei bestehende
+unindizierte Fremdschlüssel wurden durch Phase 9 nicht verändert. Die umfassende
+Sicherheits- und Gesamt-QA bleibt das nächste Arbeitspaket.
+
+Damit ist DND-VTT-001 abgeschlossen. Als Nächstes folgen DND-SEC-001 und
+DND-QA-001 in Phase 10 (Sicherheitsabnahme und Gesamt-QA).
