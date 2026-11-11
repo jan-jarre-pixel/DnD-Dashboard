@@ -7,15 +7,18 @@
     "build": "node scripts/build.cjs",
     "test:browser": "node tests/browser.cjs",
     "test:layout": "node tests/vtt-layout.cjs",
-    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs && node tests/db/sessions.cjs && node tests/db/workspace.cjs && node tests/db/sync.cjs && node tests/db/sync-concurrency.cjs && node tests/db/combat.cjs && node tests/db/vtt.cjs && node tests/db/campaign.cjs && node tests/db/inventory.cjs && node tests/db/inventory-concurrency.cjs && node tests/db/vision.cjs && node tests/db/vision-concurrency.cjs && node tests/db/vision-load.cjs",
+    "test:db": "node tests/db/integration.cjs && node tests/db/concurrency.cjs && node tests/db/sessions.cjs && node tests/db/workspace.cjs && node tests/db/sync.cjs && node tests/db/sync-concurrency.cjs && node tests/db/combat.cjs && node tests/db/vtt.cjs && node tests/db/campaign.cjs && node tests/db/inventory.cjs && node tests/db/inventory-concurrency.cjs && node tests/db/vision.cjs && node tests/db/vision-concurrency.cjs && node tests/db/vision-load.cjs && node tests/db/security.cjs",
     "test:multiplayer": "node tests/multiplayer.cjs",
     "test:production": "node tests/production-readonly.cjs",
-    "test:comfort": "node tests/comfort-browser.cjs"
+    "test:comfort": "node tests/comfort-browser.cjs",
+    "test:security": "node tests/security-browser.cjs",
+    "test:qa": "node tests/qa-browser.cjs"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "playwright": "1.62.1"
   }
 }

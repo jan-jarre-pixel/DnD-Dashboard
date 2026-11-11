@@ -66,7 +66,7 @@
     if (state.role==='gm') {
       if(cur!=='all'&&S[cur])sheetRoot.innerHTML+=`<section class="card"><h2>Zustände & Quest-Notizen</h2><p>${esc(S[cur].conditions.join(', ')||'Keine Zustände eingetragen')}</p><p class="preserve-lines">${esc(S[cur].questNotes||'Keine persönlichen Quest-Notizen')}</p></section>`;
       for (const b of sheetRoot.querySelectorAll('button')) {
-        if (!['Kampfmodus','Bogen'].includes(b.textContent.trim())) b.disabled=true;
+        if (!b.classList.contains('character-link')&&!['Kampfmodus','Bogen'].includes(b.textContent.trim())) b.disabled=true;
       }
       for (const e of sheetRoot.querySelectorAll('textarea,input,select')) e.disabled=true;
       for (const e of sheetRoot.querySelectorAll('[onclick].pip')) e.removeAttribute('onclick');

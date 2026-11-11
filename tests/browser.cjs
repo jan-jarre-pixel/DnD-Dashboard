@@ -10,6 +10,7 @@ const path=require('node:path');
 (async()=>{
  if(local){local.seed();local.rpc('dnd_gm_manage',{p_code:local.codes.gm,p_action:'start',p_title:'Browser test'});}
  const server=http.createServer((req,res)=>{
+  if(req.url.split('?')[0]==='/DnD-Dashboard/__events'){res.writeHead(503,{'Content-Type':'application/json'});res.end('{}');return;}
   const file=decodeURIComponent(req.url.split('?')[0]).replace(/^\/DnD-Dashboard\//,'')||'index.html';
   if(file.includes('..')||!(['index.html','spieltisch.html','config.js','online.js'].includes(file)||/^(src|public)\/[a-z0-9/.-]+$/.test(file))||!fs.existsSync(file)){res.writeHead(404);return res.end();}
   res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html');res.end(fs.readFileSync(file));
@@ -20,8 +21,12 @@ const path=require('node:path');
  let count=0;
  for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
   for(const role of ['len','gra','sas','pei','gm']){
-   const context=await browser.newContext({viewport});const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[];const requests=[];page.on('pageerror',e=>errors.push(e.message));
-   await page.route('https://*.supabase.co/**',r=>{
+   const context=await browser.newContext({viewport});const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[];const requests=[];const external=[];page.on('pageerror',e=>errors.push(e.message));
+   // Same-origin unavailable stream exercises polling without fabricating cross-origin CORS errors.
+   // The full multiplayer suite separately runs the actual event handler.
+   await context.addInitScript(()=>{const original=window.fetch;window.fetch=(url,options)=>original(typeof url==='string'&&url.includes('/functions/v1/dnd-events')?location.origin+'/DnD-Dashboard/__events':url,options);});
+   await context.route('https://**/*',r=>{external.push(new URL(r.request().url()).hostname);return r.abort('blockedbyclient');});
+   await page.route('https://*.supabase.co/rest/v1/rpc/*',r=>{
     let method=r.request().url().split('/').pop();let body=r.request().postDataJSON();requests.push({method,body});
     if(local){try{return r.fulfill({json:local.rpc(method,body)});}catch(e){return r.fulfill({status:400,json:{message:e.message}});}}
     if(method==='dnd_workspace_call')return r.fulfill({json:{session:{id:'test-session',title:'Testsitzung',status:'active'},scene:'Testszene',announcement:'',version:1,...(role==='gm'?{plans:[],history:[],active_plan_id:null}:{})}});
@@ -63,7 +68,7 @@ const path=require('node:path');
    await page.locator('#logout').click();await page.locator('#loginPanel').waitFor({state:'visible'});
    assert.equal(await page.evaluate(()=>localStorage.getItem('dnd_characters_cloud_v2')),null);
    assert.equal(await page.evaluate(()=>sessionStorage.getItem('dnd_session_v1')),null);
-   assert.deepEqual(errors,[]);count++;await context.close();
+   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);count++;await context.close();
   }
  }
  console.log(`${count} ${engine} scenarios passed (5 roles × desktop/mobile; ${local?'local PostgreSQL RPCs':'mocked backend'}).`);
