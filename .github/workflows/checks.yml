@@ -56,6 +56,9 @@ jobs:
       - run: npm run test:qa
         env:
           BROWSER: ${{ matrix.browser }}
+      - run: npm run test:design
+        env:
+          BROWSER: ${{ matrix.browser }}
       - run: npm run test:comfort
         env:
           BROWSER: ${{ matrix.browser }}

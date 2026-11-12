@@ -1,1 +1,1 @@
-{"id":"./","name":"D&D Command Center","short_name":"D&D","lang":"de","start_url":"./","scope":"./","display":"standalone","background_color":"#191612","theme_color":"#191612","icons":[{"src":"public/icons/dnd.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{"id":"./","name":"D&D Command Center","short_name":"D&D","lang":"de","start_url":"./","scope":"./","display":"standalone","background_color":"#0b151d","theme_color":"#0b151d","icons":[{"src":"public/icons/dnd.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}

@@ -6,3 +6,12 @@ for(const [mode,block] of [['dark',css.split(':root[data-theme="light"]')[0]],['
  const tokens=Object.fromEntries([...block.matchAll(/--dnd-([a-z-]+):(#\w{6})/g)].map(m=>[m[1],m[2]]));
  for(const ink of ['text','muted','gold'])for(const bg of ['bg','surface','raised'])assert(contrast(tokens[ink],tokens[bg])>=4.5,`${ink}/${bg}`);
 });
+
+for(const [mode,block] of [['dark',css.split(':root[data-theme="light"]')[0]],['light',css.split(':root[data-theme="light"]')[1]]])test(`${mode}: interactive borders, focus, semantic feedback and primary buttons meet contrast budgets`,()=>{
+ const tokens=Object.fromEntries([...block.matchAll(/--dnd-([a-z-]+):(#\w{6})/g)].map(m=>[m[1],m[2]]));
+ for(const bg of ['bg','surface','raised']){
+  for(const ink of ['border','focus'])assert(contrast(tokens[ink],tokens[bg])>=3,`${ink}/${bg}`);
+  for(const ink of ['sea','positive','warning','danger'])assert(contrast(tokens[ink],tokens[bg])>=4.5,`${ink}/${bg}`);
+ }
+ assert(contrast(tokens['on-accent'],tokens.gold)>=4.5,'primary button text');
+});

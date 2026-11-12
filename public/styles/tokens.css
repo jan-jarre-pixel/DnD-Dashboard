@@ -1,13 +1,28 @@
-/* DND design tokens v1. Colors are shared by both roles and both entry points. */
+/* R1 semantic tokens. Keep legacy aliases: all views share the same data and palette. */
+@font-face{font-family:"Source Sans 3";font-style:normal;font-weight:200 900;font-display:swap;src:url("../fonts/source-sans-3-latin.woff2") format("woff2")}
+@font-face{font-family:Literata;font-style:normal;font-weight:200 900;font-display:swap;src:url("../fonts/literata-latin.woff2") format("woff2")}
 :root,:root:not([data-theme="light"]),:root[data-theme="dark"] {
  color-scheme:dark;
- --dnd-bg:#17191f;--dnd-surface:#22252e;--dnd-raised:#2c303b;
- --dnd-text:#f1eade;--dnd-muted:#c2b9aa;--dnd-gold:#e2bd78;
- --dnd-border:#80889a;--dnd-positive:#8bd6ab;--dnd-danger:#ffa697;
- --dnd-font:system-ui,-apple-system,"Segoe UI",sans-serif;
- --dnd-radius:12px;--dnd-space:8px;--dnd-focus:#f6d58f;
+ --dnd-bg:#0b151d;--dnd-surface:#142530;--dnd-raised:#203744;
+ --dnd-text:#f4ebdd;--dnd-muted:#b8c8cd;--dnd-gold:#e4bd75;
+ --dnd-border:#75929f;--dnd-divider:#344d59;--dnd-sea:#72d3c1;
+ --dnd-positive:#8dd6ac;--dnd-warning:#f3cc83;--dnd-danger:#ffada0;--dnd-focus:#90ddff;
+ --dnd-on-accent:#0b151d;
+ --dnd-font:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+ --dnd-font-title:Literata,Georgia,serif;
+ --dnd-radius:10px;--dnd-radius-field:6px;--dnd-radius-dialog:16px;
+ --dnd-space:8px;--dnd-space-1:4px;--dnd-space-2:8px;--dnd-space-3:12px;
+ --dnd-space-4:16px;--dnd-space-6:24px;--dnd-space-8:32px;--dnd-space-12:48px;--dnd-space-16:64px;
+ --dnd-control:44px;--dnd-motion:150ms;--dnd-shadow:0 12px 36px #0003;
  --bg:var(--dnd-bg);--card:var(--dnd-surface);--panel:var(--dnd-surface);--panel2:var(--dnd-raised);
  --ink:var(--dnd-text);--text:var(--dnd-text);--mut:var(--dnd-muted);--muted:var(--dnd-muted);
  --acc:var(--dnd-gold);--gold:var(--dnd-gold);--line:var(--dnd-border);--ok:var(--dnd-positive);--green:var(--dnd-positive);--red:var(--dnd-danger);
 }
-:root[data-theme="light"]{color-scheme:light;--dnd-bg:#f4efe6;--dnd-surface:#fffdf8;--dnd-raised:#eee5d5;--dnd-text:#29241d;--dnd-muted:#5e5548;--dnd-gold:#704b15;--dnd-border:#877861;--dnd-positive:#24663c;--dnd-danger:#9d2f25;--dnd-focus:#704b15}
+:root[data-theme="light"]{
+ color-scheme:light;
+ --dnd-bg:#f3eee3;--dnd-surface:#fffcf5;--dnd-raised:#e7ddca;
+ --dnd-text:#182b36;--dnd-muted:#455b66;--dnd-gold:#78501b;
+ --dnd-border:#607783;--dnd-divider:#c9bea9;--dnd-sea:#176d61;
+ --dnd-positive:#23613e;--dnd-warning:#754a0d;--dnd-danger:#a52f28;--dnd-focus:#005f8b;
+ --dnd-on-accent:#fffcf5;
+}
