@@ -12,7 +12,8 @@
     "test:production": "node tests/production-readonly.cjs",
     "test:comfort": "node tests/comfort-browser.cjs",
     "test:security": "node tests/security-browser.cjs",
-    "test:qa": "node tests/qa-browser.cjs"
+    "test:qa": "node tests/qa-browser.cjs",
+    "test:design": "node tests/design-browser.cjs"
   },
   "engines": {
     "node": ">=22"

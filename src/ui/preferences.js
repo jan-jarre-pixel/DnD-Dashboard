@@ -1,0 +1,2 @@
+/* Only a non-sensitive display preference is restored before styles paint. */
+(()=>{try{const theme=localStorage.getItem('dnd-theme');if(theme==='dark'||theme==='light'){document.documentElement.dataset.theme=theme;const meta=document.querySelector?.('meta[name="theme-color"]');if(meta)meta.content=theme==='light'?'#f3eee3':'#0b151d';}}catch{/* Default dark theme also works without storage. */}})();

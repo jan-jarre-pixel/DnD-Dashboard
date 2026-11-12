@@ -1,32 +1,57 @@
-body{background:var(--bg);color:var(--text);font-family:var(--dnd-font);line-height:1.5}
-a{color:var(--gold)}
-button,input,select,textarea{font-family:var(--dnd-font);font-size:1rem;min-height:44px}
-button{touch-action:manipulation;background:var(--dnd-raised);color:var(--text);border:1px solid var(--line);border-radius:8px}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--dnd-focus);outline-offset:3px}
-button.b,.quiet-link{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-button.b{background:var(--dnd-raised);color:var(--text)}
-nav button.on{background:var(--gold);color:var(--bg)}
-.card,.paper{background:var(--dnd-surface);border-color:var(--line);border-radius:var(--dnd-radius)}
-.card h2{line-height:1.25}.card h3,.cat{color:var(--gold)}
-input,select,textarea{background:var(--bg);color:var(--text);border-color:var(--line)}
-.app-header{max-width:1150px;margin:auto;padding:20px 18px 12px;display:flex;justify-content:space-between;align-items:center;gap:16px}
-.app-brand{font-size:1.2rem;font-weight:750;text-decoration:none;color:var(--text)}
-.app-brand>span{color:var(--gold);margin-right:8px}.app-brand small{display:block;font-size:.78rem;font-weight:400;color:var(--muted);margin-top:4px}
-.role-badge{font-size:.8rem;padding:6px 10px;border:1px solid var(--line);border-radius:20px;color:var(--muted)}
-.app-navigation{max-width:1150px;margin:0 auto 8px;padding:0 18px;display:flex;gap:8px;flex-wrap:wrap}
-.app-navigation a{display:flex;align-items:center;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--text);background:var(--card)}
-.app-navigation a[aria-current]{border-color:var(--gold);color:var(--gold);box-shadow:inset 0 -3px var(--gold)}
-.skip-link{position:fixed;left:12px;top:-100px;z-index:100;padding:12px;background:var(--card);color:var(--text);border:2px solid var(--gold)}.skip-link:focus{top:8px}
-.pip{min-width:44px;min-height:44px;width:44px;height:44px;background:transparent;color:var(--gold)}
-.pip.u{background:var(--gold);opacity:1;color:var(--bg)}
-#st{min-height:24px}.top{position:static;background:var(--bg)}
+/* Shared foundation, loaded after each legacy entry stylesheet. Domain layouts stay local. */
+body{background:var(--dnd-bg);color:var(--dnd-text);font-family:var(--dnd-font);font-size:1rem;line-height:1.5}
+a{color:var(--dnd-gold);text-underline-offset:.2em}
+h1,h2,h3{overflow-wrap:anywhere}.hero h1,.player-heading h1,.name{font-family:var(--dnd-font-title);font-weight:600}h1{font-family:var(--dnd-font-title);font-weight:600;line-height:1.25}
+button,input,select,textarea{font-family:var(--dnd-font);font-size:1rem;min-height:var(--dnd-control)}
+button{touch-action:manipulation;background:var(--dnd-raised);color:var(--dnd-text);border:1px solid var(--dnd-border);border-radius:var(--dnd-radius-field);cursor:pointer;transition:background-color var(--dnd-motion)}
+button:hover{filter:none;border-color:var(--dnd-gold)}button:active{box-shadow:inset 0 0 0 1px var(--dnd-gold)}
+button:disabled{opacity:1;color:var(--dnd-muted);border-color:var(--dnd-border);background:var(--dnd-surface);cursor:not-allowed;box-shadow:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--dnd-focus);outline-offset:3px}
+button.b,.quiet-link,.ui-button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px}
+button.b,.ui-button{background:var(--dnd-raised);color:var(--dnd-text)}
+button.primary,.ui-button--primary{background:var(--dnd-gold);color:var(--dnd-on-accent);font-weight:700;border-color:var(--dnd-gold)}
+button.danger,.ui-button--danger{color:var(--dnd-danger);border-color:var(--dnd-danger)}
+button.primary:disabled,.ui-button--primary:disabled{background:var(--dnd-surface);color:var(--dnd-muted);border-color:var(--dnd-border)}
+nav button.on{background:var(--dnd-gold);color:var(--dnd-on-accent)}
+.card,.paper{background:var(--dnd-surface);border-color:var(--dnd-border);border-radius:var(--dnd-radius);box-shadow:none;padding:var(--dnd-space-6);margin-bottom:var(--dnd-space-4)}
+.card h2,.paper h2{line-height:1.4;font-family:var(--dnd-font)}.card h3,.cat{color:var(--dnd-gold)}
+input,select,textarea{background:var(--dnd-bg);color:var(--dnd-text);border-color:var(--dnd-border);border-radius:var(--dnd-radius-field);max-width:100%;font-variant-numeric:tabular-nums}
+label{color:var(--dnd-muted);font-size:.875rem}input[aria-invalid=true],textarea[aria-invalid=true]{border:2px solid var(--dnd-danger)}
+small,.small,.tiny{color:var(--dnd-muted);font-size:.8125rem}.note{color:var(--dnd-muted);font-size:.875rem}
+.hp,.result,.number,.vital-stats,.pc-bottom{font-variant-numeric:tabular-nums}
+.result{background:var(--dnd-raised)}.toast,#toast{background:var(--dnd-raised);color:var(--dnd-text)}
+.app-header{max-width:1600px;margin:auto;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.app-brand{display:flex;align-items:center;gap:12px;font-size:1.2rem;font-weight:700;text-decoration:none;color:var(--dnd-text);line-height:1.3;min-width:0}
+.app-brand img{flex:none}.app-brand>span{min-width:0;overflow-wrap:anywhere}
+.app-brand small{display:block;font-size:.875rem;font-weight:400;color:var(--dnd-muted);margin-top:4px}
+.app-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}
+.role-badge,.ui-badge{font-size:.875rem;padding:4px 10px;border:1px solid var(--dnd-border);border-radius:24px;color:var(--dnd-muted);overflow-wrap:anywhere}
+.live-status{font-size:.875rem;color:var(--dnd-muted);overflow-wrap:anywhere}
+.app-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.app-tools .comfort-open{margin:0;max-width:100%;background:var(--dnd-raised);border-color:var(--dnd-border);padding:8px 12px}
+.app-navigation{max-width:1600px;margin:0 auto 16px;padding:0 24px 12px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--dnd-divider)}
+.app-navigation a{display:flex;align-items:center;min-height:44px;padding:8px 14px;border:1px solid transparent;border-radius:var(--dnd-radius-field);text-decoration:none;color:var(--dnd-muted);background:transparent}
+.app-navigation a:hover{background:var(--dnd-raised);color:var(--dnd-text)}
+.app-navigation a[aria-current]{border-color:var(--dnd-gold);color:var(--dnd-gold);background:var(--dnd-surface);box-shadow:inset 0 -2px var(--dnd-gold)}
+.skip-link{position:fixed;left:12px;top:-100px;z-index:100;padding:12px;background:var(--dnd-surface);color:var(--dnd-text);border:2px solid var(--dnd-gold)}.skip-link:focus{top:8px}
+.pip{min-width:44px;min-height:44px;width:44px;height:44px;background:transparent;color:var(--dnd-gold)}.pip.u{background:var(--dnd-gold);opacity:1;color:var(--dnd-on-accent)}
+#st{min-height:24px}#dfab,.die{color:var(--dnd-on-accent)}.quiet-link{border-color:var(--dnd-border)}
+button.ln{width:100%;border:0;border-bottom:1px dotted var(--dnd-border);border-radius:0;background:transparent;color:var(--dnd-text);text-align:left}.character-link{color:var(--dnd-gold);background:transparent;padding:6px 8px}
+.ui-field{margin:16px 0}.ui-field label{display:block;margin-bottom:8px}.ui-field input,.ui-field select{width:100%;padding:10px 12px;border:1px solid var(--dnd-border)}
+.ui-hint{color:var(--dnd-muted);font-size:.875rem}.ui-error{color:var(--dnd-danger)}
+.ui-badge--positive{color:var(--dnd-positive)}.ui-badge--warning{color:var(--dnd-warning)}.ui-badge--danger{color:var(--dnd-danger)}
+.ui-message{padding:24px;border:1px solid var(--dnd-border);border-radius:var(--dnd-radius);background:var(--dnd-surface)}.ui-message--error{border-left:4px solid var(--dnd-danger)}
+.ui-dialog{box-sizing:border-box;width:min(640px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:24px;background:var(--dnd-surface);color:var(--dnd-text);border:1px solid var(--dnd-border);border-radius:var(--dnd-radius-dialog);box-shadow:var(--dnd-shadow);overflow-wrap:anywhere}
+.ui-dialog::backdrop{background:#0009}.ui-dialog h2{font-family:var(--dnd-font-title);font-size:1.5rem;margin:0}.ui-dialog .section-head{align-items:center}
+.ui-drawer{margin:16px 16px 16px auto;width:min(420px,calc(100% - 32px));height:calc(100dvh - 32px)}
+.ui-shortcuts{display:grid;grid-template-columns:auto 1fr;gap:12px}.ui-shortcuts dt{font-weight:600}.ui-shortcuts dd{margin:0;color:var(--dnd-muted)}
 [hidden]{display:none!important}
-@media(max-width:600px){.app-header{align-items:flex-start;padding:14px 12px 10px}.app-brand{font-size:1.05rem}.role-badge{max-width:40%;overflow-wrap:anywhere}.app-navigation{padding:0 12px;gap:6px}.app-navigation a{flex:1;justify-content:center;padding:8px;font-size:.875rem}.shell,main{padding-left:12px;padding-right:12px}.topin{padding:8px 12px}.abs{grid-template-columns:repeat(3,minmax(0,1fr))}.row{gap:8px}.buttonbar>button{flex:1}.paper{min-width:0}.hero{flex-wrap:wrap}.roll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1050px){.app-header{padding:16px}.app-meta{margin-left:auto}.app-tools{width:100%;justify-content:flex-end}.app-navigation{padding:0 16px 12px}}
+@media(max-width:600px){.app-header{align-items:flex-start;padding:12px;gap:12px}.app-brand{font-size:1.05rem;gap:8px}.app-brand img{width:32px;height:32px}.app-meta{margin-left:0;width:100%;justify-content:space-between;gap:8px}.app-tools{justify-content:flex-start}.app-tools button{min-height:48px}.app-navigation{padding:0 12px 12px;gap:6px}.app-navigation a{flex:1;justify-content:center;padding:8px;font-size:.875rem}.shell,main{padding-left:12px;padding-right:12px}.abs{grid-template-columns:repeat(3,minmax(0,1fr))}.row{gap:8px}.buttonbar>button{flex:1}.paper,.card{min-width:0;padding:16px}.hero{flex-wrap:wrap}.roll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ui-drawer{margin:8px;width:calc(100% - 16px);height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);padding:16px}.ui-shortcuts{grid-template-columns:1fr;gap:4px}.ui-shortcuts dd{margin-bottom:12px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-#dfab,.die{color:var(--bg)}
-.quiet-link{border-color:var(--line)}
-
-button.ln{width:100%;border:0;border-bottom:1px dotted var(--line);border-radius:0;background:transparent;color:var(--text);text-align:left}.character-link{color:var(--gold);background:transparent;padding:6px 8px}
-
-.app-header{flex-wrap:wrap}.live-status{font-size:.8rem;color:var(--muted);max-width:100%;overflow-wrap:anywhere}
+/* The two page adapters retain their own login handlers but share the access surface. */
+.login,body[data-role="guest"] #sheet>.card{max-width:640px;margin:32px auto;padding:24px}
+.login h1,body[data-role="guest"] #sheet>.card h2{font-family:var(--dnd-font-title);font-size:1.75rem;font-weight:600;line-height:1.35;text-align:left}
+.login>p{text-align:left}.login .crest{display:none}
+body[data-role="guest"] #sheet .ed{grid-template-columns:1fr}
+@media(max-width:600px){.login,body[data-role="guest"] #sheet>.card{padding:16px;margin:16px auto}.login h1,body[data-role="guest"] #sheet>.card h2{font-size:1.5rem}}

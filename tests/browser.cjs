@@ -31,6 +31,8 @@ const path=require('node:path');
     if(local){try{return r.fulfill({json:local.rpc(method,body)});}catch(e){return r.fulfill({status:400,json:{message:e.message}});}}
     if(method==='dnd_workspace_call')return r.fulfill({json:{session:{id:'test-session',title:'Testsitzung',status:'active'},scene:'Testszene',announcement:'',version:1,...(role==='gm'?{plans:[],history:[],active_plan_id:null}:{})}});
     if(method==='dnd_sign_in'&&body.p_code!=='invalid_code_for_test_0000')return r.fulfill({json:{actor:role,role:role==='gm'?'owner':'player',identity_id:'test-identity',expires_at:new Date(Date.now()+3600000).toISOString(),token:'a'.repeat(64)}});
+    if(method==='dnd_sync_call'&&body.p_action==='character.read')return r.fulfill({json:{sheet:{},version:1}});
+    if(method==='dnd_sync_call'&&body.p_action==='party.read')return r.fulfill({json:['len','gra','sas','pei'].map(char_key=>({char_key,sheet:{},version:1}))});
     if(method==='dnd_session_call'){method=body.p_operation;body=body.p_payload;}
     if(method==='identity')return r.fulfill({json:{actor:role,role:role==='gm'?'owner':'player',identity_id:'test-identity',expires_at:new Date(Date.now()+3600000).toISOString()}});
     if(body?.p_code==='invalid_code_for_test_0000')return r.fulfill({status:400,json:{message:'Ungültiger Charaktercode'}});

@@ -35,6 +35,13 @@ gehärtet, Ressourcenanzeigen begrenzt und Editor-Beschriftungen ergänzt.
 Installierte PWAs über **Suche & Werkzeuge → App installieren & Tastatur** auf
 Updates prüfen und **Neue App-Version laden**, damit die Korrekturen offline ankommen.
 
+## UI/UX-Redesign
+
+R0 ist freigegeben. R1 liefert das maritime Designsystem, gemeinsame Shell,
+Darstellungs-Drawer und wiederverwendbare UI-Bausteine; Spieler-/GM-/Live-Umbauten
+folgen getrennt in R2–R4. [Umsetzung, Routing und Abnahme R1](docs/REDESIGN-R1.md).
+Der R1-Branch wird vor Freigabe nicht nach main gemergt oder veröffentlicht.
+
 ## Lokal prüfen
 
 Node >=22: `npm test`, `npm run build`.
