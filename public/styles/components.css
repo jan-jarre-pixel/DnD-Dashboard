@@ -53,5 +53,6 @@ button.ln{width:100%;border:0;border-bottom:1px dotted var(--dnd-border);border-
 .login,body[data-role="guest"] #sheet>.card{max-width:640px;margin:32px auto;padding:24px}
 .login h1,body[data-role="guest"] #sheet>.card h2{font-family:var(--dnd-font-title);font-size:1.75rem;font-weight:600;line-height:1.35;text-align:left}
 .login>p{text-align:left}.login .crest{display:none}
-body[data-role="guest"] #sheet .ed{grid-template-columns:1fr}
+body[data-role="guest"] #sheet .ed{grid-template-columns:minmax(0,1fr)}
+body[data-role="guest"] #sheet .ed>div{min-width:0}
 @media(max-width:600px){.login,body[data-role="guest"] #sheet>.card{padding:16px;margin:16px auto}.login h1,body[data-role="guest"] #sheet>.card h2{font-size:1.5rem}}
