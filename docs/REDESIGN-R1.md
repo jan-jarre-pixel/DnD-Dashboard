@@ -83,7 +83,7 @@ zum ausdrücklichen Update aktiv. Keine neue Speicherung von Identitäten oder C
 - Neue Komponententests prüfen HTML-Escaping, begrenzte Varianten, zugeordnete
   Fehlertexte, Pending-Buttons, Dialog-Schließschutz und Präferenzvalidierung.
 - `npm run test:design`: beide Einstiege, vier Viewports, beide Themes,
-  insgesamt 16 axe-AA-Scans im Drawer, Fokus, Persistenz und acht GM-Hashlinks.
+  16 axe-AA-Scans im Drawer plus zwei Komponenten-Zustandsscans, Fokus, Persistenz und acht GM-Hashlinks.
   Läuft im vorhandenen Drei-Browser-CI-Job nach allgemeiner QA.
 - Der alte datenbanklose Browser-Mock beantwortet nun auch `dnd_sync_call`
   `character.read` und `party.read`. Ohne diese Antworten scheiterte der in R0
@@ -95,7 +95,7 @@ Die authentifizierte visuelle Baseline wurde vor den Layoutänderungen mit dem
 bestehenden isolierten DB-Harness aufgenommen: 13 Ansichten × Desktop/Mobil =
 26 Screenshots mit synthetischen Daten. Keine Originalcodes/Spielstände.
 Screenshots und Testprotokolle werden als PR-Nachweise außerhalb des öffentlichen
-App-Builds aufbewahrt. Abschließende Ergebnisse siehe Abnahmeabschnitt unten.
+App-Builds aufbewahrt. Abschließende Ergebnisse und CI-Nachweise stehen in der PR-Abnahme.
 
 ## Releasegrenze und Folgephasen
 
@@ -109,3 +109,28 @@ Die Sicherheitskorrekturen aus Phase 10 dürfen durch einen Revert nicht entfall
 
 Echte Geräte, NVDA/VoiceOver und mehrstündige Live-Performance bleiben ausdrücklich
 Teil R4/R5. Automatische AA-Scans sind keine vollständige WCAG-Zertifizierung.
+
+## Nachweise und geschlossene R1-Regressionsbefunde
+
+PR: https://github.com/jan-jarre-pixel/DnD-Dashboard/pull/23
+
+Lokal bestanden: 63 Unit-/Kontrast-/Komponententests, vollständige isolierte
+DB-Suite (197 Szenarien plus Parallelität/Geometrie/Last), 10 authentifizierte
+Chromium-Rollen-/Viewportabläufe, gespeicherter Cross-Role-XSS-/Ressourcen-DOM-Test,
+48 allgemeine AA-Scans und Komfort-/Offline-/PWA-Abläufe. Die vollständige
+Drei-Browser-CI prüft denselben Branch; der aktuelle vollständige Abnahmestand
+und die konkreten Run-Links sind im PR festgehalten. Kein positiver Produktionstest.
+
+Der 320-px-Reflow-Test deckte im umgestalteten Charakterlogin die intrinsische
+Mindestbreite des nativen Rollen-Selects auf. Die Gridspalte ist jetzt explizit
+`minmax(0,1fr)`, ihre Kinder dürfen schrumpfen; die vorhandene Reflow-Assertion
+bestand anschließend. Bei der Zustandsprüfung wurden außerdem verbliebene
+Legacy-Farben für aktive Buttons und kritische/fehlgeschlagene Würfel auf
+semantische Kontrastpaare umgestellt. Zwei zusätzliche Zustands-Scans und eine
+Prüfung der tatsächlich berechneten Active-Farben sichern diese Paare ab.
+
+Wiederholte unveränderte Transportzustände schreiben den Text der Live-Region
+nicht erneut. Fokus und Headerknoten bleiben beim Statuswechsel erhalten.
+
+R2, R3 und R4 werden durch R1 nicht begonnen. Echte Gerätetests und assistive
+Technik bleiben wie in R0 vereinbart Teil der späteren Gesamt-QA.

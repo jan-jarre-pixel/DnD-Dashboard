@@ -12,7 +12,7 @@
    [['./#dashboard','Dashboard','dashboard'],['./#character','Charakter','character'],['./#actions','Aktionen & Zauber','actions'],['./#inventory','Inventar','inventory'],['./#journal','Journal & Quests','journal'],['spieltisch.html','Spieltisch','tabletop']];
   const current=!identity?(tabletop?'tabletop':'home'):gm?(tabletop?(['prep','history','group','combat','map','campaign','items'].includes(hash)?hash:'session'):'group'):(tabletop?'tabletop':playerRoute);
   host.querySelector('.role-badge').textContent=identity?(gm?'Spielleitung':model.actors[identity.actor]):'Private Spielrunde';
-  const status=host.querySelector('.live-status');status.textContent=identity?(statuses[liveStatus]||'Verbindung wird geprüft …'):'Mit privatem Code anmelden';
+  const status=host.querySelector('.live-status'),statusText=identity?(statuses[liveStatus]||'Verbindung wird geprüft …'):'Mit privatem Code anmelden';if(status.textContent!==statusText)status.textContent=statusText;
   const next=JSON.stringify([links,current]);if(next!==signature){host.querySelector('.app-navigation').innerHTML=links.map(([href,label,key])=>ui.link(href,label,key===current)).join('');signature=next;}
   host.querySelector('.app-navigation').setAttribute('aria-label',gm?'Spielleiter-Navigation':'Hauptnavigation');
   document.body.dataset.role=identity?.role||'guest';

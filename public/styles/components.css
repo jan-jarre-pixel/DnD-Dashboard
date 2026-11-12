@@ -3,12 +3,12 @@ body{background:var(--dnd-bg);color:var(--dnd-text);font-family:var(--dnd-font);
 a{color:var(--dnd-gold);text-underline-offset:.2em}
 h1,h2,h3{overflow-wrap:anywhere}.hero h1,.player-heading h1,.name{font-family:var(--dnd-font-title);font-weight:600}h1{font-family:var(--dnd-font-title);font-weight:600;line-height:1.25}
 button,input,select,textarea{font-family:var(--dnd-font);font-size:1rem;min-height:var(--dnd-control)}
-button{touch-action:manipulation;background:var(--dnd-raised);color:var(--dnd-text);border:1px solid var(--dnd-border);border-radius:var(--dnd-radius-field);cursor:pointer;transition:background-color var(--dnd-motion)}
+button{touch-action:manipulation;background:var(--dnd-raised);color:var(--dnd-text);border:1px solid var(--dnd-border);border-radius:var(--dnd-radius-field);cursor:pointer;transition:box-shadow var(--dnd-motion)}
 button:hover{filter:none;border-color:var(--dnd-gold)}button:active{box-shadow:inset 0 0 0 1px var(--dnd-gold)}
 button:disabled{opacity:1;color:var(--dnd-muted);border-color:var(--dnd-border);background:var(--dnd-surface);cursor:not-allowed;box-shadow:none}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--dnd-focus);outline-offset:3px}
 button.b,.quiet-link,.ui-button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px}
-button.b,.ui-button{background:var(--dnd-raised);color:var(--dnd-text)}
+button.b,.ui-button,button.b:active{background:var(--dnd-raised);color:var(--dnd-text)}
 button.primary,.ui-button--primary{background:var(--dnd-gold);color:var(--dnd-on-accent);font-weight:700;border-color:var(--dnd-gold)}
 button.danger,.ui-button--danger{color:var(--dnd-danger);border-color:var(--dnd-danger)}
 button.primary:disabled,.ui-button--primary:disabled{background:var(--dnd-surface);color:var(--dnd-muted);border-color:var(--dnd-border)}
@@ -56,3 +56,6 @@ button.ln{width:100%;border:0;border-bottom:1px dotted var(--dnd-border);border-
 body[data-role="guest"] #sheet .ed{grid-template-columns:minmax(0,1fr)}
 body[data-role="guest"] #sheet .ed>div{min-width:0}
 @media(max-width:600px){.login,body[data-role="guest"] #sheet>.card{padding:16px;margin:16px auto}.login h1,body[data-role="guest"] #sheet>.card h2{font-size:1.5rem}}
+
+/* Dice/critical feedback uses semantic pairs in both themes, including active legacy buttons. */
+.roll-entry.crit .number{color:var(--dnd-gold)}.die.crit{background:var(--dnd-gold);color:var(--dnd-on-accent)}.die.fail{background:var(--dnd-danger);color:var(--dnd-bg)}
